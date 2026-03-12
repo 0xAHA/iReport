@@ -1,0 +1,577 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SalesOrderTaxes" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="552" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="8e1286f4-c245-436c-a13e-9fda5abad06a">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.652892561983471"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="dateRange1" class="java.util.Date" isForPrompting="false">
+		<parameterDescription><![CDATA[This Month]]></parameterDescription>
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRange2" class="java.util.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowSOLineItems" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Boolean(false)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TaxRate" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORTDESCRIPTION" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Prints the tax rate and total tax on a list of sales orders."]]></defaultValueExpression>
+	</parameter>
+	<parameter name="salesPerson" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="qbClassID" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="customerID" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="locationGroupID" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["-1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckVoided" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[80,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["80"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckFulfilled" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[60,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["60"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckInProgress" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[25,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["25"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckIssued" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[20,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["20"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckEstimate" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[10,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["10"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckClosedShort" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[70,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["70"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cbGroupBy" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA["locationgroup.name",Location Group,"customer.name",Customer,"IF($P!{IncludeLineItemTax} AND SOITEM.TYPEID = 70, SOITEM.PRODUCTNUM, SO.TAXRATENAME)",Tax Rate Name]]></parameterDescription>
+		<defaultValueExpression><![CDATA["locationgroup.name"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IncludeLineItemTax" class="java.lang.Boolean" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cbApplyDateFilter" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[so.datefirstship,SO Date Scheduled,so.datecreated,SO Date Created,so.dateissued,SO Date Issued,so.datecompleted,SO Date Completed,so.datelastmodified,SO Date Last Modified,soitem.dateLastFulfillment,SO Date Last Fulfilled]]></parameterDescription>
+		<defaultValueExpression><![CDATA["so.datefirstship"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ReportTitle" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT $P!{cbGroupBy} GROUPBY,
+       SO.NUM SONUM,
+       SO.TOTALTAX,
+       SOITEM.PRODUCTNUM,
+       SOITEM.TOTALPRICE,
+       SOITEM.TAXABLEFLAG,
+       CUSTOMER.NAME CUSTOMER,
+       SO.DATEISSUED,
+       SO.TAXRATE,
+       IF($P!{IncludeLineItemTax} AND SOITEM.TYPEID = 70, SOITEM.PRODUCTNUM, SO.TAXRATENAME) TAXRATENAME,
+       (SELECT NAME FROM COMPANY WHERE ID = 1) COMPANY,
+       SOSTATUS.NAME STATUS,
+       SOITEMSTATUS.NAME ITEMSTATUS,
+       SOITEM.TYPEID,
+       CURRENCY.SYMBOL,
+       IF((SOITEM.TAXABLEFLAG OR country.sysValue = 'AU'), ROUND((SOITEM.TAXRATE * SOITEM.TOTALPRICE),2), 0.0) ROUNDEDSOITEMTAX,
+       IF((SOITEM.TAXABLEFLAG OR country.sysValue = 'AU'), (SOITEM.TAXRATE * SOITEM.TOTALPRICE), 0.0)  NONROUNDEDSOITEMTAX,
+       $P!{cbApplyDateFilter} DATEFILTERED,
+       TAXRATE.CODE ITEMTAXNAME
+
+FROM SO
+     INNER JOIN SOSTATUS ON SO.STATUSID = SOSTATUS.ID
+     INNER JOIN SOITEM ON SO.ID = SOITEM.SOID
+     INNER JOIN SOITEMSTATUS ON SOITEM.STATUSID = SOITEMSTATUS.ID
+     INNER JOIN CUSTOMER ON SO.CUSTOMERID = CUSTOMER.ID
+     INNER JOIN LOCATIONGROUP ON SO.LOCATIONGROUPID = LOCATIONGROUP.ID
+     LEFT OUTER JOIN CURRENCY ON CURRENCY.HOMECURRENCY = 1
+     LEFT OUTER JOIN SYSPROPERTIES AS COUNTRY ON COUNTRY.SYSKEY = 'QBVersion'
+     LEFT OUTER JOIN TAXRATE ON SOITEM.TAXID = TAXRATE.ID
+
+WHERE $P!{cbApplyDateFilter} BETWEEN $P{dateRange1} AND DATE_SUB($P{dateRange2}, INTERVAL 1 SECOND)
+  AND COALESCE(SO.TAXRATENAME,'') LIKE $P{TaxRate}
+  AND SO.LOCATIONGROUPID IN ($P!{locationGroupID})
+  AND CUSTOMER.ID LIKE '$P!{customerID}'
+  AND coalesce(SO.QBCLASSID,-1) LIKE '$P!{qbClassID}'
+  AND SO.SALESMAN LIKE $P{salesPerson}
+  AND SO.statusID IN ($P!{ckEstimate},$P!{ckIssued},$P!{ckInProgress},$P!{ckFulfilled},$P!{ckClosedShort},$P!{ckVoided})
+
+ORDER BY 1, 2, 7, 14]]>
+	</queryString>
+	<field name="GROUPBY" class="java.lang.String"/>
+	<field name="SONUM" class="java.lang.String"/>
+	<field name="TOTALTAX" class="java.lang.Double"/>
+	<field name="PRODUCTNUM" class="java.lang.String"/>
+	<field name="TOTALPRICE" class="java.lang.Double"/>
+	<field name="TAXABLEFLAG" class="java.lang.Integer"/>
+	<field name="CUSTOMER" class="java.lang.String"/>
+	<field name="DATEISSUED" class="java.sql.Timestamp"/>
+	<field name="TAXRATE" class="java.lang.Double"/>
+	<field name="TAXRATENAME" class="java.lang.String"/>
+	<field name="COMPANY" class="java.lang.String"/>
+	<field name="STATUS" class="java.lang.String"/>
+	<field name="ITEMSTATUS" class="java.lang.String"/>
+	<field name="TYPEID" class="java.lang.Integer"/>
+	<field name="SYMBOL" class="java.lang.Integer"/>
+	<field name="ROUNDEDSOITEMTAX" class="java.lang.Double"/>
+	<field name="NONROUNDEDSOITEMTAX" class="java.lang.Double"/>
+	<field name="DATEFILTERED" class="java.sql.Timestamp"/>
+	<field name="ITEMTAXNAME" class="java.lang.String"/>
+	<variable name="lineItemTaxTotal" class="java.lang.Double" resetType="Group" resetGroup="SO" calculation="Sum">
+		<variableExpression><![CDATA[$F{TYPEID} == 70 ? $F{TOTALPRICE} : 0]]></variableExpression>
+	</variable>
+	<variable name="LineItemTaxGroupTotal" class="java.lang.Double" resetType="Group" resetGroup="GroupBy" calculation="Sum">
+		<variableExpression><![CDATA[$F{TYPEID} == 70 ? $F{TOTALPRICE} : 0]]></variableExpression>
+	</variable>
+	<variable name="TotalGroupTax" class="java.lang.Double" resetType="Group" resetGroup="GroupBy" calculation="Sum">
+		<variableExpression><![CDATA[$F{NONROUNDEDSOITEMTAX}]]></variableExpression>
+	</variable>
+	<variable name="TotalSOTax" class="java.lang.Double" resetType="Group" resetGroup="SO" calculation="Sum">
+		<variableExpression><![CDATA[$F{NONROUNDEDSOITEMTAX}]]></variableExpression>
+	</variable>
+	<variable name="TotalReportLineitemTax" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{TYPEID} == 70 ? $F{TOTALPRICE} : 0]]></variableExpression>
+	</variable>
+	<variable name="TotalTax" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$P{IncludeLineItemTax} && $F{TYPEID}== 70 ? 0 : $F{NONROUNDEDSOITEMTAX}]]></variableExpression>
+	</variable>
+	<variable name="PriceDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_PRICE")]]></variableExpression>
+	</variable>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<variable name="CostDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_COST")]]></variableExpression>
+	</variable>
+	<variable name="DateFormat" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+	</variable>
+	<variable name="isMultiCurrency" class="java.lang.Boolean">
+		<variableExpression><![CDATA[com.evnt.eve.modules.CurrencyModule.isMultiCurrency()]]></variableExpression>
+	</variable>
+	<group name="GroupBy">
+		<groupExpression><![CDATA[$F{GROUPBY}]]></groupExpression>
+		<groupHeader>
+			<band height="14" splitType="Stretch">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-16" x="0" y="0" width="552" height="14" uuid="c88935d9-a91d-4a3d-a615-318eabb6a769"/>
+					<box leftPadding="5">
+						<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Open Sans" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{GROUPBY}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="14" splitType="Stretch">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-17" x="352" y="0" width="100" height="14" uuid="26832a67-bf70-4820-b15d-d9af288f49e2"/>
+					<box rightPadding="0">
+						<topPen lineWidth="1.0" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font fontName="Open Sans" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{GROUPBY} + " Total:"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-18" x="452" y="0" width="100" height="14" uuid="84a39737-71b8-4795-afbd-e6348f71f590"/>
+					<box leftPadding="3" rightPadding="0">
+						<topPen lineWidth="1.0" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font fontName="Open Sans" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{isMultiCurrency} ?
+com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, $V{TotalGroupTax}+($P{IncludeLineItemTax} ? $V{LineItemTaxGroupTotal}:0), $V{PriceDecimal})
+:
+$V{TotalGroupTax}+($P{IncludeLineItemTax} ? $V{LineItemTaxGroupTotal}:0)]]></textFieldExpression>
+					<patternExpression><![CDATA[$V{PriceDecimal}]]></patternExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="SO">
+		<groupExpression><![CDATA[$F{SONUM}]]></groupExpression>
+		<groupHeader>
+			<band height="15" splitType="Stretch">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+					<reportElement key="textField-4" stretchType="RelativeToBandHeight" x="0" y="0" width="75" height="14" forecolor="#000099" uuid="8a883ed8-43b8-4949-9500-b83bd0a51f1d"/>
+					<box leftPadding="0"/>
+					<textElement verticalAlignment="Top">
+						<font fontName="Open Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SONUM}]]></textFieldExpression>
+					<anchorNameExpression><![CDATA["SONum"]]></anchorNameExpression>
+					<hyperlinkReferenceExpression><![CDATA[$F{SONUM}]]></hyperlinkReferenceExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-5" stretchType="RelativeToBandHeight" x="75" y="0" width="127" height="14" forecolor="#000000" uuid="ac75c6c5-800d-473e-83cd-261d4bd97233">
+						<printWhenExpression><![CDATA[new Boolean($P{cbGroupBy}.equals("locationgroup.name"))]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="3"/>
+					<textElement verticalAlignment="Top">
+						<font fontName="Open Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CUSTOMER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-6" stretchType="RelativeToBandHeight" x="202" y="0" width="75" height="14" forecolor="#000000" uuid="1fa2b1c9-acc1-4d72-8250-fd9cccf6eb82"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Open Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DATEFILTERED}]]></textFieldExpression>
+					<patternExpression><![CDATA[$V{DateFormat}]]></patternExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="SO" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-7" stretchType="RelativeToBandHeight" x="452" y="0" width="100" height="14" forecolor="#000000" uuid="0ecaf745-c93d-43a0-9728-2627d59b0b22"/>
+					<box leftPadding="3" rightPadding="0"/>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font fontName="Open Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{isMultiCurrency} ?
+$P{cbGroupBy}.equals("(CASE WHEN $P!{ckIncludeLineItemTax} = 1 and soitem.typeid = 70 then soitem.productnum else so.taxratename end)")
+    ? ($F{TAXRATENAME}.equals($F{GROUPBY}) && $F{TYPEID} == 70 && !$F{GROUPBY}.equals("None") && $P{IncludeLineItemTax})
+        ? com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, $V{lineItemTaxTotal}, $V{PriceDecimal})
+        : com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, $V{TotalSOTax}, $V{PriceDecimal})
+    :$P{IncludeLineItemTax}
+        ? com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, $V{lineItemTaxTotal} + $V{TotalSOTax}, $V{PriceDecimal})
+        : com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, $V{TotalSOTax}, $V{PriceDecimal})
+:
+$P{cbGroupBy}.equals("(CASE WHEN $P!{ckIncludeLineItemTax} = 1 and soitem.typeid = 70 then soitem.productnum else so.taxratename end)")
+    ? ($F{TAXRATENAME}.equals($F{GROUPBY}) && $F{TYPEID} == 70 && !$F{GROUPBY}.equals("None") && $P{IncludeLineItemTax})
+        ? $V{lineItemTaxTotal}
+        : $V{TotalSOTax}
+    :$P{IncludeLineItemTax}
+        ? $V{lineItemTaxTotal}+$V{TotalSOTax}
+        : $V{TotalSOTax}]]></textFieldExpression>
+					<patternExpression><![CDATA[$V{PriceDecimal}]]></patternExpression>
+				</textField>
+				<line>
+					<reportElement key="line-2" positionType="Float" x="0" y="14" width="552" height="1" forecolor="#CCCCCC" uuid="7913cf6d-0f31-40de-bcc8-a3f4022c74fe"/>
+				</line>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-14" stretchType="RelativeToBandHeight" x="277" y="0" width="75" height="14" forecolor="#000000" uuid="40d0467a-4b5e-4061-a05d-505255a3b990"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Open Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{STATUS}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="352" y="0" width="100" height="14" uuid="ac5fa4b8-868f-49f9-b5db-72f3bfd63ec6"/>
+					<box leftPadding="3"/>
+					<textElement textAlignment="Right">
+						<font fontName="Open Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TAXRATENAME}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="4" splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="64" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-2" mode="Transparent" x="0" y="40" width="552" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="d957f806-deb6-4f18-970b-e16bd0d6fbe8"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{dateRange1}.getYear() <= -900 && $P{dateRange2}.getYear() >= 1100
+  ? "Date Range: All"
+  : "Date Range: " + (new SimpleDateFormat($V{DateFormat})).format($P{dateRange1}) + " - " +
+(new SimpleDateFormat($V{DateFormat})).format($P{dateRange2}.getTime()-86400000)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement key="staticText-1" mode="Transparent" x="0" y="18" width="552" height="22" forecolor="#000000" backcolor="#FFFFFF" uuid="77ecf15e-bf83-428b-a43f-750e3e666801"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Open Sans" size="16" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ReportTitle}.equals("%") ? "Sales Order Taxes" : $P{ReportTitle}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-3" x="0" y="0" width="552" height="18" uuid="cac94baa-efc5-4fa5-84f1-f221ada63c74"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMPANY}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-1" x="0" y="54" width="552" height="10" uuid="b04cc566-1399-447f-a121-b6403e977587"/>
+				<textElement>
+					<font fontName="Open Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" "]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="33" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText-2" x="0" y="0" width="75" height="32" uuid="164e1eda-b4f0-4bb0-a918-b58834e1281f"/>
+				<box leftPadding="0"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SO Num]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-3" x="75" y="0" width="127" height="32" uuid="36eaf192-2e2a-40ed-917f-a6da75a15139">
+					<printWhenExpression><![CDATA[new Boolean($P{cbGroupBy}.equals("locationgroup.name"))]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Customer]]></text>
+			</staticText>
+			<textField>
+				<reportElement key="staticText-4" x="202" y="0" width="75" height="32" uuid="9ffa6874-55e2-4702-91d5-c9aeaca05e29"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" markup="none">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cbApplyDateFilter}.equals("so.datefirstship")
+    ? "Date Scheduled"
+: $P{cbApplyDateFilter}.equals("so.datecreated")
+    ? "Date Created"
+: $P{cbApplyDateFilter}.equals("so.dateissued")
+    ? "Date Issued"
+: $P{cbApplyDateFilter}.equals("so.datelastmodified")
+    ? "Last Modified"
+: $P{cbApplyDateFilter}.equals("soitem.dateLastFulfillment")
+    ? "Last Fulfilled"
+: ""]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-5" x="452" y="0" width="100" height="32" uuid="e7c34564-d287-4a1a-895f-a591886b6b46"/>
+				<box rightPadding="0"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Order Tax]]></text>
+			</staticText>
+			<line>
+				<reportElement key="line-1" x="0" y="32" width="552" height="1" uuid="f643a4b2-ef57-4c0b-abd3-8fe1174df4f0"/>
+			</line>
+			<staticText>
+				<reportElement key="staticText-6" x="352" y="0" width="100" height="32" uuid="a46ee0cb-e923-4aba-a988-805e5ca0b9c1"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tax Rate]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-7" x="277" y="0" width="75" height="32" uuid="a8fe3e48-7076-4d26-94e7-be1e2a452712"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Status]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{ShowSOLineItems}]]></printWhenExpression>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-11" x="0" y="0" width="202" height="14" uuid="303b284a-5eae-4b27-abf2-bb3c330cc24a"/>
+				<box leftPadding="10"/>
+				<textElement>
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRODUCTNUM}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="¤ #,##0.00###" isBlankWhenNull="true">
+				<reportElement key="textField-12" x="452" y="0" width="100" height="14" uuid="06c5bf1b-7e95-4b04-9f97-93c7d9296b1c"/>
+				<box rightPadding="0"/>
+				<textElement textAlignment="Right">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{isMultiCurrency} ?
+(($P{IncludeLineItemTax} && $F{TYPEID}== 70)
+    ? com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, $F{TOTALPRICE}, $V{PriceDecimal})
+    : $F{TAXABLEFLAG}.intValue() == 1
+        ? com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, $F{ROUNDEDSOITEMTAX}, $V{PriceDecimal})
+        : com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, new Double(0), $V{PriceDecimal}))
+:
+(($P{IncludeLineItemTax} && $F{TYPEID}== 70)
+    ? $F{TOTALPRICE}
+    : $F{TAXABLEFLAG}.intValue() == 1
+        ? $F{ROUNDEDSOITEMTAX}
+        : new Double(0))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-15" x="277" y="0" width="75" height="14" uuid="312d5452-2adf-44b0-951e-6970a049ff56"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEMSTATUS}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="352" y="0" width="100" height="14" uuid="c84e612f-3ae1-4614-86c8-a033ef2921e3"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Right">
+					<font fontName="Open Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEMTAXNAME}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="14" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-8" mode="Transparent" x="333" y="0" width="183" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="c0d301d6-3903-44b7-b767-15737e2686ad">
+					<printWhenExpression><![CDATA[!$P{IS_IGNORE_PAGINATION}]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-9" mode="Transparent" x="516" y="0" width="36" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="17506f40-17bf-4077-8d79-91f63a4e2ae3">
+					<printWhenExpression><![CDATA[!$P{IS_IGNORE_PAGINATION}]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-10" mode="Transparent" x="0" y="0" width="333" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="fe6a9467-ca12-47f9-92b1-b77a752e4657">
+					<printWhenExpression><![CDATA[!$P{IS_IGNORE_PAGINATION}]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.LONG)).format(new Date())]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="36" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-19" mode="Transparent" x="333" y="22" width="183" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="b0647afd-6ec6-4ea0-9741-aa078a38aa24">
+					<printWhenExpression><![CDATA[!$P{IS_IGNORE_PAGINATION}]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-20" mode="Transparent" x="516" y="22" width="36" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="7ce3c043-5161-4e07-9863-58c6ac634891">
+					<printWhenExpression><![CDATA[!$P{IS_IGNORE_PAGINATION}]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-21" mode="Transparent" x="0" y="22" width="333" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="df452409-bad9-4a64-8eb9-8a8f09767da1">
+					<printWhenExpression><![CDATA[!$P{IS_IGNORE_PAGINATION}]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.LONG)).format(new Date())]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-22" x="352" y="0" width="100" height="14" uuid="fd1da295-f557-4444-87ab-23266dc0c471"/>
+				<box rightPadding="0">
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Open Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Grand Total:"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-23" x="452" y="0" width="100" height="14" uuid="005c2140-897d-458a-94b3-f38d2cb129c4"/>
+				<box leftPadding="3" rightPadding="0">
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Open Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{isMultiCurrency} ?
+com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, $V{TotalTax}+($P{IncludeLineItemTax}? $V{TotalReportLineitemTax}: 0), $V{PriceDecimal})
+:
+$V{TotalTax}+($P{IncludeLineItemTax}? $V{TotalReportLineitemTax}: 0)]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{PriceDecimal}]]></patternExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+</jasperReport>

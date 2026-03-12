@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SalesOrderSummaryExport_subreport" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="4b15957a-182e-4442-9265-e7e84736377e">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="9" fontName="Open Sans" fontSize="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="10" isDefault="true" fontName="Open Sans" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="10b" fontName="Open Sans" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="12b" fontName="Open Sans" fontSize="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="Zebra" fontName="Open Sans">
+		<box leftPadding="3" rightPadding="3">
+			<leftPen lineWidth="0.0"/>
+			<rightPen lineWidth="0.0"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT} % 2 == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#EAEAEA"/>
+		</conditionalStyle>
+	</style>
+	<style name="GroupHeader" fontName="Open Sans" fontSize="10" isBold="true">
+		<box leftPadding="3" rightPadding="3">
+			<topPen lineWidth="1.0"/>
+			<bottomPen lineWidth="1.0"/>
+		</box>
+	</style>
+	<parameter name="locationGroupID" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["-1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="customerID" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRange1" class="java.sql.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRange2" class="java.sql.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="salesPerson" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowFreightItems" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    SO.NUM AS SONUM,
+    CUSTOMER.NAME AS CUSTOMER,
+    SO.CUSTOMERPO,
+    SO.SALESMAN,
+    SO.DATECREATED,
+    (SOITEM.UNITPRICE * SOITEM.QTYTOFULFILL) + SOITEM.ADJUSTAMOUNT AS ORDEREDPRICE,
+    SOITEM.TOTALCOST,
+    SOITEM.TOTALPRICE,
+    SOITEM.PRODUCTNUM,
+    CASE
+        WHEN SOITEM.TOTALPRICE > 0
+        THEN ((SOITEM.TOTALPRICE - SOITEM.TOTALCOST) / SOITEM.TOTALPRICE) * 100
+        ELSE 0
+    END AS MARGINPCT
+
+FROM
+    SO
+    INNER JOIN LOCATIONGROUP ON LOCATIONGROUP.ID = SO.LOCATIONGROUPID
+    INNER JOIN CUSTOMER ON CUSTOMER.ID = SO.CUSTOMERID
+    INNER JOIN SOSTATUS ON SOSTATUS.ID = SO.STATUSID
+    INNER JOIN SOITEM ON SOITEM.SOID = SO.ID
+    INNER JOIN SOITEMSTATUS ON SOITEM.STATUSID = SOITEMSTATUS.ID
+
+WHERE
+    SO.STATUSID NOT IN (90, 80)
+    AND SOITEM.TYPEID NOT IN (90, 40)
+    AND ($P{ShowFreightItems} = true OR SOITEM.TYPEID != 60)
+    AND SO.LOCATIONGROUPID IN ($P!{locationGroupID})
+    AND SO.CUSTOMERID LIKE $P{customerID}
+    AND UPPER(SO.SALESMAN) LIKE UPPER($P{salesPerson})
+    AND DATE(SO.DATECREATED) BETWEEN $P{dateRange1} AND $P{dateRange2}
+
+ORDER BY
+    SO.SALESMAN, SO.NUM, SO.DATECREATED]]>
+	</queryString>
+	<field name="SONUM" class="java.lang.String"/>
+	<field name="CUSTOMER" class="java.lang.String"/>
+	<field name="CUSTOMERPO" class="java.lang.String"/>
+	<field name="SALESMAN" class="java.lang.String"/>
+	<field name="DATECREATED" class="java.sql.Timestamp"/>
+	<field name="ORDEREDPRICE" class="java.lang.Double"/>
+	<field name="TOTALCOST" class="java.math.BigDecimal"/>
+	<field name="TOTALPRICE" class="java.math.BigDecimal"/>
+	<field name="MARGINPCT" class="java.lang.Double"/>
+	<field name="PRODUCTNUM" class="java.lang.String"/>
+	<variable name="DateFormat" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+	</variable>
+	<variable name="PriceDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_PRICE")]]></variableExpression>
+	</variable>
+	<variable name="SalesPersonTotal" class="java.lang.Double" resetType="Group" resetGroup="SalesPersonGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{ORDEREDPRICE}]]></variableExpression>
+	</variable>
+	<variable name="GrandTotal" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{ORDEREDPRICE}]]></variableExpression>
+	</variable>
+	<variable name="SalesPersonAvgMargin" class="java.lang.Double" resetType="Group" resetGroup="SalesPersonGroup" calculation="Average">
+		<variableExpression><![CDATA[$F{MARGINPCT}]]></variableExpression>
+	</variable>
+	<variable name="GrandAvgMargin" class="java.lang.Double" calculation="Average">
+		<variableExpression><![CDATA[$F{MARGINPCT}]]></variableExpression>
+	</variable>
+	<variable name="SalesPersonTotalCost" class="java.math.BigDecimal" resetType="Group" resetGroup="SalesPersonGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTALCOST}]]></variableExpression>
+	</variable>
+	<variable name="SalesPersonTotalPrice" class="java.math.BigDecimal" resetType="Group" resetGroup="SalesPersonGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTALPRICE}]]></variableExpression>
+	</variable>
+	<variable name="GrandTotalCost" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTALCOST}]]></variableExpression>
+	</variable>
+	<variable name="GrandTotalPrice" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTALPRICE}]]></variableExpression>
+	</variable>
+	<group name="SalesPersonGroup">
+		<groupExpression><![CDATA[$F{SALESMAN}]]></groupExpression>
+		<groupHeader>
+			<band height="25">
+				<textField>
+					<reportElement style="GroupHeader" mode="Opaque" x="0" y="5" width="802" height="20" backcolor="#D0D0D0" uuid="b8e1c4f5-3c7d-4a9e-8b2d-5e9f3a1c6d8e"/>
+					<box leftPadding="5">
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Open Sans" size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Sales Person: " + ($F{SALESMAN} != null ? $F{SALESMAN} : "Unknown")]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="25">
+				<textField>
+					<reportElement style="10b" mode="Opaque" x="0" y="2" width="602" height="20" backcolor="#E8E8E8" uuid="c5d8e9f2-4b7a-3c9d-8a1e-6f2d5b8c9e1a"/>
+					<box leftPadding="5" rightPadding="3">
+						<topPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Open Sans" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Subtotal for " + ($F{SALESMAN} != null ? $F{SALESMAN} : "Unknown") + ":"]]></textFieldExpression>
+				</textField>
+				<textField pattern="">
+					<reportElement style="10b" mode="Opaque" x="602" y="2" width="100" height="20" backcolor="#E8E8E8" uuid="d6e9f1a3-5c8b-4d9e-9b2f-7a3e6c9d1b2a"/>
+					<box leftPadding="3" rightPadding="5">
+						<topPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Open Sans" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SalesPersonTotal}]]></textFieldExpression>
+					<patternExpression><![CDATA[$V{PriceDecimal}]]></patternExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement style="10b" mode="Opaque" x="702" y="2" width="100" height="20" backcolor="#E8E8E8" uuid="e7f1a2b4-6d9c-5e8f-a3c1-8b4f7d9e2c3a"/>
+					<box leftPadding="3" rightPadding="5">
+						<topPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Open Sans" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SalesPersonTotalPrice}.doubleValue() > 0 ? (($V{SalesPersonTotalPrice}.doubleValue() - $V{SalesPersonTotalCost}.doubleValue()) / $V{SalesPersonTotalPrice}.doubleValue()) * 100 : 0]]></textFieldExpression>
+					<patternExpression><![CDATA["#,##0.00'%'"]]></patternExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement style="10b" mode="Opaque" x="0" y="0" width="80" height="20" backcolor="#C0C0C0" uuid="56c83d74-3170-4795-87a9-843b2c810f11"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SO #]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="10b" mode="Opaque" x="80" y="0" width="160" height="20" backcolor="#C0C0C0" uuid="5f45a6a6-c620-4129-bfba-01bb42cdc9aa"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Customer]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="10b" mode="Opaque" x="240" y="0" width="100" height="20" backcolor="#C0C0C0" uuid="2920a92f-73a5-4809-b7d9-8ac6f279cb07"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Customer PO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="10b" mode="Opaque" x="340" y="0" width="100" height="20" backcolor="#C0C0C0" uuid="306b7d81-beb6-4d05-9fb5-60e2aef08774"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date Created]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="10b" mode="Opaque" x="602" y="0" width="100" height="20" backcolor="#C0C0C0" uuid="10830cf8-5830-4f16-85e4-d35ab6c830fc"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ordered Price]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="10b" mode="Opaque" x="440" y="0" width="162" height="20" backcolor="#C0C0C0" uuid="0502761a-9b91-4846-9195-b6ea0dac8580"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Product Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="10b" mode="Opaque" x="702" y="0" width="100" height="20" backcolor="#C0C0C0" uuid="a1b2c3d4-e5f6-7890-abcd-ef1234567890"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Margin %]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="Zebra" stretchType="RelativeToTallestObject" x="80" y="0" width="160" height="15" uuid="ebdabb59-58a1-427c-afee-9e6f369614dc"/>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CUSTOMER}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="Zebra" stretchType="RelativeToTallestObject" x="240" y="0" width="100" height="15" uuid="956e647e-cab5-4dbd-b26c-1c95230509ec"/>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CUSTOMERPO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement style="Zebra" stretchType="RelativeToTallestObject" x="340" y="0" width="100" height="15" uuid="28e6719e-add7-497f-9624-2efbf4ef0e48"/>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DATECREATED}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{DateFormat}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement style="Zebra" stretchType="RelativeToTallestObject" x="602" y="0" width="100" height="15" uuid="74a0430c-37db-445f-b40c-4e03b085a962"/>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORDEREDPRICE}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{PriceDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement style="Zebra" stretchType="RelativeToTallestObject" x="440" y="0" width="162" height="15" uuid="bf284c3b-94b8-4550-ac1d-95dc3377698d"/>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRODUCTNUM}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{PriceDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="Zebra" stretchType="RelativeToTallestObject" x="0" y="0" width="80" height="15" uuid="be50a915-ef6b-4a06-a1c0-48676c335de3"/>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SONUM}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement style="Zebra" stretchType="RelativeToTallestObject" x="702" y="0" width="100" height="15" uuid="efe56f58-9dda-4483-8bd2-30680355b972"/>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MARGINPCT}]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00'%'"]]></patternExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="30">
+			<staticText>
+				<reportElement style="10b" mode="Opaque" x="0" y="5" width="440" height="22" backcolor="#B0B0B0" uuid="f1a2b3c4-d5e6-7f8a-9b0c-1d2e3f4a5b6c"/>
+				<box leftPadding="5" rightPadding="3">
+					<topPen lineWidth="2.0"/>
+					<bottomPen lineWidth="2.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Grand Total:]]></text>
+			</staticText>
+			<textField pattern="">
+				<reportElement style="10b" mode="Opaque" x="440" y="5" width="262" height="22" backcolor="#B0B0B0" uuid="e2f3a4b5-c6d7-8e9f-0a1b-2c3d4e5f6a7b"/>
+				<box leftPadding="3" rightPadding="5">
+					<topPen lineWidth="2.0"/>
+					<bottomPen lineWidth="2.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{GrandTotal}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{PriceDecimal}]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement style="10b" mode="Opaque" x="702" y="5" width="100" height="22" backcolor="#B0B0B0" uuid="2d341648-6925-422b-9e25-951e05e4e07a"/>
+				<box leftPadding="3" rightPadding="5">
+					<topPen lineWidth="2.0"/>
+					<bottomPen lineWidth="2.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{GrandTotalPrice}.doubleValue() > 0 ? (($V{GrandTotalPrice}.doubleValue() - $V{GrandTotalCost}.doubleValue()) / $V{GrandTotalPrice}.doubleValue()) * 100 : 0]]></textFieldExpression>
+				<patternExpression><![CDATA["#,##0.00'%'"]]></patternExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

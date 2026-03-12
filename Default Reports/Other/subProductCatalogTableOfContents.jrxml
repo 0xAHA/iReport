@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subProductCatalogTableOfContents" pageWidth="572" pageHeight="752" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="bb5c2d1a-fa9b-46cf-ad91-cec91995ae4e">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Zebra" fontName="Open Sans">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{PAGE_COUNT}.intValue() % 2 == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#EAEAEA" pattern="" fontName="Open Sans"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="productTree1" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="productTree2" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="ShowCoverPage" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ExcludeCoverFromPageNumbering" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="countStart" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{ShowCoverPage} == false || $P{ExcludeCoverFromPageNumbering} == true
+    ? 1
+    : 2]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tocIncrement" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="AlternateReportTitle" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="ShowInactiveProducts" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckIncludeServiceItems" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[20,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["20"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckIncludeNonInventoryItems" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[30,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["30"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cbUncategorizedProducts" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[1,Include,2,Exclude,3,Show Only]]></parameterDescription>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    producttree.name AS productTree,
+    (SELECT name FROM company) AS company,
+    (SELECT datus FROM contact WHERE accountid = 1 AND typeid = 50 and defaultflag = 1 LIMIT 1) AS phone,
+    (SELECT datus FROM contact WHERE accountid = 1 AND typeid = 60 and defaultflag = 1 LIMIT 1) AS email,
+    floor(((SELECT count(product.id)
+        FROM product
+        join producttotree on producttotree.productid = product.id
+        left join part on product.partid = part.id
+        WHERE producttreeid = producttree.id
+        and if($P!{ShowInactiveProducts},1=1,product.activeflag = 1)
+        and (part.typeid IN (10,$P!{ckIncludeServiceItems},$P!{ckIncludeNonInventoryItems}) OR part.id is null)) - 0.01) / 12) AS productTreeCounter,
+    @counter:=@counter + 1 + floor(((SELECT count(product.id)
+        FROM product
+        join producttotree on producttotree.productid = product.id
+        left join part on product.partid = part.id
+        WHERE producttreeid = producttree.id
+        and if($P!{ShowInactiveProducts},1=1,product.activeflag = 1)) - 0.01) / 12) AS pageHelper
+
+FROM producttree
+    CROSS JOIN (SELECT @counter:=$P!{countStart}) c
+
+WHERE producttree.id != 1
+    and (
+        COALESCE(producttree.id,0) IN ($P!{productTree1})
+        OR COALESCE(producttree.id,0) LIKE $P{productTree2}
+    )
+
+HAVING (SELECT count(product.id) FROM product
+        join producttotree on producttotree.productid = product.id
+        left join part on product.partid = part.id
+        WHERE producttreeid = producttree.id
+        and if($P!{ShowInactiveProducts},1=1,product.activeflag = 1)
+        and (part.typeid IN (10,$P!{ckIncludeServiceItems},$P!{ckIncludeNonInventoryItems}) OR part.id is null)) > 0]]>
+	</queryString>
+	<field name="productTree" class="java.lang.String"/>
+	<field name="company" class="java.lang.String"/>
+	<field name="phone" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="email" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="pageHelper" class="java.lang.Integer"/>
+	<field name="productTreeCounter" class="java.lang.Integer"/>
+	<pageHeader>
+		<band height="77" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="42" width="572" height="35" uuid="aae71147-1f1d-4065-a5ba-ddf96924f76d"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Table of Contents]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="0" width="572" height="22" uuid="fb71f652-f212-40ca-9a99-7343454b6d4a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Open Sans" size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{AlternateReportTitle}.equals("%") ? "Product Catalog" : $P{AlternateReportTitle}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="22" width="572" height="20" uuid="51261ef9-448e-48d6-a1b0-5854198ff39a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{company}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="472" y="57" width="100" height="20" uuid="c8394d87-f5b7-4316-baef-b9d5e41ac233"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{countStart}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement style="Zebra" x="0" y="0" width="472" height="20" uuid="e652452e-84d3-4e06-b74a-ae4db68eb37a"/>
+				<box leftPadding="3" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{productTree}.replaceAll("zz - ","")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Zebra" x="472" y="0" width="100" height="20" uuid="8de4cc19-0e32-4bad-8201-9ad40a032f7c"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{pageHelper} - $F{productTreeCounter} - ($P{ShowCoverPage} ? 0 : 1)) + $P{tocIncrement}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="20">
+			<printWhenExpression><![CDATA[$P{cbUncategorizedProducts}.equals("1") && $P{productTree2}.equals("%")]]></printWhenExpression>
+			<textField evaluationTime="Report">
+				<reportElement mode="Opaque" x="0" y="0" width="572" height="20" backcolor="#EAEAEA" uuid="4ac4d979-aabb-484b-8e43-e0b5c8ef4213">
+					<printWhenExpression><![CDATA[$V{REPORT_COUNT} % 2 != 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" markup="none"/>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement mode="Transparent" x="0" y="0" width="472" height="20" uuid="d122044b-1fbc-477c-aa6e-3cc1a570f07b"/>
+				<box leftPadding="3" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Uncategorized"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement mode="Transparent" x="472" y="0" width="100" height="20" uuid="946f74b7-92eb-4d98-b77f-de50ae118a4e"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pageHelper} + 1]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

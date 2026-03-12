@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PartBarcode with Tracking 50x40mm" pageWidth="141" pageHeight="113" whenNoDataType="AllSectionsNoDetail" columnWidth="131" leftMargin="5" rightMargin="5" topMargin="5" bottomMargin="5" uuid="eed30b19-2960-4623-96fa-feaa956801e0">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="ireport.callouts" value="##Thu Jun 29 13:06:13 AEST 2023"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="default" isDefault="true" fontName="SansSerif" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="18" fontName="SansSerif" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="barcode" hAlign="Center" vAlign="Middle"/>
+	<parameter name="REPORTDESCRIPTION" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Part Barcodes for one off Labels. Prints one label for each qty of items for a specific location."]]></defaultValueExpression>
+	</parameter>
+	<parameter name="module" class="java.lang.Object" isForPrompting="false">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path_1" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["../Custom/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="locationID" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="partNum" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SerialNum" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="woNum" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT distinct part.num AS partNum, part.description, CAST(woitem.qtyused as unsigned) as qtymanufactured,
+CASE WHEN parttracking.typeid = 10 THEN trackinginfo.info
+	WHEN parttracking.typeid IN (20,30) THEN trackinginfo.infodate
+	WHEN parttracking.typeid IN (50,60) THEN trackinginfo.infodouble
+	WHEN parttracking.typeid IN (70,80) THEN trackinginfo.infointeger
+	ELSE serials.serialnum END AS trackingvalue, parttracking.typeid, parttracking.name AS trackingtype
+
+From wo
+    JOIN woitem ON woitem.woid = wo.id
+    JOIN part ON part.id = woitem.partid
+    LEFT JOIN inventorylog ON inventorylog.tableid = -355941248 AND inventorylog.typeid = 10
+			AND inventorylog.partid = part.id AND inventorylog.recordid = woitem.id
+    LEFT JOIN parttotracking on part.id = parttotracking.partid and parttotracking.primaryflag = 1
+    LEFT JOIN parttracking ON parttotracking.parttrackingid = parttracking.id
+    LEFT JOIN trackinginfo ON trackinginfo.parttrackingid = parttotracking.parttrackingid
+			AND trackinginfo.recordid = woitem.id AND trackinginfo.tableid = -355941248
+    LEFT JOIN trackinginfosn serials ON serials.trackinginfoid = trackinginfo.id
+
+WHERE part.id > 0
+    AND part.activeflag = 1
+    AND part.typeid = 10
+    AND UPPER(part.num) LIKE UPPER($P{partNum})
+    AND wo.num LIKE $P{woNum}
+    AND woitem.typeid = 10
+
+
+
+order by 1, 3]]>
+	</queryString>
+	<field name="partNum" class="java.lang.String"/>
+	<field name="description" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="qtymanufactured" class="java.math.BigInteger"/>
+	<field name="trackingvalue" class="java.lang.String"/>
+	<field name="typeid" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="trackingtype" class="java.lang.String"/>
+	<variable name="DateFormat" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+	</variable>
+	<variable name="PriceDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_PRICE")]]></variableExpression>
+	</variable>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<variable name="CostDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_COST")]]></variableExpression>
+	</variable>
+	<group name="LG">
+		<groupExpression><![CDATA[$F{partNum}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band height="100">
+			<textField>
+				<reportElement x="0" y="21" width="131" height="30" uuid="60c033b2-02fc-4e40-9f18-4da120f973dc"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement style="barcode" positionType="Float" x="0" y="51" width="131" height="30" uuid="5857fa15-05ff-4d9a-98f5-d539df66abbd"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128B" drawText="false" checksumRequired="false" barWidth="0">
+					<jr:codeExpression><![CDATA[$F{trackingvalue}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="81" width="131" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="41aec046-1c0f-4b28-865b-35d267fb591f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Open Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{trackingvalue}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="131" height="21" uuid="4e3bef08-e682-4c93-a989-963ce7b7fbc3"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{partNum}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

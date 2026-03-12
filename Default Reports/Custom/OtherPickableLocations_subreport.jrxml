@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="OtherPickableLocations_subreport" pageWidth="294" pageHeight="802" columnWidth="294" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d4e5f6a7-b8c9-0123-def4-567890123456">
+	<property name="ireport.zoom" value="1.6105100000000008"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="note" isDefault="true" fontName="Open Sans" fontSize="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<parameter name="PARTID" class="java.lang.Integer"/>
+	<parameter name="LOCATIONGROUPID" class="java.lang.Integer"/>
+	<parameter name="DEFAULTLOCATIONID" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[SELECT
+    L.NAME AS LOCATIONNAME,
+    QOH.QTY AS QTYONHAND,
+    L.PICKABLE,
+    L.TYPEID
+FROM
+    QOHVIEW QOH
+    JOIN LOCATION L ON L.ID = QOH.LOCATIONID
+WHERE
+    QOH.PARTID = $P{PARTID}
+    AND L.LOCATIONGROUPID = $P{LOCATIONGROUPID}
+    AND L.ID != $P{DEFAULTLOCATIONID}
+    AND (L.PICKABLE = 1 OR L.TYPEID = 100)
+    AND QOH.QTY > 0
+ORDER BY
+    L.PICKABLE DESC, L.NAME]]>
+	</queryString>
+	<field name="LOCATIONNAME" class="java.lang.String"/>
+	<field name="QTYONHAND" class="java.lang.Double"/>
+	<field name="PICKABLE" class="java.lang.Boolean"/>
+	<field name="TYPEID" class="java.lang.Integer"/>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<detail>
+		<band height="13" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Transparent" x="1" y="0" width="154" height="13" forecolor="#666666" backcolor="#FFFFFF" uuid="e5f6a7b8-c9d0-1234-ef56-789012345678">
+					<printWhenExpression><![CDATA[null]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="15" rightPadding="3">
+					<bottomPen lineWidth="0.5" lineColor="#EEEEEE"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Open Sans" size="9" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Stock in Other Locations:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="155" y="0" width="100" height="13" forecolor="#666666" uuid="f6a7b8c9-d0e1-2345-f678-90123456789a"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.5" lineColor="#EEEEEE"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Open Sans" size="9" isItalic="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TYPEID} == 100 ? $F{LOCATIONNAME} + " (In Transit)" : $F{LOCATIONNAME}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" evaluationTime="Auto" pattern="" isBlankWhenNull="true">
+				<reportElement x="255" y="0" width="39" height="13" forecolor="#666666" uuid="a7b8c9d0-e1f2-3456-789a-bcdef0123456"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.5" lineColor="#EEEEEE"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Open Sans" size="9" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{QTYONHAND}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CombinedOrderSummary" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="69b73100-c2f4-46bc-9fa3-a62a5fcabb9b">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="9" fontName="Open Sans" fontSize="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="10" isDefault="true" fontName="Open Sans" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="12" fontName="Open Sans" fontSize="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="14" fontName="Open Sans" fontSize="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="10b" fontName="Open Sans" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="12b" fontName="Open Sans" fontSize="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="14b" fontName="Open Sans" fontSize="14" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="16b" fontName="Open Sans" fontSize="16" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="18b" fontName="Open Sans" fontSize="18" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="24b" fontName="Open Sans" fontSize="24" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="10i" fontName="Open Sans" fontSize="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="12i" fontName="Open Sans" fontSize="12" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="10bu" fontName="Open Sans" fontSize="10" isBold="true" isItalic="false" isUnderline="true" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="header1" fontName="Open Sans" fontSize="24" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="header2" fontName="Open Sans" fontSize="18" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="header3" fontName="Open Sans" fontSize="16" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="addressHeader" fontName="Open Sans" fontSize="14" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="date" fontName="Open Sans" fontSize="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="type" fontName="Open Sans" fontSize="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="address" fontName="Open Sans" fontSize="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="column_head" fontName="Open Sans" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="body" isDefault="true" fontName="Open Sans" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="note" isDefault="true" fontName="Open Sans" fontSize="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:/Program Files/Fishbowl/Server/reports/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="module" class="java.lang.Object" isForPrompting="false">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORTDESCRIPTION" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Combined summary of sales orders and transfer orders grouped by ACA Approver."]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRange1" class="java.sql.Date" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<parameterDescription><![CDATA[All]]></parameterDescription>
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRange2" class="java.sql.Date" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="locationGroupID" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<defaultValueExpression><![CDATA["-1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckSalesOrders" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<parameterDescription><![CDATA[SO,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["SO"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckTransferOrders" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<parameterDescription><![CDATA[TO,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["TO"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckEnteredOrEstimate" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Status"/>
+		<property name="Sort" value="1"/>
+		<parameterDescription><![CDATA[10,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["10"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckRequest" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Status"/>
+		<parameterDescription><![CDATA[15,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckIssued" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Status"/>
+		<parameterDescription><![CDATA[20,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckInProgress" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Status"/>
+		<parameterDescription><![CDATA[25,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckPicking" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Status"/>
+		<parameterDescription><![CDATA[30,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckPartial" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Status"/>
+		<parameterDescription><![CDATA[40,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckPicked" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Status"/>
+		<parameterDescription><![CDATA[50,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckFulfilledShipped" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Status"/>
+		<parameterDescription><![CDATA[60,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckClosedShortFulfilled" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Status"/>
+		<parameterDescription><![CDATA[70,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckVoidedClosedShort" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Status"/>
+		<parameterDescription><![CDATA[80,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckCancelled" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Status"/>
+		<parameterDescription><![CDATA[85,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckExpiredVoid" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Status"/>
+		<parameterDescription><![CDATA[90,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckHistorical" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Status"/>
+		<parameterDescription><![CDATA[95,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ACAApproverFilter" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<property name="Tooltip" value="Filter by ACA Approver name. Use % for wildcard searches. Leave blank for all approvers."/>
+		<parameterDescription><![CDATA[ACA Approver Filter]]></parameterDescription>
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    COMPANY.NAME AS COMPANY,
+    orders.ACAapprover,
+    orders.ordertype,
+    orders.ordernum,
+    orders.fromlocation,
+    orders.tolocation,
+    orders.salesperson,
+    orders.datecreated,
+    orders.datescheduled,
+    orders.status,
+    orders.customerpo,
+    0 AS ordered,
+    0 AS shipped,
+    '' AS productnum,
+    '' AS description,
+    0 AS itemqtyordered,
+    0 AS itemqtyshipped
+FROM COMPANY
+CROSS JOIN (
+    -- Sales Orders
+    SELECT
+        CASE
+            WHEN TRIM(COALESCE(CustomFieldByName(so.customfields, 'ACA Approver'), '')) = ''
+            THEN 'No Approver'
+            ELSE TRIM(CustomFieldByName(so.customfields, 'ACA Approver'))
+        END AS ACAapprover,
+        'SO' AS ordertype,
+        so.num AS ordernum,
+        locationgroup.name AS fromlocation,
+        customer.name AS tolocation,
+        so.salesman AS salesperson,
+        so.datecreated,
+        so.datefirstship AS datescheduled,
+        sostatus.name AS status,
+        so.customerpo,
+        so.id AS orderid
+    FROM so
+        INNER JOIN locationgroup ON locationgroup.id = so.locationgroupid
+        INNER JOIN customer ON customer.id = so.customerid
+        INNER JOIN sostatus ON sostatus.id = so.statusid
+    WHERE $P{ckSalesOrders} = 'SO'
+        AND so.locationgroupid IN ($P!{locationGroupID})
+        AND so.datecreated BETWEEN $P{dateRange1} AND $P{dateRange2}
+        AND so.statusid IN ($P{ckEnteredOrEstimate},$P{ckIssued},$P{ckInProgress},$P{ckFulfilledShipped},$P{ckClosedShortFulfilled},$P{ckVoidedClosedShort},$P{ckCancelled},$P{ckExpiredVoid},$P{ckHistorical})
+
+    UNION ALL
+
+    -- Transfer Orders
+    SELECT
+        CASE
+            WHEN TRIM(COALESCE(CustomFieldByName(xo.customfields, 'ACA Approver'), '')) = ''
+            THEN 'No Approver'
+            ELSE TRIM(CustomFieldByName(xo.customfields, 'ACA Approver'))
+        END AS ACAapprover,
+        'TO' AS ordertype,
+        xo.num AS ordernum,
+        fromlg.name AS fromlocation,
+        tolg.name AS tolocation,
+        '' AS salesperson,
+        xo.datecreated,
+        xo.datecreated AS datescheduled,
+        xostatus.name AS status,
+        '' AS customerpo,
+        xo.id AS orderid
+    FROM xo
+        JOIN locationgroup fromlg ON fromlg.id = xo.fromlgid
+        JOIN locationgroup tolg ON tolg.id = xo.shiptolgid
+        JOIN xostatus ON xostatus.id = xo.statusid
+    WHERE $P{ckTransferOrders} = 'TO'
+        AND (fromlg.id IN ($P!{locationGroupID}) OR tolg.id IN ($P!{locationGroupID}))
+        AND xo.datecreated BETWEEN $P{dateRange1} AND $P{dateRange2}
+        AND xo.statusid IN ($P{ckEnteredOrEstimate},$P{ckRequest},$P{ckIssued},$P{ckPicking},$P{ckPartial},$P{ckPicked},$P{ckFulfilledShipped},$P{ckClosedShortFulfilled},$P{ckVoidedClosedShort},$P{ckExpiredVoid})
+) AS orders
+WHERE COMPANY.id = 1
+    AND orders.ACAapprover LIKE $P{ACAApproverFilter}
+ORDER BY orders.ACAapprover, orders.ordertype, orders.ordernum]]>
+	</queryString>
+	<field name="COMPANY" class="java.lang.String"/>
+	<field name="ACAapprover" class="java.lang.String"/>
+	<field name="ordertype" class="java.lang.String"/>
+	<field name="fromlocation" class="java.lang.String"/>
+	<field name="tolocation" class="java.lang.String"/>
+	<field name="salesperson" class="java.lang.String"/>
+	<field name="datecreated" class="java.sql.Timestamp"/>
+	<field name="datescheduled" class="java.sql.Timestamp"/>
+	<field name="status" class="java.lang.String"/>
+	<field name="customerpo" class="java.lang.String"/>
+	<field name="ordernum" class="java.lang.String"/>
+	<variable name="TotalOrdered" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="TotalShipped" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="TotalRemaining" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="ApproverOrdered" class="java.lang.Double" resetType="Group" resetGroup="ACAApprover" calculation="Sum">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="ApproverShipped" class="java.lang.Double" resetType="Group" resetGroup="ACAApprover" calculation="Sum">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="ApproverRemaining" class="java.lang.Double" resetType="Group" resetGroup="ACAApprover" calculation="Sum">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="PriceDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_PRICE")]]></variableExpression>
+	</variable>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<variable name="DateFormat" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+	</variable>
+	<group name="ACAApprover">
+		<groupExpression><![CDATA[$F{ACAapprover}]]></groupExpression>
+		<groupHeader>
+			<band height="23">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="0" y="4" width="535" height="19" uuid="e9ac08ce-e16e-497a-a21e-401ab3a6d6e5"/>
+					<box leftPadding="3" rightPadding="3">
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Open Sans" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["ACA Approver: " + ($F{ACAapprover} == null || $F{ACAapprover}.equals("") ? "No Approver" : $F{ACAapprover})]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="14"/>
+		</groupFooter>
+	</group>
+	<group name="OrderGroup">
+		<groupExpression><![CDATA[$F{ordernum} + $F{ordertype}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="111" y="0" width="104" height="14" uuid="318617e7-06ea-4a32-af57-1a12c5ebde0c"/>
+					<box leftPadding="3" rightPadding="3">
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Open Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{fromlocation}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="215" y="0" width="108" height="14" uuid="c74a77b9-8b73-40ca-928c-688e901bfe49"/>
+					<box leftPadding="3" rightPadding="3">
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Open Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{tolocation}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="323" y="0" width="69" height="14" uuid="e5c1bc97-5bb2-41b5-a311-94c913accb88"/>
+					<box leftPadding="3" rightPadding="3">
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Open Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{salesperson}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="392" y="0" width="63" height="14" uuid="c78773f5-53ad-4806-994e-6d23e96f7873"/>
+					<box leftPadding="3" rightPadding="3">
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Open Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{datecreated}]]></textFieldExpression>
+					<patternExpression><![CDATA[$V{DateFormat}]]></patternExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="455" y="0" width="80" height="14" uuid="b6ee0e6d-8435-4a46-bbb3-5fc213b0d070"/>
+					<box leftPadding="3" rightPadding="3">
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Open Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="14" forecolor="#000000" uuid="c16a088a-0d90-4bed-a231-80e19f29d274"/>
+					<box leftPadding="3" rightPadding="3">
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement verticalAlignment="Middle" markup="none">
+						<font fontName="Open Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ordertype}]]></textFieldExpression>
+					<anchorNameExpression><![CDATA["OrderNum"]]></anchorNameExpression>
+					<hyperlinkReferenceExpression><![CDATA[$F{ordertype}]]></hyperlinkReferenceExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" hyperlinkType="Reference">
+					<reportElement key="textField" stretchType="RelativeToBandHeight" mode="Transparent" x="20" y="0" width="91" height="14" forecolor="#000099" backcolor="#FFFFFF" uuid="be4d2638-ef1d-4982-aa4c-7a29b1bb47d6"/>
+					<box leftPadding="2">
+						<pen lineColor="#000000"/>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+						<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ordernum}]]></textFieldExpression>
+					<anchorNameExpression><![CDATA["TONum"]]></anchorNameExpression>
+					<hyperlinkReferenceExpression><![CDATA[$F{ordernum}]]></hyperlinkReferenceExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<pageHeader>
+		<band height="64" splitType="Prevent">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="40" width="780" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="94c5defb-2209-45a7-8e8b-2f0794306a3d"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{dateRange1}.getYear() <= -900 && $P{dateRange2}.getYear() >= 1100
+  ? "Date Range: All"
+  : "Date Range: " + (new SimpleDateFormat($V{DateFormat})).format($P{dateRange1}) + " - " +
+(new SimpleDateFormat($V{DateFormat})).format($P{dateRange2})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="780" height="18" uuid="37929e84-e98f-4dd3-97bb-54fc9b6f5b5e"/>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement>
+					<font fontName="Open Sans" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMPANY}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="54" width="780" height="10" uuid="47bc6157-4181-4988-893c-38b83e3baf98"/>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement>
+					<font fontName="Open Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="0" y="18" width="780" height="22" forecolor="#000000" backcolor="#FFFFFF" uuid="3c2c1bfd-2155-4bce-953c-e63b64e61e04"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Open Sans" size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Combined Order Summary - Awaiting Approval"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="30">
+			<staticText>
+				<reportElement x="0" y="0" width="111" height="30" uuid="6774e443-db3e-4b2a-a1cb-72e39e40af72"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Order #]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="111" y="0" width="104" height="30" uuid="12f73f03-ac3d-4550-ad2c-aaca7408e75a"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[From LG]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="215" y="0" width="108" height="30" uuid="607122a8-839f-4a82-8c4f-53d55619e171"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[To LG/Customer]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="323" y="0" width="69" height="30" uuid="a156cb17-f1c1-457a-a4f6-c17eb3c3b61e"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[User]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="392" y="0" width="63" height="30" uuid="1b0c6ecf-004f-4a8e-8a26-6021bf064d4b"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date Created]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="0" width="80" height="30" uuid="c28f21ab-1980-40c2-a6d9-6a49aaa05b78"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Status]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14">
+			<printWhenExpression><![CDATA[null]]></printWhenExpression>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="18" splitType="Prevent">
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="304" y="3" width="210" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="f2a60207-d5ef-464a-9ee1-cea13307187c">
+					<printWhenExpression><![CDATA[!$P{IS_IGNORE_PAGINATION}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0" rightPadding="4">
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="514" y="3" width="21" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="ed3dbc3c-3d28-4c1c-b533-1d67ed250faa">
+					<printWhenExpression><![CDATA[!$P{IS_IGNORE_PAGINATION}]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="3" width="215" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="be88ff9d-ce0a-4398-b59e-9e444a24b556">
+					<printWhenExpression><![CDATA[!$P{IS_IGNORE_PAGINATION}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.LONG)).format(new Date())]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="30"/>
+	</summary>
+</jasperReport>

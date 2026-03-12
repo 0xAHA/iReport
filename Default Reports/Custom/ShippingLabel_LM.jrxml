@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ShippingLabel_LM" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7a534f11-b95b-481d-81b5-ca5c788289a5">
+	<property name="ireport.zoom" value="0.9090909090909091"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="shipID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT DISTINCT
+    so.note,
+    so.id AS recordID,
+    company.name AS company,
+    so.locationgroupid,
+    sostatus.name AS sostatus,
+    so.datecompleted AS sodatecompleted,
+    so.datecreated AS sodatecreated,
+    so.datefirstship AS sodatefirstship,
+    so.daterevision AS sodaterevision,
+    so.datelastmodified AS sodatelastmodified,
+    so.dateissued AS sodateissued,
+    so.revisionnum,
+    so.num AS sonum,
+    so.paymentlink,
+
+    /* Customer info */
+    COALESCE(so.customercontact,'') AS customercontact,
+    so.customerpo,
+    so.customerid,
+    customer.name AS customerName,
+
+    /* Non-Currency */
+    so.totalTax AS totaltax,
+    so.estimatedTax,
+    so.statusid,
+
+    /* Country version */
+    COALESCE(UPPER(sysProperties.sysValue), 'US') AS qbVersion,
+
+    /* Ship To */
+    so.shiptoname,
+    so.shiptoaddress,
+    so.shiptocity,
+    so.shiptozip,
+    shipstate.code AS shiptostate,
+    shipcountry.name AS shiptocountry,
+
+    /* Bill To */
+    so.billtoname AS billToName,
+    so.billtoaddress,
+    so.billtocity,
+    so.billtozip,
+    billstate.code AS billtostate,
+    billcountry.name AS billtocountry,
+
+    /* Currency */
+    so.currencyRate,
+    currency.code AS currencyCode,
+    COALESCE(currency.symbol, homecurrency.symbol, 91) AS COALESCESYMBOL,
+
+    SUM(soitem.unitPrice * soItem.qtyToFulfill + COALESCE(soItem.adjustAmount, 0)) AS totalprice,
+    SUM(ROUND(soitem.unitPrice * soItem.qtyToFulfill + COALESCE(soItem.adjustAmount, 0), 2)) AS roundedTotalPrice,
+
+    COALESCE(so.mcTotalTax, 0) AS currencyTaxTotal,
+
+    CASE COALESCE(UPPER(sysProperties.sysValue), 'US')
+        WHEN 'US' THEN SUM(ROUND((soItem.unitPrice * soItem.qtyToFulfill / so.currencyRate) + (COALESCE(soItem.adjustAmount, 0) / so.currencyRate), 2))
+        WHEN 'CA' THEN SUM(ROUND((soItem.unitPrice * soItem.qtyToFulfill / so.currencyRate) + (COALESCE(soItem.adjustAmount, 0) / so.currencyRate), 2))
+        WHEN 'AU' THEN SUM(ROUND((soItem.unitPrice * soItem.qtyToFulfill + soItem.adjustAmount) / so.currencyRate, 2))
+        ELSE 0.0
+    END AS currencySubtotal,
+
+    CASE COALESCE(UPPER(sysProperties.sysValue), 'US')
+        WHEN 'US' THEN SUM((soItem.unitPrice * soItem.qtyToFulfill / so.currencyRate) + (COALESCE(soItem.adjustAmount, 0) / so.currencyRate))
+        WHEN 'CA' THEN SUM((soItem.unitPrice * soItem.qtyToFulfill / so.currencyRate) + (COALESCE(soItem.adjustAmount, 0) / so.currencyRate))
+        WHEN 'AU' THEN SUM((soItem.unitPrice * soItem.qtyToFulfill + soItem.adjustAmount) / so.currencyRate)
+        ELSE 0.0
+    END AS currencySubtotalNotRounded,
+
+    /* AU ABN */
+    company.ABN,
+
+    /* Payment Info */
+    COALESCE(paymentInfo.amount, 0) AS paymentAmount,
+    so.currencyRate,
+    COALESCE(paymentInfo.amount, 0) / COALESCE(so.currencyRate, 1) AS currencyPaymentAmount,
+    homeCurrency.symbol AS homeCurrencySymbol,
+    COALESCE(contact.datus, '') AS fax,
+    so.phone,
+    so.email,
+
+    /* Ship Info */
+    ship.id AS shipID,
+    ship.ordertypeid AS ordertype
+
+FROM so
+    INNER JOIN ship ON ship.soid = so.id
+    INNER JOIN customer ON so.customerid = customer.id
+    INNER JOIN company ON company.id = 1
+    LEFT OUTER JOIN sostatus ON so.statusid = sostatus.id
+    LEFT OUTER JOIN soitem ON so.id = soitem.soid AND soitem.typeid != 40
+    LEFT OUTER JOIN countryconst billcountry ON billcountry.id = so.billtocountryid
+    LEFT OUTER JOIN countryconst shipcountry ON shipcountry.id = so.shiptocountryid
+    LEFT OUTER JOIN stateconst shipState ON so.shiptostateid = shipState.id
+    LEFT OUTER JOIN stateconst billState ON so.billtostateid = billState.id
+    LEFT OUTER JOIN sysProperties ON sysProperties.sysKey = 'QBVersion'
+    LEFT OUTER JOIN currency ON customer.currencyId = currency.id
+    LEFT OUTER JOIN currency AS homeCurrency ON homeCurrency.homeCurrency = 1
+    LEFT OUTER JOIN (
+        SELECT DISTINCT SUM(posTransaction.amount) AS amount, posTransaction.soId
+        FROM posTransaction
+        GROUP BY posTransaction.soId
+    ) AS paymentInfo ON so.id = paymentInfo.soId
+    LEFT JOIN (
+        SELECT contact.datus, so.id AS soid
+        FROM contact
+        JOIN customer ON contact.accountid = customer.accountid
+        JOIN so ON customer.id = so.customerid
+        WHERE contact.typeid = 40 AND contact.defaultflag = 1
+        LIMIT 1
+    ) AS contact ON contact.soid = so.id
+
+WHERE ship.id = $P{shipID}
+
+GROUP BY
+    so.note, company.name, so.locationgroupid, so.customercontact, so.customerpo,
+    so.customerid, so.id, so.totalTax, so.shiptoname, so.shiptoaddress,
+    so.shiptocity, so.shiptozip, shipstate.code, shipcountry.name, so.billtoname,
+    so.billtoaddress, so.billtocity, so.billtozip, billstate.code, billcountry.name,
+    customer.name, currency.code, currency.symbol, so.currencyRate, sysProperties.sysValue,
+    company.ABN, so.mcTotalTax, paymentInfo.amount, so.currencyRate,
+    homeCurrency.symbol, fax, so.phone, so.email, ship.id, ship.ordertypeid]]>
+	</queryString>
+	<field name="note" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="recordID" class="java.lang.Integer"/>
+	<field name="company" class="java.lang.String"/>
+	<field name="locationgroupid" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="sostatus" class="java.lang.String"/>
+	<field name="sodatecompleted" class="java.sql.Timestamp"/>
+	<field name="sodatecreated" class="java.sql.Timestamp"/>
+	<field name="sodatefirstship" class="java.sql.Timestamp"/>
+	<field name="sodaterevision" class="java.sql.Timestamp"/>
+	<field name="sodatelastmodified" class="java.sql.Timestamp"/>
+	<field name="sodateissued" class="java.sql.Timestamp"/>
+	<field name="revisionnum" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="sonum" class="java.lang.String"/>
+	<field name="paymentlink" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="customercontact" class="java.lang.String"/>
+	<field name="customerpo" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="customerid" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="customerName" class="java.lang.String"/>
+	<field name="totaltax" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="estimatedTax" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="statusid" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="qbVersion" class="java.lang.String"/>
+	<field name="shiptoname" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="shiptoaddress" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="shiptocity" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="shiptozip" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="shiptostate" class="java.lang.String"/>
+	<field name="shiptocountry" class="java.lang.String"/>
+	<field name="billToName" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="billtoaddress" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="billtocity" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="billtozip" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="billtostate" class="java.lang.String"/>
+	<field name="billtocountry" class="java.lang.String"/>
+	<field name="currencyRate" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="currencyCode" class="java.lang.String"/>
+	<field name="COALESCESYMBOL" class="java.lang.Long"/>
+	<field name="totalprice" class="java.math.BigDecimal"/>
+	<field name="roundedTotalPrice" class="java.math.BigDecimal"/>
+	<field name="currencyTaxTotal" class="java.math.BigDecimal"/>
+	<field name="currencySubtotal" class="java.lang.Double"/>
+	<field name="currencySubtotalNotRounded" class="java.lang.Double"/>
+	<field name="ABN" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="paymentAmount" class="java.math.BigDecimal"/>
+	<field name="currencyPaymentAmount" class="java.lang.Double"/>
+	<field name="homeCurrencySymbol" class="java.lang.Integer"/>
+	<field name="fax" class="java.lang.String"/>
+	<field name="phone" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="email" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="555" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="45" width="802" height="90" forecolor="#FF0000" uuid="a6eeaab4-ede1-4732-8c8a-42dcdc1f1c14"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="48" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{customerpo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="135" width="802" height="90" uuid="2670a1eb-c3c1-45ff-a84e-4307b74e7e56"/>
+				<textElement textAlignment="Center">
+					<font size="48" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{customerName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="225" width="802" height="330" uuid="59c3f6fe-5a9c-4bd4-a0de-b4fe55a1ca49"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="48" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{shiptoaddress} + "\n" +
+$F{shiptocity} + " " + $F{shiptostate} + " " + $F{shiptozip}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

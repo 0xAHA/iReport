@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subOtherPicksForPart" pageWidth="315" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="315" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="8a2b729b-ff03-40d2-9d5c-484d19b077fc">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.771561000000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="9" fontName="Open Sans" fontSize="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="10" fontName="Open Sans" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="10b" fontName="Open Sans" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="body" isDefault="true" fontName="Open Sans" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<parameter name="currentPickID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="partID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="locationGroupID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    GROUP_CONCAT(DISTINCT PICK.NUM ORDER BY PICK.NUM SEPARATOR ', ') AS PICKNUMBER,
+    GROUP_CONCAT(DISTINCT SUBSTRING(PICK.NUM FROM 2 FOR 50) ORDER BY PICK.NUM SEPARATOR ', ') AS ORDERNUMBER,
+    SUM(PICKITEM.QTY) AS PICKITEMQTY,
+    GROUP_CONCAT(DISTINCT
+        CASE
+            WHEN SUBSTRING(PICK.NUM FROM 1 FOR 1) = 'S' THEN
+                (SELECT CUSTOMER.NAME
+                 FROM so
+                 INNER JOIN customer ON so.customerid = customer.id
+                 WHERE so.num = SUBSTRING(PICK.NUM FROM 2 FOR 50))
+            ELSE ''
+        END
+    SEPARATOR ', ') AS CUSTOMERNAME,
+    DESTLG.NAME AS DESTLOCATIONGROUP,
+    destlocation.name AS DESTLOCATIONNAME,
+    SHIPPING.SHIPPINGQTY
+FROM pick
+    INNER JOIN pickstatus ON pick.statusid = pickstatus.id
+    INNER JOIN pickitem ON pick.id = pickitem.pickid
+    LEFT OUTER JOIN tag desttag ON pickitem.desttagid = desttag.id
+    LEFT OUTER JOIN location destlocation ON desttag.locationid = destlocation.id
+    LEFT OUTER JOIN locationgroup destlg ON destlocation.locationgroupid = destlg.id
+    CROSS JOIN (
+        SELECT COALESCE(SUM(TAG.QTY) - SUM(TAG.QTYCOMMITTED), 0) AS SHIPPINGQTY
+        FROM tag TAG
+        INNER JOIN location LOC ON TAG.LOCATIONID = LOC.ID
+        WHERE TAG.PARTID = $P{partID}
+          AND LOC.TYPEID = 20
+          AND LOC.DEFAULTFLAG = true
+          AND LOC.LOCATIONGROUPID = $P{locationGroupID}
+    ) AS SHIPPING
+WHERE pick.id != $P{currentPickID}
+  AND pickitem.partid = $P{partID}
+  AND pick.locationgroupid = $P{locationGroupID}
+  AND pick.statusid IN (20, 30)
+  AND pickitem.statusid IN (20,30)
+GROUP BY DESTLG.NAME, destlocation.name, SHIPPING.SHIPPINGQTY]]>
+	</queryString>
+	<field name="PICKNUMBER" class="java.lang.String"/>
+	<field name="ORDERNUMBER" class="java.lang.String"/>
+	<field name="PICKITEMQTY" class="java.math.BigDecimal"/>
+	<field name="CUSTOMERNAME" class="java.lang.String"/>
+	<field name="DESTLOCATIONGROUP" class="java.lang.String"/>
+	<field name="SHIPPINGQTY" class="java.math.BigDecimal"/>
+	<field name="DESTLOCATIONNAME" class="java.lang.String"/>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="18" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText-1" style="10b" mode="Transparent" x="0" y="2" width="143" height="14" backcolor="#FFFFFF" uuid="6dac7f69-d251-4ff1-a336-eabda03a9e5f"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Monospaced" size="9"/>
+				</textElement>
+				<text><![CDATA[Stock committed/picking]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-2" style="10b" mode="Transparent" x="143" y="2" width="117" height="14" backcolor="#FFFFFF" uuid="af677171-bb69-464f-85f3-ab8da7a5df5e"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Monospaced" size="9"/>
+				</textElement>
+				<text><![CDATA[Cust. name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-3" style="10b" mode="Transparent" x="260" y="2" width="55" height="14" backcolor="#FFFFFF" uuid="80ab2884-6c67-4ab5-9f97-a6e92846d892"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Monospaced" size="9"/>
+				</textElement>
+				<text><![CDATA[QTY]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" style="9" mode="Transparent" x="0" y="0" width="143" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="1dac7f69-d251-4ff1-a336-eabda03a9e5f"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Monospaced" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["# " +$F{ORDERNUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" style="9" mode="Transparent" x="143" y="0" width="117" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="2f677171-bb69-464f-85f3-ab8da7a5df5e"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Monospaced" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CUSTOMERNAME}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" style="9" mode="Transparent" x="260" y="0" width="55" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="30ab2884-6c67-4ab5-9f97-a6e92846d892"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None">
+					<font fontName="Monospaced" size="9"/>
+					<paragraph lineSpacing="Single" rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PICKITEMQTY}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="14" splitType="Stretch">
+			<printWhenExpression><![CDATA[$V{REPORT_COUNT} > 0]]></printWhenExpression>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" style="9" mode="Transparent" x="0" y="0" width="143" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="4dac7f69-d251-4ff1-a336-eabda03a9e5f"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Monospaced" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESTLOCATIONGROUP} + "-" + $F{DESTLOCATIONNAME}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" style="9" mode="Transparent" x="143" y="0" width="117" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="5f677171-bb69-464f-85f3-ab8da7a5df5e"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Monospaced" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" style="9" mode="Transparent" x="260" y="0" width="55" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="60ab2884-6c67-4ab5-9f97-a6e92846d892"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None">
+					<font fontName="Monospaced" size="9"/>
+					<paragraph lineSpacing="Single" rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPINGQTY}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+		</band>
+	</summary>
+	<noData>
+		<band height="2"/>
+	</noData>
+</jasperReport>

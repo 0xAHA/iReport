@@ -1,0 +1,926 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="OrderProjectedCostSubreport" pageWidth="732" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="732" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="e02442fa-38fa-4f87-a6eb-2ccf63f5d087">
+	<property name="ireport.zoom" value="0.9090909090909095"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="ShowDetails" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Boolean(true)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRangeNone" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="module" class="java.lang.Object" isForPrompting="false">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["../Common/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="woID" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ISSUBREPORTONLY" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT MO.ID AS MOID, MO.NUM AS MONUM, MO.DATESCHEDULED AS MODATESCHEDULED, MOSTATUS.NAME AS MOSTATUS,
+    MOLG.NAME AS MOLG, MO.DATEISSUED, MO.DATECOMPLETED, MO.NOTE AS MONOTE, WO.NUM AS WONUM, QBCLASS.NAME AS WOCLASS,
+    WO.DATESTARTED AS WODATESTARTED, WO.DATEFINISHED AS WODATEFINISHED, UOM.CODE AS UOMCODE, WOITEMUOM.CODE AS WOITEMUOM,
+    WOSTATUS.NAME AS WOSTATUS, BOM.NUM AS BOMNUM, WO.QTYORDERED, WOLG.NAME || ' - ' || WOLOC.NAME AS WOLOCATION,
+    PART.NUM AS WOITEMPART, WOITEM.QTYTARGET AS WOITEMNEEDED, COALESCE(ONHAND.QTY,0) AS QTYONHAND,
+    WOUSERS.USERS AS WOUSERS, PART.DESCRIPTION AS WOITEMDESCRIPTION, COMPANY.NAME AS COMPANY, PART.TYPEID AS PARTTYPEID,
+    COALESCE(PARTUOMCONV.FACTOR,1) AS PARTUOMFACTOR, COALESCE(PARTUOMCONV.MULTIPLY,1) AS PARTUOMMULTIPLY,
+    COALESCE(ITEMUOMCONV.FACTOR,1) AS ITEMUOMFACTOR, COALESCE(ITEMUOMCONV.MULTIPLY,1) AS ITEMUOMMULTIPLY,
+    COALESCE(WOITEM.COST,0) AS WOITEMCOST, COALESCE(WOITEM.QTYTARGET,0) AS WOITEMTARGET, BOMITEMTYPE.NAME AS ITEMTYPE,
+    PART.UOMID AS PARTUOMID, WOITEM.UOMID AS WOITEMUOMID, WO.STATUSID AS WOSTATUSID, WOITEM.QTYUSED AS WOITEMQTYUSED,
+    (CASE PART.TYPEID WHEN 10 THEN COALESCE(PARTCOST.AVGCOST, 0) ELSE COALESCE(PART.STDCOST, 0) END) AS AVGCOST, COALESCE(PART.STDCOST, 0) AS STDCOST, CURRENCY.SYMBOL,
+    COALESCE(COALESCE((CASE PART.TYPEID WHEN 10 THEN ((SELECT (COALESCE(COSTLAYER.ORGTOTALCOST,0) / COSTLAYER.ORGQTY) AS COST
+                 FROM COSTLAYER
+                WHERE COSTLAYER.PARTID = PART.ID
+                  AND COSTLAYER.STATUSID = 10
+                ORDER BY COSTLAYER.ID ASC LIMIT 1)) ELSE COALESCE(PART.STDCOST, 0) END),
+		(CASE PART.TYPEID WHEN 10 THEN ((SELECT (COALESCE(COSTLAYER.ORGTOTALCOST,0) / COSTLAYER.ORGQTY) AS COST
+                 FROM COSTLAYER
+                WHERE COSTLAYER.PARTID = PART.ID
+                ORDER BY COSTLAYER.DATELASTMODIFIED DESC LIMIT 1)) ELSE COALESCE(PART.STDCOST, 0) END)),0) AS FIFOCOST,
+    COALESCE(COALESCE((CASE PART.TYPEID WHEN 10 THEN ((SELECT (COALESCE(COSTLAYER.ORGTOTALCOST,0) / COSTLAYER.ORGQTY) AS COST
+                 FROM COSTLAYER
+                WHERE COSTLAYER.PARTID = PART.ID
+                  AND COSTLAYER.STATUSID = 10
+                ORDER BY COSTLAYER.ID DESC LIMIT 1)) ELSE COALESCE(PART.STDCOST, 0) END),
+		(CASE PART.TYPEID WHEN 10 THEN ((SELECT (COALESCE(COSTLAYER.ORGTOTALCOST,0) / COSTLAYER.ORGQTY) AS COST
+                 FROM COSTLAYER
+                WHERE COSTLAYER.PARTID = PART.ID
+                ORDER BY COSTLAYER.DATELASTMODIFIED DESC LIMIT 1)) ELSE COALESCE(PART.STDCOST, 0) END)),0) AS LIFOCOST
+
+FROM mo
+    INNER JOIN moitem ON mo.id = moitem.moid
+    INNER JOIN mostatus ON mo.statusid = mostatus.id
+    INNER JOIN locationgroup AS molg ON mo.locationgroupid = molg.id
+    LEFT JOIN wo ON moitem.id = wo.moitemid
+    LEFT JOIN qbclass ON qbclass.id = wo.qbclassid
+    LEFT JOIN wostatus ON wo.statusid = wostatus.id
+    LEFT JOIN locationgroup AS wolg ON wo.locationgroupid = wolg.id
+    LEFT JOIN location AS woloc ON wo.locationid = woloc.id
+    LEFT JOIN woitem ON wo.id = woitem.woid AND woitem.typeid IN (10,20,30)
+    LEFT JOIN part ON woitem.partid = part.id
+    LEFT JOIN partcost ON woitem.partid = partcost.partid
+    LEFT JOIN uom ON part.uomid = uom.id
+    LEFT JOIN uom AS woitemuom ON woitem.uomid = woitemuom.id
+    LEFT JOIN uomconversion AS partuomconv ON (partuomconv.touomid = part.uomid AND partuomconv.fromuomid = woitem.uomid)
+    LEFT JOIN uomconversion AS itemuomconv ON (itemuomconv.touomid = part.uomid AND itemuomconv.fromuomid = woitem.uomid)
+    LEFT JOIN bom ON moitem.bomid = bom.id
+    LEFT JOIN bomitemtype ON woitem.typeid = bomitemtype.id
+    LEFT JOIN (SELECT qtyonhand.partid, SUM(qtyonhand.qty) AS qty
+        FROM qtyonhand GROUP BY qtyonhand.partid) onhand ON onhand.partid = woitem.partid
+    LEFT OUTER JOIN (SELECT woassignedusers.woid, GROUP_CONCAT(sysuser.username, ', ') AS users
+        FROM woassignedusers
+            INNER JOIN sysuser ON woassignedusers.userid = sysuser.id
+        GROUP BY woassignedusers.woid) wousers ON wousers.woid = wo.id
+    INNER JOIN company ON company.id = 1
+    LEFT JOIN currency ON currency.homeCurrency = 1
+
+WHERE wo.id LIKE $P{woID}
+  AND (moitem.bomid IS NOT NULL OR woitem.partid IS NOT NULL)
+  AND wo.qtyordered IS NOT NULL
+
+ORDER BY wo.num, wo.datescheduled, woitem.typeid, woitem.sortid, woitem.description]]>
+	</queryString>
+	<field name="MOID" class="java.lang.Integer"/>
+	<field name="MONUM" class="java.lang.String"/>
+	<field name="MODATESCHEDULED" class="java.sql.Timestamp"/>
+	<field name="MOSTATUS" class="java.lang.String"/>
+	<field name="MOLG" class="java.lang.String"/>
+	<field name="DATEISSUED" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="DATECOMPLETED" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="MONOTE" class="java.lang.String"/>
+	<field name="WONUM" class="java.lang.String"/>
+	<field name="WOCLASS" class="java.lang.String"/>
+	<field name="WODATESTARTED" class="java.sql.Timestamp"/>
+	<field name="WODATEFINISHED" class="java.sql.Timestamp"/>
+	<field name="UOMCODE" class="java.lang.String"/>
+	<field name="WOITEMUOM" class="java.lang.String"/>
+	<field name="WOSTATUS" class="java.lang.String"/>
+	<field name="BOMNUM" class="java.lang.String"/>
+	<field name="QTYORDERED" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="WOLOCATION" class="java.lang.Integer"/>
+	<field name="WOITEMPART" class="java.lang.String"/>
+	<field name="WOITEMNEEDED" class="java.lang.Double"/>
+	<field name="QTYONHAND" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="WOUSERS" class="java.lang.String"/>
+	<field name="WOITEMDESCRIPTION" class="java.lang.String"/>
+	<field name="COMPANY" class="java.lang.String"/>
+	<field name="PARTTYPEID" class="java.lang.Integer"/>
+	<field name="PARTUOMFACTOR" class="java.lang.Double"/>
+	<field name="PARTUOMMULTIPLY" class="java.lang.Double"/>
+	<field name="ITEMUOMFACTOR" class="java.lang.Double"/>
+	<field name="ITEMUOMMULTIPLY" class="java.lang.Double"/>
+	<field name="WOITEMCOST" class="java.lang.Double"/>
+	<field name="WOITEMTARGET" class="java.lang.Double"/>
+	<field name="ITEMTYPE" class="java.lang.String"/>
+	<field name="PARTUOMID" class="java.lang.Integer"/>
+	<field name="WOITEMUOMID" class="java.lang.Integer"/>
+	<field name="WOSTATUSID" class="java.lang.Integer"/>
+	<field name="WOITEMQTYUSED" class="java.lang.Double"/>
+	<field name="AVGCOST" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="STDCOST" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="SYMBOL" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="FIFOCOST" class="java.lang.Double"/>
+	<field name="LIFOCOST" class="java.lang.Double"/>
+	<variable name="Cost" class="java.lang.Double" resetType="None">
+		<variableExpression><![CDATA[$F{WOSTATUSID} == 40 ?
+    $V{FinalCost} :
+    ($F{PARTUOMID} == $F{WOITEMUOMID} ?
+        $V{FinalCost} :
+        ($V{FinalCost} * $F{PARTUOMMULTIPLY}) / $F{PARTUOMFACTOR})]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<variable name="FinalCost" class="java.lang.Double" resetType="None">
+		<variableExpression><![CDATA[$F{WOSTATUSID} == 40 ?
+    ($F{WOITEMQTYUSED} == 0 ?
+        0 :
+        (($F{WOITEMCOST} / ($F{WOITEMQTYUSED} * $F{PARTUOMMULTIPLY} / $F{PARTUOMFACTOR})) * $F{ITEMUOMMULTIPLY} / $F{ITEMUOMFACTOR})) :
+    ($V{CostingMethod}.equals("Average Costing") ?
+    $F{AVGCOST} :
+    $V{CostingMethod}.equals("Standard Costing") ?
+        $F{STDCOST} :
+        $V{CostingMethod}.equals("FIFO Costing") ?
+            $F{FIFOCOST} :
+            $F{LIFOCOST})]]></variableExpression>
+	</variable>
+	<variable name="QtyNeededForOrder" class="java.lang.Double">
+		<variableExpression><![CDATA[$F{QTYORDERED} * $F{WOITEMTARGET}]]></variableExpression>
+	</variable>
+	<variable name="CostingMethod" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("Acct Costing Method")]]></variableExpression>
+	</variable>
+	<variable name="TotalCost" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[!$F{ITEMTYPE}.equals("Finished Good") ?
+    $F{WOSTATUSID} == 40 ?
+        $F{WOITEMCOST} :
+        ($F{PARTUOMID} == $F{WOITEMUOMID} ?
+            $V{FinalCost} :
+            ($V{FinalCost} * $F{PARTUOMMULTIPLY}) / $F{PARTUOMFACTOR}) * $F{WOITEMTARGET} :
+        0]]></variableExpression>
+	</variable>
+	<variable name="PriceDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_PRICE")]]></variableExpression>
+	</variable>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<variable name="CostDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_COST")]]></variableExpression>
+	</variable>
+	<variable name="DateFormat" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+	</variable>
+	<variable name="isMultiCurrency" class="java.lang.Boolean">
+		<variableExpression><![CDATA[com.evnt.eve.modules.CurrencyModule.isMultiCurrency()]]></variableExpression>
+	</variable>
+	<group name="WO">
+		<groupExpression><![CDATA[$F{WONUM}]]></groupExpression>
+		<groupHeader>
+			<band height="42">
+				<staticText>
+					<reportElement key="staticText-9" positionType="Float" x="0" y="0" width="48" height="14" uuid="74c8f73a-fdd7-4ea8-8c2a-d532a3fe5934"/>
+					<box leftPadding="2">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="true"/>
+					</textElement>
+					<text><![CDATA[WO Num:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-15" positionType="Float" mode="Transparent" x="48" y="0" width="87" height="14" backcolor="#FFFFFF" uuid="45ba2761-f646-433d-8850-0e6d3c04368c"/>
+					<box leftPadding="5" rightPadding="10">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Top">
+						<font fontName="Open Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{WONUM}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-10" positionType="Float" x="135" y="0" width="55" height="14" uuid="6ce09826-6078-478c-b6a4-60b3e2dd5bf1"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Status:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-16" positionType="Float" x="190" y="0" width="70" height="14" uuid="f8ed6c6c-3c59-4748-8a00-825c68c781bf"/>
+					<box leftPadding="5" rightPadding="10">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Top">
+						<font fontName="Open Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{WOSTATUS}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-11" positionType="Float" x="385" y="0" width="100" height="14" uuid="ce8a81e4-ad11-4fbd-a793-0e55bcba4306"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Date Started:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-17" positionType="Float" x="485" y="0" width="80" height="14" uuid="05e95eaf-da75-4fb7-b412-dc295afaf06a"/>
+					<box leftPadding="5" rightPadding="10">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Top">
+						<font fontName="Open Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{WODATESTARTED}]]></textFieldExpression>
+					<patternExpression><![CDATA[$V{DateFormat}]]></patternExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-12" positionType="Float" x="385" y="14" width="100" height="14" uuid="4669dcb9-b196-4eb3-a22e-ee4ec836d667"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Date Completed:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-18" positionType="Float" x="485" y="14" width="80" height="14" uuid="3de7e546-ebf5-4243-966d-ab7f0a475bb2"/>
+					<box leftPadding="5" rightPadding="10">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Top">
+						<font fontName="Open Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{WODATEFINISHED}]]></textFieldExpression>
+					<patternExpression><![CDATA[$V{DateFormat}]]></patternExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-13" positionType="Float" x="0" y="14" width="50" height="14" uuid="b18bc067-9cb3-4555-91b6-6dc345264ab0"/>
+					<box leftPadding="2">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="true"/>
+					</textElement>
+					<text><![CDATA[BOM:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-19" positionType="Float" mode="Transparent" x="50" y="14" width="85" height="14" backcolor="#F0F0F0" uuid="9b32caad-e7e9-4839-b165-3bb7e30108b2"/>
+					<box leftPadding="5" rightPadding="10">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Open Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{BOMNUM}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-14" positionType="Float" x="260" y="0" width="55" height="14" uuid="98077d3f-cd69-40f8-9e70-3fb8a9164bc9"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Qty:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-20" positionType="Float" x="315" y="0" width="70" height="14" uuid="95a7da08-1282-4397-b593-1efc298fb34b"/>
+					<box leftPadding="5" rightPadding="15">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Open Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{QTYORDERED}]]></textFieldExpression>
+					<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-22" positionType="Float" x="135" y="14" width="90" height="14" uuid="9e5dc8cf-7b75-49a5-bf57-923128dafabc"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Location:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-29" positionType="Float" x="225" y="14" width="160" height="14" uuid="d4d1e9d5-c7ed-4909-a047-19b11acd140f"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Open Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{WOLOCATION}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-23" positionType="Float" x="0" y="28" width="105" height="14" uuid="9a8b4ef6-d63e-450c-9cac-2715de816ba7"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Assigned User(s):]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-30" positionType="Float" x="105" y="28" width="513" height="14" uuid="9e96c68d-9572-441d-b9be-f8b499242290"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Top">
+						<font fontName="Open Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{WOUSERS}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-17" positionType="Float" x="627" y="0" width="105" height="14" uuid="dbc83d59-f962-469c-a8c6-3582072eb6de"/>
+					<box leftPadding="5" rightPadding="10">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Top">
+						<font fontName="Open Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{WOCLASS}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-11" positionType="Float" x="565" y="0" width="62" height="14" uuid="85d7d3d9-5245-4cce-b595-1f307b39837a"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Class:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="20">
+				<line>
+					<reportElement x="0" y="18" width="732" height="1" forecolor="#CCCCCC" uuid="4769fef0-9ef5-4676-8a9d-aecf20411d02"/>
+				</line>
+				<textField isStretchWithOverflow="true" evaluationTime="Report" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-31" x="570" y="4" width="162" height="14" uuid="5dccd600-3f8a-48e2-b599-bc4b5b373831"/>
+					<box leftPadding="2">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="true" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{isMultiCurrency} ?
+com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, $V{TotalCost}, $V{CostDecimal})
+:
+$V{TotalCost}]]></textFieldExpression>
+					<patternExpression><![CDATA[$V{CostDecimal}]]></patternExpression>
+				</textField>
+				<line>
+					<reportElement key="line-1" positionType="Float" x="75" y="2" width="657" height="1" uuid="ab9d9a64-6b30-4bac-abba-db9b4f084041">
+						<printWhenExpression><![CDATA[$P{ShowDetails}]]></printWhenExpression>
+					</reportElement>
+				</line>
+				<textField isStretchWithOverflow="true" evaluationTime="Report" pattern="¤ #,##0.00###" isBlankWhenNull="true">
+					<reportElement key="textField-31" x="0" y="4" width="570" height="14" uuid="86b68e3e-adb6-43f0-b69d-5171dc193168"/>
+					<box leftPadding="2">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="true" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["WO " + $F{WONUM}  + " Total:"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="ItemType">
+		<groupExpression><![CDATA[$F{ITEMTYPE}]]></groupExpression>
+		<groupHeader>
+			<band height="29">
+				<printWhenExpression><![CDATA[$F{ITEMTYPE}.equals("Finished Good")]]></printWhenExpression>
+				<staticText>
+					<reportElement key="staticText-18" positionType="Float" x="75" y="14" width="75" height="14" uuid="2b574ec5-1047-4660-a580-1a1d16910b83"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Part #]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-19" positionType="Float" x="150" y="14" width="200" height="14" uuid="5671c8bf-b4b3-420b-b7fd-66f3adef2276"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Description]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-17" positionType="Float" x="0" y="0" width="732" height="14" uuid="b34a14d5-718b-498b-9b4d-2e0221a85957"/>
+					<box leftPadding="5">
+						<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement>
+						<font fontName="Open Sans" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Finished Goods]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-15" positionType="Float" x="627" y="14" width="105" height="14" uuid="ff624d5a-c30c-4109-b416-4a628f79e83b">
+						<printWhenExpression><![CDATA[$F{WOSTATUSID} == 40]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Cost]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-20" positionType="Float" x="350" y="14" width="75" height="14" uuid="7958b0ba-87a4-42d8-be37-031ed679b795"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Requested]]></text>
+				</staticText>
+				<line>
+					<reportElement key="line-1" positionType="Float" x="75" y="28" width="657" height="1" uuid="28907ba5-8893-4972-86fe-0ecc40ccccfb"/>
+				</line>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-22" x="547" y="14" width="80" height="14" uuid="e4d83bb0-25a6-424e-a2e3-1dd7ff57f0db">
+						<printWhenExpression><![CDATA[$F{WOSTATUSID} == 40]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Unit Cost"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="14" width="75" height="14" uuid="7eeb16b0-8e92-4d50-a4a5-65eaa947f227"/>
+					<textElement>
+						<font fontName="Open Sans" size="10"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="425" y="14" width="122" height="14" uuid="298cbfff-8ddf-46cd-a640-ec35bc3d9b90">
+						<printWhenExpression><![CDATA[$F{WOSTATUSID} == 40]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="2" rightPadding="20"/>
+					<textElement textAlignment="Right">
+						<font fontName="Open Sans" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Fulfilled]]></text>
+				</staticText>
+			</band>
+			<band height="29">
+				<printWhenExpression><![CDATA[!$F{ITEMTYPE}.equals("Finished Good") && $P{ShowDetails}]]></printWhenExpression>
+				<staticText>
+					<reportElement key="staticText-15" positionType="Float" x="627" y="14" width="105" height="14" uuid="d561311c-7be0-4684-a711-911d88c59028"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Cost]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-18" positionType="Float" x="75" y="14" width="75" height="14" uuid="b2a789bf-1d5f-4ccd-a922-000a279fd6fe">
+						<printWhenExpression><![CDATA[$P{ShowDetails}]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Part #]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-19" positionType="Float" x="150" y="14" width="200" height="14" uuid="8badba20-3df8-4347-9c67-740501b8977d">
+						<printWhenExpression><![CDATA[$P{ShowDetails}]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Description]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-20" positionType="Float" x="350" y="14" width="75" height="14" uuid="3ebb636f-19d0-48f1-84a5-a51bde81346a">
+						<printWhenExpression><![CDATA[$P{ShowDetails}]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Needed]]></text>
+				</staticText>
+				<line>
+					<reportElement key="line-1" positionType="Float" x="75" y="28" width="657" height="1" uuid="4ff80cb8-6cd4-40bc-a231-ea598ed0253d">
+						<printWhenExpression><![CDATA[$P{ShowDetails}]]></printWhenExpression>
+					</reportElement>
+				</line>
+				<staticText>
+					<reportElement key="staticText-25" positionType="Float" x="547" y="14" width="80" height="14" uuid="5dabd2cc-7fee-4027-be6e-6cbc95c88624"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Unit Cost]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="0" y="0" width="732" height="14" uuid="480a21f3-6cba-475f-8906-7bd36b6b9f54"/>
+					<box leftPadding="5"/>
+					<textElement>
+						<font fontName="Open Sans" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ITEMTYPE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-26" x="425" y="14" width="122" height="14" uuid="9cb91bcc-8132-4fee-8043-27c364bb2819"/>
+					<box leftPadding="2" rightPadding="20">
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{WOSTATUSID} == 40 ?
+    "Qty Used" :
+    "On Hand"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="14" width="75" height="14" uuid="b38e3d3e-832f-4150-938e-3c9237830e3e"/>
+					<textElement>
+						<font fontName="Open Sans" size="10"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<printWhenExpression><![CDATA[$F{ITEMTYPE}.equals("Finished Good")]]></printWhenExpression>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-33" x="547" y="0" width="80" height="14" uuid="8c327e7c-c2d1-4bf0-a725-28ed22ec2dbd">
+					<printWhenExpression><![CDATA[$F{WOSTATUSID} == 40]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{isMultiCurrency} ?
+com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, $V{FinalCost}, $V{CostDecimal})
+:
+$V{FinalCost}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{CostDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-22" x="75" y="0" width="75" height="14" uuid="ea0fb7f9-b080-4ba4-8982-d6214abee4df"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{WOITEMPART}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-25" x="395" y="0" width="30" height="14" uuid="6e97f081-d144-4fce-898a-a070c91ce80c"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{WOITEMUOM}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-24" x="350" y="0" width="45" height="14" uuid="f4f7c3a9-5961-40eb-8be7-4c8363ed303a"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{WOITEMNEEDED}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-23" x="150" y="0" width="200" height="14" uuid="85d0c009-36a5-4a08-81bd-a4b987e719a0"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{WOITEMDESCRIPTION}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-31" x="627" y="0" width="105" height="14" uuid="86fe415b-7ab7-49a3-b6bc-a7e1442ce8d8">
+					<printWhenExpression><![CDATA[$F{WOSTATUSID} == 40]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{isMultiCurrency} ?
+    $F{WOSTATUSID} == 40 ?
+        com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, $F{WOITEMCOST}, $V{CostDecimal}) :
+        com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, ($F{PARTUOMID} == $F{WOITEMUOMID} ?
+            $V{FinalCost} :
+            ($V{FinalCost} * $F{PARTUOMMULTIPLY}) / $F{PARTUOMFACTOR}
+        ) * $F{WOITEMTARGET}, $V{CostDecimal})
+:
+$F{WOSTATUSID} == 40 ?
+    $F{WOITEMCOST} :
+    ($F{PARTUOMID} == $F{WOITEMUOMID} ?
+        $V{FinalCost} :
+        ($V{FinalCost} * $F{PARTUOMMULTIPLY}) / $F{PARTUOMFACTOR}
+    ) * $F{WOITEMTARGET}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{CostDecimal}]]></patternExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="75" height="14" uuid="b88cba4f-578a-400d-b3f1-e5670a98c4ec"/>
+				<textElement>
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-26" x="425" y="0" width="92" height="14" uuid="b1ced7dd-edc8-466f-9c04-c8be04b115ac">
+					<printWhenExpression><![CDATA[$F{WOSTATUSID} == 40]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{WOITEMQTYUSED}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-27" x="517" y="0" width="30" height="14" uuid="94565279-3480-40a5-8c9e-bc2142badb15">
+					<printWhenExpression><![CDATA[$F{WOSTATUSID} == 40]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{WOITEMUOM}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="14">
+			<printWhenExpression><![CDATA[!$F{ITEMTYPE}.equals("Finished Good") && $P{ShowDetails}]]></printWhenExpression>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-27" x="517" y="0" width="30" height="14" uuid="94565279-3480-40a5-8c9e-bc2142badb15">
+					<printWhenExpression><![CDATA[$F{WOSTATUSID} != 40 ? $F{PARTTYPEID} == 10 : true]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{WOSTATUSID} == 40 ?
+    $F{WOITEMUOM} :
+    $F{UOMCODE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-25" x="395" y="0" width="30" height="14" uuid="7cbe2dd1-4b04-4b98-9ca0-c7e56a93bf19"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{WOITEMUOM}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-26" x="425" y="0" width="92" height="14" uuid="b1ced7dd-edc8-466f-9c04-c8be04b115ac">
+					<printWhenExpression><![CDATA[$F{WOSTATUSID} != 40 ? $F{PARTTYPEID} == 10 : true]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{WOSTATUSID} == 40 ?
+    $F{WOITEMQTYUSED} :
+    $F{QTYONHAND}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-22" x="75" y="0" width="75" height="14" uuid="9b051c72-e92f-4162-8c5a-99ff44f7cc8d"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{WOITEMPART}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-31" x="627" y="0" width="105" height="14" uuid="4b1d7eaf-2140-4c57-8257-78142ac0087a"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Open Sans" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{isMultiCurrency} ?
+    $F{WOSTATUSID} == 40 ?
+        com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, $F{WOITEMCOST}, $V{CostDecimal}) :
+        com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, ($F{PARTUOMID} == $F{WOITEMUOMID} ?
+            $V{FinalCost} :
+            ($V{FinalCost} * $F{PARTUOMMULTIPLY}) / $F{PARTUOMFACTOR}
+        ) * $F{WOITEMTARGET}, $V{CostDecimal})
+:
+$F{WOSTATUSID} == 40 ?
+    $F{WOITEMCOST} :
+    ($F{PARTUOMID} == $F{WOITEMUOMID} ?
+        $V{FinalCost} :
+        ($V{FinalCost} * $F{PARTUOMMULTIPLY}) / $F{PARTUOMFACTOR}
+    ) * $F{WOITEMTARGET}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{CostDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-24" x="350" y="0" width="45" height="14" uuid="b98d009d-5eba-46ff-87b9-f2f9b565b053"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{WOITEMTARGET}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-23" x="150" y="0" width="200" height="14" uuid="74994df0-35a9-4448-992b-36e91daf33cf"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{WOITEMDESCRIPTION}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-33" x="547" y="0" width="80" height="14" uuid="105a91a4-7297-446f-9486-21d8633b56c7"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{isMultiCurrency} ?
+com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, $V{FinalCost}, $V{CostDecimal})
+:
+$V{FinalCost}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{CostDecimal}]]></patternExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="75" height="14" uuid="90d8f036-0cf9-4c22-a85c-a529846eac7d"/>
+				<textElement>
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

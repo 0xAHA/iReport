@@ -1,0 +1,763 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Tracking" pageWidth="612" pageHeight="792" whenNoDataType="NoDataSection" columnWidth="552" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="b003c187-e1b5-4831-8c3d-4c0bcf247ef5">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.4641000000000013"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="9" fontName="Open Sans" fontSize="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="10" isDefault="true" fontName="Open Sans" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="12" fontName="Open Sans" fontSize="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="14" fontName="Open Sans" fontSize="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="10b" fontName="Open Sans" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="12b" fontName="Open Sans" fontSize="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="14b" fontName="Open Sans" fontSize="14" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="16b" fontName="Open Sans" fontSize="16" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="18b" fontName="Open Sans" fontSize="18" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="24b" fontName="Open Sans" fontSize="24" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="10i" fontName="Open Sans" fontSize="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="12i" fontName="Open Sans" fontSize="12" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="10bu" fontName="Open Sans" fontSize="10" isBold="true" isItalic="false" isUnderline="true" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="header1" fontName="Open Sans" fontSize="24" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="header2" fontName="Open Sans" fontSize="18" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="header3" fontName="Open Sans" fontSize="16" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="addressHeader" fontName="Open Sans" fontSize="14" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="date" fontName="Open Sans" fontSize="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="type" fontName="Open Sans" fontSize="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="address" fontName="Open Sans" fontSize="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="column_head" fontName="Open Sans" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="body" isDefault="true" fontName="Open Sans" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="note" isDefault="true" fontName="Open Sans" fontSize="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<parameter name="REPORTDESCRIPTION" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Information for Part Tracking values. Date values are filtered with the same format as they appear in the Inventory Module. Checkbox values are filtered with 1 and 0 for checked and unchecked, respectively. Money, Quantity, Count, and Checkbox values must be searched using exact values."]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TrackingValue" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="module" class="java.lang.Object" isForPrompting="false">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["../Other/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="partNum" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="productNum" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SearchForExactValue" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IncludeRMAItems" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IncludePickItems" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IncludeWorkOrders" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IncludeShippingItems" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IncludeReceivingItems" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowItemDescriptionInHeader" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ReportTitle" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Count" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[1000]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Skip" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[(
+   select 'receipt' as query,
+      (select name from company) AS company,
+      pt.name as ptName,
+      case
+         when tis.serialNum is not null then tis.serialNum
+         when length(ti.info) > 0 then ti.info
+         else null
+      end as textTracking,
+      if(tis.SerialNum is null and length(ti.info) = 0 and ti.infoInteger is null and ti.infoDate is null,
+         ti.infoDouble,
+         null
+      ) as numberTracking,
+      ti.infoInteger as intTracking,
+      date_format(ti.infoDate, '%b %d, %Y') as dateTracking,
+      case receipt.orderTypeId
+         when 10 then 'receiptItem-p'
+         when 20 then 'receiptItem-s'
+         when 40 then 'receiptItem-x'
+         else null
+      end as type,
+      concat(
+         part.num,
+         if($P!{ShowItemDescriptionInHeader}, concat(' - ',part.description),''),
+         ' received for ',
+         case receipt.orderTypeId
+            when 10 then 'PO: '
+            when 20 then 'SO: '
+            when 40 then 'TO: '
+            else '{Error: Unknown Order}'
+         end
+      ) as title,
+      case receipt.orderTypeId
+         when 10 then po.num
+         when 20 then so.num
+         when 40 then xo.num
+         else null
+      end as recordNum,
+      if(tis.id is null, 0, 1) as serialFlag,
+      ti.recordId,
+      ti.id as orderBy
+
+   from trackinginfo as ti
+      join partTracking as pt on pt.id = ti.partTrackingId
+      join receiptItem as ri on ri.id = ti.recordId
+      join part on part.id = ri.partId
+      join receipt on receipt.id = ri.receiptId
+      left join trackingInfoSn as tis on tis.trackingInfoId = ti.id
+      left join poItem on poItem.id = ri.poItemId and receipt.orderTypeId = 10
+      left join po on po.id = poItem.poId
+      left join soItem on soItem.id = ri.soItemId and receipt.orderTypeId = 20
+      left join so on so.id = soItem.soId
+      left join xoItem on xoItem.id = ri.xoItemId and receipt.orderTypeId = 40
+      left join xo on xo.id = xoItem.xoId
+      left join product on part.defaultproductid = product.id
+
+   where ti.tableId = 1259138490
+      and (
+         if($P!{SearchForExactValue},
+               (
+                  ti.info = $P{TrackingValue}
+                  or tis.serialNum = $P{TrackingValue}
+                  or date_format(ti.infoDate, '%b %d, %Y') = $P{TrackingValue}
+                  or (
+                     cast(ti.infoDouble as char) = $P{TrackingValue}
+                     and (
+                        tis.serialNum is null
+                        and length(ti.info) = 0
+                        and ti.infoInteger is null
+                        and ti.infoDate is null
+                     )
+                  )
+                  or cast(ti.infoInteger as char) = $P{TrackingValue}
+               ), -- 'like' values with wildcards. note that double and integers aren't supported
+               (
+                  ti.info like concat('%', $P{TrackingValue}, '%')
+                  or tis.serialnum like concat('%', $P{TrackingValue}, '%')
+                  or date_format(ti.infoDate, '%b %d, %Y') like concat('%', $P{TrackingValue}, '%')
+               )
+         )
+      )
+      and part.num like $P{partNum}
+      and coalesce(product.num,'') like $P{productNum}
+      and $P!{IncludeReceivingItems}
+
+   group by ti.recordId, tis.serialNum, ti.info, ti.infoDouble, ti.infoInteger, ti.infoDate
+)
+union all
+(
+   select 'shipping' as query,
+      (select name from company) AS company,
+      pt.name as ptName,
+      case
+         when tis.serialNum is not null then tis.serialNum
+         when length(ti.info) > 0 then ti.info
+         else null
+      end as textTracking,
+      if(tis.SerialNum is null and length(ti.info) = 0 and ti.infoInteger is null and ti.infoDate is null,
+         ti.infoDouble,
+         null
+      ) as numberTracking,
+      ti.infoInteger as intTracking,
+      date_format(ti.infoDate, '%b %d, %Y') as dateTracking,
+      case ship.orderTypeId
+         when 10 then 'shipItem-p'
+         when 20 then 'shipItem-s'
+         when 40 then 'shipItem-x'
+         else null
+      end as type,
+      concat(
+         if(ship.orderTypeId = 20,
+            concat(product.num, if($P!{ShowItemDescriptionInHeader}, concat(' - ', product.description), '')),
+            concat(part.num, if($P!{ShowItemDescriptionInHeader}, concat(' - ', part.description), ''))
+         ),
+         ' shipped for ',
+         case ship.orderTypeId
+            when 10 then 'PO: '
+            when 20 then 'SO: '
+            when 40 then 'TO: '
+            else '{Error: Unknown Order}'
+         end
+      ) as title,
+      case ship.orderTypeId
+         when 10 then po.num
+         when 20 then so.num
+         when 40 then xo.num
+         else null
+      end as recordNum,
+      if(tis.id is null, 0, 1) as serialFlag,
+      ti.recordId,
+      ti.id as orderBy
+
+   from trackinginfo as ti
+      join shipItem as si on si.id = ti.recordId
+      join ship on ship.id = si.shipId
+      join partTracking as pt on pt.id = ti.partTrackingId
+      left join trackingInfoSn as tis on tis.trackingInfoId = ti.id
+      left join poItem on poItem.id = si.poItemId
+      left join po on po.id = poItem.poId
+      left join soItem on soItem.id = si.soItemId
+      left join product on product.id = soItem.productId
+      left join so on so.id = soItem.soId
+      left join xoItem on xoItem.id = si.xoItemId
+      left join xo on xo.id = xoItem.xoId
+      left join part on part.id = coalesce(product.partId, poItem.partId, xoItem.partId)
+
+   where ti.tableId = 1555030112
+      and (
+         if($P!{SearchForExactValue},
+               (
+                  ti.info = $P{TrackingValue}
+                  or tis.serialNum = $P{TrackingValue}
+                  or date_format(ti.infoDate, '%b %d, %Y') = $P{TrackingValue}
+                  or (
+                     cast(ti.infoDouble as char) = $P{TrackingValue}
+                     and (
+                        tis.serialNum is null
+                        and length(ti.info) = 0
+                        and ti.infoInteger is null
+                        and ti.infoDate is null
+                     )
+                  )
+                  or cast(ti.infoInteger as char) = $P{TrackingValue}
+               ), -- 'like' values with wildcards. note that double and integers aren't supported
+               (
+                  ti.info like concat('%', $P{TrackingValue}, '%')
+                  or tis.serialnum like concat('%', $P{TrackingValue}, '%')
+                  or date_format(ti.infoDate, '%b %d, %Y') like concat('%', $P{TrackingValue}, '%')
+               )
+         )
+      )
+      and if('$P!{partNum}' = '%',1=1,part.num like '$P!{partNum}')
+      and if('$P!{productNum}' = '%',1=1,product.num like '$P!{productNum}')
+      and $P!{IncludeShippingItems}
+
+   group by ti.recordId, tis.serialNum, ti.info, ti.infoDouble, ti.infoInteger, ti.infoDate
+)
+union all
+(
+   select 'work orders' as query,
+      (select name from company) AS company,
+      pt.name as ptName,
+      case
+         when tis.serialNum is not null then tis.serialNum
+         when length(ti.info) > 0 then ti.info
+         else null
+      end as textTracking,
+      if(tis.SerialNum is null and length(ti.info) = 0 and ti.infoInteger is null and ti.infoDate is null,
+         ti.infoDouble,
+         null
+      ) as numberTracking,
+      ti.infoInteger as intTracking,
+      date_format(ti.infoDate, '%b %d, %Y') as dateTracking,
+      'woItem' as type,
+      concat(
+         part.num,
+         if($P!{ShowItemDescriptionInHeader}, concat(' - ',part.description),''),
+         case wi.typeId
+            when 10 then ' created on WO: '
+            when 20 then ' consumed on WO: '
+         end
+      ) as title,
+      wo.num as recordNum,
+      if(tis.id is null, 0, 1) as serialFlag,
+      wo.id as recordId,
+      ti.id as orderBy
+
+   from trackinginfo as ti
+      join partTracking as pt on pt.id = ti.partTrackingId
+      join woItem as wi on wi.id = ti.recordId
+      join part on part.id = wi.partId
+      join wo on wo.id = wi.woId
+      left join trackingInfoSn as tis on tis.trackingInfoId = ti.id
+      left join product on part.defaultproductid = product.id
+
+   where ti.tableId = -355941248
+      and (
+         if($P!{SearchForExactValue},
+               (
+                  ti.info = $P{TrackingValue}
+                  or tis.serialNum = $P{TrackingValue}
+                  or date_format(ti.infoDate, '%b %d, %Y') = $P{TrackingValue}
+                  or (
+                     cast(ti.infoDouble as char) = $P{TrackingValue}
+                     and (
+                        tis.serialNum is null
+                        and length(ti.info) = 0
+                        and ti.infoInteger is null
+                        and ti.infoDate is null
+                     )
+                  )
+                  or cast(ti.infoInteger as char) = $P{TrackingValue}
+               ), -- 'like' values with wildcards. note that double and integers aren't supported
+               (
+                  ti.info like concat('%', $P{TrackingValue}, '%')
+                  or tis.serialnum like concat('%', $P{TrackingValue}, '%')
+                  or date_format(ti.infoDate, '%b %d, %Y') like concat('%', $P{TrackingValue}, '%')
+               )
+         )
+      )
+      and part.num like $P{partNum}
+      and coalesce(product.num,'') like $P{productNum}
+      and $P!{IncludeWorkOrders}
+
+   group by ti.recordId, tis.serialNum, ti.info, ti.infoDouble, ti.infoInteger, ti.infoDate
+)
+union all
+(
+   select 'picking' as query,
+      (select name from company) AS company,
+      pt.name as ptName,
+      case
+         when tis.serialNum is not null then tis.serialNum
+         when length(ti.info) > 0 then ti.info
+         else null
+      end as textTracking,
+      if(tis.SerialNum is null and length(ti.info) = 0 and ti.infoInteger is null and ti.infoDate is null,
+         ti.infoDouble,
+         null
+      ) as numberTracking,
+      ti.infoInteger as intTracking,
+      date_format(ti.infoDate, '%b %d, %Y') as dateTracking,
+      case pi.orderTypeId
+         when 10 then 'pickItem-p' -- suffix needed for hyperlinks
+         when 20 then 'pickItem-s' -- suffix needed for hyperlinks
+         when 30 then 'pickItem-w' -- suffix needed for hyperlinks
+         when 40 then 'pickItem-x' -- suffix needed for hyperlinks
+      end as type,
+      concat(
+         part.num,
+         if($P!{ShowItemDescriptionInHeader}, concat(' - ', part.description), ''),
+         case pi.orderTypeId
+            when 10 then ' picked for PO: '
+            when 20 then ' picked for SO: '
+            when 30 then ' picked for WO: '
+            when 40 then ' picked for TO: '
+         end
+      ) as title,
+      case pi.orderTypeId
+         when 10 then po.num
+         when 20 then so.num
+         when 30 then wo.num
+         when 40 then xo.num
+      end as recordNum,
+      if(tis.id is null, 0, 1) as serialFlag,
+      pi.id as recordId,
+      ti.id as orderBy
+
+   from trackinginfo as ti
+      join partTracking as pt on pt.id = ti.partTrackingId
+      join pickItem as pi on pi.id = ti.recordId
+      join pick on pick.id = pi.pickId
+      join part on part.id = pi.partId
+      left join trackingInfoSn as tis on tis.trackingInfoId = ti.id
+      left join po on po.id = pi.orderId and pi.orderTypeId = 10
+      left join so on so.id = pi.orderId and pi.orderTypeId = 20
+      left join wo on wo.id = pi.orderId and pi.orderTypeId = 30
+      left join xo on xo.id = pi.orderId and pi.orderTypeId = 40
+      left join product on part.defaultproductid = product.id
+
+   where ti.tableId = -1515431424
+      and (
+         if($P!{SearchForExactValue},
+               (
+                  ti.info = $P{TrackingValue}
+                  or tis.serialNum = $P{TrackingValue}
+                  or date_format(ti.infoDate, '%b %d, %Y') = $P{TrackingValue}
+                  or (
+                     cast(ti.infoDouble as char) = $P{TrackingValue}
+                     and (
+                        tis.serialNum is null
+                        and length(ti.info) = 0
+                        and ti.infoInteger is null
+                        and ti.infoDate is null
+                     )
+                  )
+                  or cast(ti.infoInteger as char) = $P{TrackingValue}
+               ), -- 'like' values with wildcards. note that double and integers aren't supported
+               (
+                  ti.info like concat('%', $P{TrackingValue}, '%')
+                  or tis.serialnum like concat('%', $P{TrackingValue}, '%')
+                  or date_format(ti.infoDate, '%b %d, %Y') like concat('%', $P{TrackingValue}, '%')
+               )
+         )
+      )
+      and part.num like $P{partNum}
+      and coalesce(product.num,'') like $P{productNum}
+      and $P!{IncludePickItems}
+
+   group by ti.recordId, tis.serialNum, ti.info, ti.infoDouble, ti.infoInteger, ti.infoDate
+)
+union all
+(
+   select 'rmaItem' as query,
+      (select name from company) as company,
+      pt.name as ptName,
+      case
+         when tis.serialNum is not null then tis.serialNum
+         when length(ti.info) > 0 then ti.info
+         else null
+      end as textTracking,
+      if(tis.SerialNum is null and length(ti.info) = 0 and ti.infoInteger is null and ti.infoDate is null,
+         ti.infoDouble,
+         null
+      ) as numberTracking,
+      ti.infoInteger as intTracking,
+      date_format(ti.infoDate, '%b %d, %Y') as dateTracking,
+      'rmaItem' as type,
+      concat(product.num, if($P!{ShowItemDescriptionInHeader}, concat(' - ', product.description), ''), ' added to RMA: ') as title,
+      rma.num as recordNum,
+      if(tis.id is null, 0, 1) as serialFlag,
+      ti.recordId,
+      ti.id as orderBy
+
+   from trackinginfo as ti
+      join partTracking as pt on pt.id = ti.partTrackingId
+      join rmaItem as ri on ri.id = ti.recordId
+      join product on product.id = ri.productId
+      join rma on rma.id = ri.rmaId
+      left join trackingInfoSn as tis on tis.trackingInfoId = ti.id
+      left join (
+         select a.id as rmaItemId,
+               max(a.rev) as firstRev,
+               revInfo.timestamp as dateCreated
+         from rmaItem_aud as a
+               join revInfo on revInfo.id = a.rev
+         where a.revType = 0 -- create type
+         group by a.id
+      ) as riDate on riDate.rmaItemId = ri.id
+
+   where ti.tableId = -183091242
+      and (
+         if($P!{SearchForExactValue},
+               (
+                  ti.info = $P{TrackingValue}
+                  or tis.serialNum = $P{TrackingValue}
+                  or date_format(ti.infoDate, '%b %d, %Y') = $P{TrackingValue}
+                  or (
+                     cast(ti.infoDouble as char) = $P{TrackingValue}
+                     and (
+                        tis.serialNum is null
+                        and length(ti.info) = 0
+                        and ti.infoInteger is null
+                        and ti.infoDate is null
+                     )
+                  )
+                  or cast(ti.infoInteger as char) = $P{TrackingValue}
+               ), -- 'like' values with wildcards. note that double and integers aren't supported
+               (
+                  ti.info like concat('%', $P{TrackingValue}, '%')
+                  or tis.serialnum like concat('%', $P{TrackingValue}, '%')
+                  or date_format(ti.infoDate, '%b %d, %Y') like concat('%', $P{TrackingValue}, '%')
+               )
+         )
+      )
+      and product.num like $P{productNum}
+      and $P!{IncludeRMAItems}
+
+   group by ti.recordId, tis.serialNum, ti.info, ti.infoDouble, ti.infoInteger, ti.infoDate
+)
+
+order by orderBy
+
+limit $P!{Count}
+offset $P!{Skip}
+
+-- rev 5/26/2020
+-- one union all per tableId. makes life easier for the subreports
+-- to correctly use the limit/offset with unions, you must enclose selects in parenthesis]]>
+	</queryString>
+	<field name="company" class="java.lang.String"/>
+	<field name="ptName" class="java.lang.String"/>
+	<field name="textTracking" class="java.lang.String"/>
+	<field name="numberTracking" class="java.lang.Double"/>
+	<field name="intTracking" class="java.lang.Integer"/>
+	<field name="dateTracking" class="java.lang.String"/>
+	<field name="type" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="title" class="java.lang.String"/>
+	<field name="recordNum" class="java.lang.String"/>
+	<field name="serialFlag" class="java.lang.Long"/>
+	<field name="recordId" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="orderBy" class="java.lang.Integer"/>
+	<field name="query" class="java.lang.String"/>
+	<variable name="hyperlinkAnchorName" class="java.lang.String">
+		<variableExpression><![CDATA[$F{type}.equals("receiptItem-p") ? "PONum"
+: $F{type}.equals("receiptItem-s") ? "SONum"
+: $F{type}.equals("receiptItem-x") ? "TONum"
+: $F{type}.equals("shipItem-s") ? "SONum"
+: $F{type}.equals("shipItem-p") ? "PONum"
+: $F{type}.equals("shipItem-x") ? "TONum"
+: $F{type}.equals("woItem") ? "WONum"
+: $F{type}.equals("pickItem-p") ? "PONum"
+: $F{type}.equals("pickItem-s") ? "SONum"
+: $F{type}.equals("pickItem-w") ? "WONum"
+: $F{type}.equals("pickItem-x") ? "TONum"
+: $F{type}.equals("rmaItem") ? "RMANum"
+: null]]></variableExpression>
+	</variable>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<pageHeader>
+		<band height="64" splitType="Prevent">
+			<textField>
+				<reportElement key="staticText-1" mode="Transparent" x="0" y="18" width="552" height="22" forecolor="#000000" backcolor="#FFFFFF" uuid="4a754b3e-5560-4140-9130-80191385f89e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Open Sans" size="16" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ReportTitle}.equals("%") ? "Tracking Report" : $P{ReportTitle}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-1" mode="Transparent" x="0" y="40" width="552" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="46a8be14-1b74-4537-a87f-4d03f15918d9"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" "]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-2" x="0" y="0" width="552" height="18" uuid="14d0134e-89e6-432c-b11e-fb9a12632bbc"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{company}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-3" x="0" y="54" width="552" height="10" uuid="ec19cb8d-5a4a-41aa-b794-f2a95795604b"/>
+				<textElement>
+					<font fontName="Open Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" "]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="15" splitType="Prevent">
+			<staticText>
+				<reportElement key="element-90" mode="Transparent" x="0" y="0" width="80" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="ce3f4273-8804-4cf4-8d71-a8c31138f9ee"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Tracking]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="element-91" mode="Transparent" x="80" y="0" width="125" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="20249783-59d3-4005-9961-7a0d839b39f1"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Value]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="element-92" mode="Transparent" x="205" y="0" width="347" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="a8d2f784-9372-4a30-81bc-28d03f8609ba"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Order Details]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="14" width="552" height="1" uuid="91fc3fc8-8405-49f2-9c3b-ad60e541719d"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Prevent">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" hyperlinkType="Reference">
+				<reportElement key="textField" mode="Transparent" x="482" y="0" width="70" height="14" isPrintWhenDetailOverflows="true" forecolor="#000099" backcolor="#FFFFFF" uuid="19ca81d2-c2f5-47f3-9eba-c7d147f4c9d6"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="false" isItalic="false" isUnderline="true" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{recordNum}]]></textFieldExpression>
+				<anchorNameExpression><![CDATA[$V{hyperlinkAnchorName}]]></anchorNameExpression>
+				<hyperlinkReferenceExpression><![CDATA[$F{recordNum}]]></hyperlinkReferenceExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" mode="Transparent" x="0" y="0" width="80" height="14" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="a378f768-5418-43bf-92cf-7aaa0fdda86a"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ptName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" mode="Transparent" x="205" y="0" width="277" height="14" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="c4a250da-40ee-49e1-845a-3095e0febf41"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{title}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" mode="Transparent" x="80" y="0" width="125" height="14" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="9786fd99-07e2-4345-87ed-99c510eef13c"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{textTracking} != null ? $F{textTracking}
+: $F{numberTracking} != null ? new DecimalFormat($V{QtyDecimal}).format($F{numberTracking})
+: $F{intTracking} != null ? $F{intTracking}
+: $F{dateTracking} != null ? $F{dateTracking}
+: null]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="205" y="0" width="100" height="14" uuid="af4b1d96-107e-45e2-9a7e-5e305518f2da">
+					<printWhenExpression><![CDATA[1 == 2]]></printWhenExpression>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{query}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="14" splitType="Prevent">
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" mode="Transparent" x="321" y="0" width="183" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="d525774c-dd31-4ed2-86fc-3530a4ee52a1">
+					<printWhenExpression><![CDATA[!$P{IS_IGNORE_PAGINATION}]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" mode="Transparent" x="504" y="0" width="48" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="f7506951-ec72-4faa-bb3b-b790af65edb7">
+					<printWhenExpression><![CDATA[!$P{IS_IGNORE_PAGINATION}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" mode="Transparent" x="0" y="0" width="321" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="04c16af4-17e4-4db0-8bfb-24cccf0ac8f2"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.LONG)).format(new Date())]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<noData>
+		<band height="38">
+			<staticText>
+				<reportElement key="" mode="Transparent" x="0" y="14" width="552" height="24" forecolor="#000000" backcolor="#FFFFFF" uuid="b3c47557-fc4e-45f0-8f8c-b2d8fc61322f"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="17" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[No data found in selection]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement key="spacer" mode="Transparent" x="0" y="0" width="552" height="10" uuid="ad6a20ba-b57e-42a1-a379-7c3ef2cd963a"/>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+		</band>
+	</noData>
+</jasperReport>

@@ -1,0 +1,662 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PackingListByDate" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="2751b915-eca4-4ef4-8443-ca48c10b8047">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="module" class="java.lang.Object" isForPrompting="false">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRange1" class="java.util.Date" isForPrompting="false">
+		<property name="Tooltip" value="Choose a date range to run the report for. This date range uses the date selection made in the Apply Date Filter To dropdown"/>
+		<property name="Group" value="Select a date field and enter a date range"/>
+		<parameterDescription><![CDATA[Today]]></parameterDescription>
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRange2" class="java.util.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cbApplyDateFilter" class="java.lang.String" isForPrompting="false">
+		<property name="Tooltip" value="Choose the date for the date range to look at"/>
+		<property name="Group" value="Select a date field and enter a date range"/>
+		<parameterDescription><![CDATA[ship.datecreated,Date Created,ship.dateshipped,Date Shipped]]></parameterDescription>
+		<defaultValueExpression><![CDATA["ship.datecreated"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckEntered" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[10,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckPacked" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[20,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckShipped" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[30,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["30"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORTDESCRIPTION" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Batch By Date - Packing List for a selected order. Selecting Standard or By Location layouts will include backorder items."]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cbContactToShow" class="java.lang.String" isForPrompting="false">
+		<property name="Tooltip" value="Choose which contact to show on the report. The choices are Address Name or SO Contact"/>
+		<parameterDescription><![CDATA[address,Address Name,contact,SO Contact]]></parameterDescription>
+		<defaultValueExpression><![CDATA["address"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cbLayoutFormat" class="java.lang.String" isForPrompting="false">
+		<property name="Tooltip" value="Choose which packing list layout to print. The choices are Standard, By Carton or By Location"/>
+		<parameterDescription><![CDATA[standard,Standard,carton,By Carton]]></parameterDescription>
+		<defaultValueExpression><![CDATA["standard"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cbLogoAlignment" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[top,Top,left,Left]]></parameterDescription>
+		<defaultValueExpression><![CDATA["left"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cbOrderNumber" class="java.lang.String" isForPrompting="false">
+		<property name="Tooltip" value="Choose whether to show the Customer PO Number or the SO Number as the Order Number on the report"/>
+		<parameterDescription><![CDATA[SO,SO Number,PO,Customer PO Number]]></parameterDescription>
+		<defaultValueExpression><![CDATA["PO"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckShowBackOrderItems" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Items"/>
+		<property name="Tooltip" value="Choose to show back order items are displayed by checking this box"/>
+		<parameterDescription><![CDATA[100,101]]></parameterDescription>
+		<defaultValueExpression><![CDATA["100"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckShowCountry" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Other Settings"/>
+		<property name="Tooltip" value="Choose to show the country on the Ship To and Bill To addresses by checking this box"/>
+		<parameterDescription><![CDATA[1,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckShowKitHeaders" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Items"/>
+		<property name="Tooltip" value="Choose to show the Kit products headers by checking this box"/>
+		<parameterDescription><![CDATA[80,90]]></parameterDescription>
+		<defaultValueExpression><![CDATA["80"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowBarcode" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Group" value="Header"/>
+		<property name="Tooltip" value="Choose to show the barcode on the report by checking this box"/>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowCartonInfo" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Group" value="Other Settings"/>
+		<property name="Tooltip" value="Choose to show the carton information by checking this box"/>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowCompanyName" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Group" value="Header"/>
+		<property name="Tooltip" value="Choose to show the company name at the top of the report by checking this box"/>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowDeliverySignature" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Group" value="Other Settings"/>
+		<property name="Tooltip" value="Choose to show the delivery signature by checking this box"/>
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowOrderNotes" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Group" value="Other Settings"/>
+		<property name="Tooltip" value="Choose to show the order notes by checking this box"/>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowTracking" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Group" value="Items"/>
+		<property name="Tooltip" value="Choose to show part tracking information is displayed by checking this box"/>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowUniqueShipNumbers" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Group" value="Header"/>
+		<property name="Tooltip" value="Choose to show unique ship numbers (from partial shipping) by checking this box"/>
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="BlindShipment" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Group" value="Header"/>
+		<property name="Tooltip" value="Choose to hide The company logo, name, and address at the top of the report by checking this box"/>
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FieldTitle:Date" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Header"/>
+		<property name="Sort" value="3"/>
+		<parameterDescription><![CDATA[Date]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:Order#" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Header"/>
+		<property name="Sort" value="2"/>
+		<parameterDescription><![CDATA[Order #]]></parameterDescription>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FieldTitle:ShipFrom" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Address"/>
+		<property name="Sort" value="2"/>
+		<parameterDescription><![CDATA[Ship From]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:ShipTo" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Address"/>
+		<property name="Sort" value="2"/>
+		<parameterDescription><![CDATA[Ship To]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:BillTo" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Address"/>
+		<property name="Sort" value="2"/>
+		<parameterDescription><![CDATA[Bill To]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:FOBPoint" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Order Fields"/>
+		<property name="Sort" value="3"/>
+		<parameterDescription><![CDATA[FOB Point]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:ShippingTerms" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Order Fields"/>
+		<property name="Sort" value="3"/>
+		<parameterDescription><![CDATA[Shipping Terms]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:Carrier" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Order Fields"/>
+		<property name="Sort" value="3"/>
+		<parameterDescription><![CDATA[Carrier]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:DateScheduled" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Order Fields"/>
+		<property name="Sort" value="3"/>
+		<parameterDescription><![CDATA[Date Scheduled]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:CartonCount" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Order Fields"/>
+		<property name="Sort" value="3"/>
+		<parameterDescription><![CDATA[Carton Count]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:ShipService" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Order Fields"/>
+		<property name="Sort" value="3"/>
+		<parameterDescription><![CDATA[Ship Service]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:OrderNum" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Order Fields"/>
+		<property name="Sort" value="3"/>
+		<parameterDescription><![CDATA[Order Num]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:DateConfirmed" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Order Fields"/>
+		<property name="Sort" value="3"/>
+		<parameterDescription><![CDATA[Date Confirmed]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:Type" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Order Fields"/>
+		<property name="Sort" value="3"/>
+		<parameterDescription><![CDATA[Type]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:Owner" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Order Fields"/>
+		<property name="Sort" value="3"/>
+		<parameterDescription><![CDATA[Owner]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:CartonInfo" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Carton Fields"/>
+		<property name="Sort" value="4"/>
+		<parameterDescription><![CDATA[Carton Info]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:Carton#" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Carton Fields"/>
+		<property name="Sort" value="4"/>
+		<parameterDescription><![CDATA[Carton #]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:Weight" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Carton Fields"/>
+		<property name="Sort" value="4"/>
+		<parameterDescription><![CDATA[Weight]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:Tracking#" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Carton Fields"/>
+		<property name="Sort" value="4"/>
+		<parameterDescription><![CDATA[Tracking #]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:TotalWeight" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Carton Fields"/>
+		<property name="Sort" value="4"/>
+		<parameterDescription><![CDATA[Total Weight]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:Cartoncount" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Carton Fields"/>
+		<property name="Sort" value="4"/>
+		<parameterDescription><![CDATA[Carton Count]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:Line#" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Items"/>
+		<property name="Sort" value="2"/>
+		<parameterDescription><![CDATA[Line #]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:Part#" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Items"/>
+		<property name="Sort" value="2"/>
+		<parameterDescription><![CDATA[Part #]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:Description" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Items"/>
+		<property name="Sort" value="2"/>
+		<parameterDescription><![CDATA[Description]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:QtyOrdered" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Items"/>
+		<property name="Sort" value="2"/>
+		<parameterDescription><![CDATA[Qty Ordered]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:QtyShipped" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Items"/>
+		<property name="Sort" value="1"/>
+		<parameterDescription><![CDATA[Qty Shipped]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:QtyRemaining" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Items"/>
+		<property name="Sort" value="2"/>
+		<parameterDescription><![CDATA[Qty Remaining]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:UnitPrice" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Items"/>
+		<property name="Sort" value="2"/>
+		<parameterDescription><![CDATA[Unit Price]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:TotalPrice" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Items"/>
+		<property name="Sort" value="2"/>
+		<parameterDescription><![CDATA[Total Price]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:Notes" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Header"/>
+		<property name="Sort" value="3"/>
+		<parameterDescription><![CDATA[Notes]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:UnitCost" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Items"/>
+		<property name="Sort" value="2"/>
+		<parameterDescription><![CDATA[Unit Cost]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:TotalCost" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Items"/>
+		<property name="Sort" value="2"/>
+		<parameterDescription><![CDATA[Total Cost]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:ReportTitle" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Header"/>
+		<property name="Sort" value="3"/>
+		<parameterDescription><![CDATA[Report Title]]></parameterDescription>
+	</parameter>
+	<parameter name="ShowSOCustomFields" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Sort" value="-1"/>
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowCfSO1" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="SO Custom Field 1"/>
+		<property name="Sort" value="3"/>
+		<parameterDescription><![CDATA[Display field]]></parameterDescription>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowCfSO2" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="SO Custom Field 2"/>
+		<property name="Sort" value="3"/>
+		<parameterDescription><![CDATA[Display Field]]></parameterDescription>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowCfSO3" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="SO Custom Field 3"/>
+		<property name="Sort" value="3"/>
+		<parameterDescription><![CDATA[Display Field]]></parameterDescription>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowCfSO4" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="SO Custom Field 4"/>
+		<property name="Sort" value="3"/>
+		<parameterDescription><![CDATA[Display Field]]></parameterDescription>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowCfSO5" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="SO Custom Field 5"/>
+		<property name="Sort" value="3"/>
+		<parameterDescription><![CDATA[Display Field]]></parameterDescription>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowCfSO6" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="SO Custom Field 6"/>
+		<property name="Sort" value="3"/>
+		<parameterDescription><![CDATA[Display Field]]></parameterDescription>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CustomField:SO1" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="SO Custom Field 1"/>
+		<property name="Sort" value="2"/>
+		<property name="Table" value="SO"/>
+		<property name="Type" value="Custom Field"/>
+		<property name="Tooltip" value="Select an SO custom field to display"/>
+		<parameterDescription><![CDATA[Select a field]]></parameterDescription>
+	</parameter>
+	<parameter name="CustomField:SO2" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="SO Custom Field 2"/>
+		<property name="Sort" value="2"/>
+		<property name="Table" value="SO"/>
+		<property name="Type" value="Custom Field"/>
+		<property name="Tooltip" value="Select an SO custom field to display"/>
+		<parameterDescription><![CDATA[Select a field]]></parameterDescription>
+	</parameter>
+	<parameter name="CustomField:SO3" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="SO Custom Field 3"/>
+		<property name="Sort" value="2"/>
+		<property name="Table" value="SO"/>
+		<property name="Type" value="Custom Field"/>
+		<property name="Tooltip" value="Select an SO custom field to display"/>
+		<parameterDescription><![CDATA[Select a field]]></parameterDescription>
+	</parameter>
+	<parameter name="CustomField:SO4" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="SO Custom Field 4"/>
+		<property name="Sort" value="2"/>
+		<property name="Table" value="SO"/>
+		<property name="Type" value="Custom Field"/>
+		<property name="Tooltip" value="Select an SO custom field to display"/>
+		<parameterDescription><![CDATA[Select a field]]></parameterDescription>
+	</parameter>
+	<parameter name="CustomField:SO5" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="SO Custom Field 5"/>
+		<property name="Sort" value="2"/>
+		<property name="Table" value="SO"/>
+		<property name="Type" value="Custom Field"/>
+		<property name="Tooltip" value="Select an SO custom field to display"/>
+		<parameterDescription><![CDATA[Select a field]]></parameterDescription>
+	</parameter>
+	<parameter name="CustomField:SO6" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="SO Custom Field 6"/>
+		<property name="Sort" value="2"/>
+		<property name="Table" value="SO"/>
+		<property name="Type" value="Custom Field"/>
+		<property name="Tooltip" value="Select an SO custom field to display"/>
+		<parameterDescription><![CDATA[Select a field]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:SOcf1" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="SO Custom Field 1"/>
+		<property name="Sort" value="1"/>
+		<property name="Alias" value="Field Title"/>
+		<parameterDescription><![CDATA[Field Title]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:SOcf2" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="SO Custom Field 2"/>
+		<property name="Sort" value="1"/>
+		<property name="Alias" value="Field Title"/>
+		<parameterDescription><![CDATA[Field Title]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:SOcf3" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="SO Custom Field 3"/>
+		<property name="Sort" value="1"/>
+		<property name="Alias" value="Field Title"/>
+		<parameterDescription><![CDATA[Field Title]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:SOcf4" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="SO Custom Field 4"/>
+		<property name="Sort" value="1"/>
+		<property name="Alias" value="Field Title"/>
+		<parameterDescription><![CDATA[Field Title]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:SOcf5" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="SO Custom Field 5"/>
+		<property name="Sort" value="1"/>
+		<property name="Alias" value="Field Title"/>
+		<parameterDescription><![CDATA[Field Title]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:SOcf6" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="SO Custom Field 6"/>
+		<property name="Sort" value="1"/>
+		<property name="Alias" value="Field Title"/>
+		<parameterDescription><![CDATA[Field Title]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:Itemcf1" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="Item Custom Field 1"/>
+		<property name="Sort" value="2"/>
+		<property name="Alias" value="Field Title"/>
+		<parameterDescription><![CDATA[Field Title]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:Itemcf2" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="Item Custom Field 2"/>
+		<property name="Sort" value="2"/>
+		<property name="Alias" value="Field Title"/>
+		<parameterDescription><![CDATA[Field Title]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:Itemcf3" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="Item Custom Field 3"/>
+		<property name="Sort" value="2"/>
+		<property name="Alias" value="Field Title"/>
+		<parameterDescription><![CDATA[Field Title]]></parameterDescription>
+	</parameter>
+	<parameter name="CustomField:Item1" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="Item Custom Field 1"/>
+		<property name="Sort" value="3"/>
+		<property name="Table" value="soitem"/>
+		<property name="Type" value="Custom Field"/>
+		<property name="Tooltip" value="Select a Sales Order Line Item custom field to display"/>
+		<parameterDescription><![CDATA[Select a field]]></parameterDescription>
+	</parameter>
+	<parameter name="CustomField:Item2" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="Item Custom Field 2"/>
+		<property name="Sort" value="3"/>
+		<property name="Table" value="soitem"/>
+		<property name="Type" value="Custom Field"/>
+		<property name="Tooltip" value="Select a Sales Order Line Item custom field to display"/>
+		<parameterDescription><![CDATA[Select a field]]></parameterDescription>
+	</parameter>
+	<parameter name="CustomField:Item3" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="Item Custom Field 3"/>
+		<property name="Sort" value="3"/>
+		<property name="Table" value="soitem"/>
+		<property name="Type" value="Custom Field"/>
+		<property name="Tooltip" value="Select a Sales Order Line Item custom field to display"/>
+		<parameterDescription><![CDATA[Select a field]]></parameterDescription>
+	</parameter>
+	<parameter name="ShowCfItem1" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="Item Custom Field 1"/>
+		<property name="Sort" value="4"/>
+		<parameterDescription><![CDATA[Display field]]></parameterDescription>
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowCfItem2" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="Item Custom Field 2"/>
+		<property name="Sort" value="4"/>
+		<parameterDescription><![CDATA[Display field]]></parameterDescription>
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowCfItem3" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="Item Custom Field 3"/>
+		<property name="Sort" value="4"/>
+		<parameterDescription><![CDATA[Display field]]></parameterDescription>
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LineNumber" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Tab" value="Hide/Show"/>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PartNumDescription" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Tab" value="Hide/Show"/>
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="QtyOrdered" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Tab" value="Hide/Show"/>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="QtyShipped" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Tab" value="Hide/Show"/>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="QtyRemaining" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Tab" value="Hide/Show"/>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="UnitPrice" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Tab" value="Hide/Show"/>
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TotalPrice" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Tab" value="Hide/Show"/>
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PartNumber" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Tab" value="Hide/Show"/>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Description" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Tab" value="Hide/Show"/>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowKitHeadersOnly" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Group" value="Items"/>
+		<property name="Tooltip" value="Choose to show only the Kit product headers by checking this box"/>
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FieldTitle:LxWxH" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Field Titles"/>
+		<property name="Group" value="Carton Fields"/>
+		<property name="Sort" value="4"/>
+		<parameterDescription><![CDATA[L x W x H]]></parameterDescription>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT ship.id AS shipid
+
+FROM ship
+
+WHERE ship.statusid IN ($P{ckEntered},$P{ckPacked},$P{ckShipped})
+  AND $P!{cbApplyDateFilter} BETWEEN $P{dateRange1} AND DATE_SUB($P{dateRange2}, INTERVAL 1 SECOND)]]>
+	</queryString>
+	<field name="SHIPID" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<subreport runToBottom="true">
+				<reportElement x="0" y="0" width="612" height="14" isPrintInFirstWholeBand="true" uuid="d6cd6a50-e2a4-4afd-a767-e6368b4e4c88"/>
+				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+				<subreportParameter name="colPartNumDescription">
+					<subreportParameterExpression><![CDATA[$P{PartNumDescription}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="module">
+					<subreportParameterExpression><![CDATA[$P{module}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="shipID">
+					<subreportParameterExpression><![CDATA[$F{SHIPID}.toString()]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ShowTracking">
+					<subreportParameterExpression><![CDATA[$P{ShowTracking}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="colQtyShipped">
+					<subreportParameterExpression><![CDATA[$P{QtyShipped}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="colUnitPrice">
+					<subreportParameterExpression><![CDATA[$P{UnitPrice}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="colQtyRemaining">
+					<subreportParameterExpression><![CDATA[$P{QtyRemaining}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cbOrderNumber">
+					<subreportParameterExpression><![CDATA[$P{cbOrderNumber}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="colTotalPrice">
+					<subreportParameterExpression><![CDATA[$P{TotalPrice}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ckShowCountry">
+					<subreportParameterExpression><![CDATA[$P{ckShowCountry}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ShowBarcode">
+					<subreportParameterExpression><![CDATA[$P{ShowBarcode}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cbLayoutFormat">
+					<subreportParameterExpression><![CDATA[$P{cbLayoutFormat}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="colQtyOrdered">
+					<subreportParameterExpression><![CDATA[$P{QtyOrdered}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ckShowKitHeaders">
+					<subreportParameterExpression><![CDATA[$P{ckShowKitHeaders}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="colLineNumber">
+					<subreportParameterExpression><![CDATA[$P{LineNumber}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["../Ship/PackingList.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

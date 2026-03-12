@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="WeeklySales" pageWidth="792" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="732" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="a1b2c3d4-e5f6-7890-a1b2-c3d4e5f67890">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[SELECT
+    YEAR(postso.postdate) AS SALESYEAR,
+    MONTH(postso.postdate) AS SALESMONTH,
+    DATE_FORMAT(postso.postdate, '%b %Y') AS MONTHYEAR,
+    CASE
+        WHEN DAY(postso.postdate) BETWEEN 1 AND 7 THEN '1-7'
+        WHEN DAY(postso.postdate) BETWEEN 8 AND 14 THEN '8-14'
+        WHEN DAY(postso.postdate) BETWEEN 15 AND 21 THEN '15-21'
+        WHEN DAY(postso.postdate) BETWEEN 22 AND 28 THEN '22-28'
+        ELSE '29-31'
+    END AS PERIOD,
+    CASE
+        WHEN DAY(postso.postdate) BETWEEN 1 AND 7 THEN 1
+        WHEN DAY(postso.postdate) BETWEEN 8 AND 14 THEN 2
+        WHEN DAY(postso.postdate) BETWEEN 15 AND 21 THEN 3
+        WHEN DAY(postso.postdate) BETWEEN 22 AND 28 THEN 4
+        ELSE 5
+    END AS PERIODORDER,
+    SUM(((SOITEM.UNITPRICE + (SOITEM.ADJUSTAMOUNT / (CASE WHEN SOITEM.QTYTOFULFILL = 0 THEN 1 ELSE SOITEM.QTYTOFULFILL END))) * POSTSOITEM.QTY)) AS WEEKLYSALES,
+    1 AS PERIODTYPE,
+    DATE_FORMAT(postso.postdate, '%b-%y') AS CURRENTMONTH,
+    DATE_FORMAT(DATE_SUB(postso.postdate, INTERVAL 1 YEAR), '%b-%y') AS PREVIOUSMONTH,
+    Company.Name as COMPANY
+FROM postsoitem
+    JOIN soitem ON postsoitem.soitemid = soitem.id
+    LEFT JOIN postso ON postso.id = postsoitem.postsoid
+    JOIN Company on Company.Id = 1
+WHERE postso.postdate BETWEEN
+    CASE WHEN MONTH(CURDATE()) >= 7
+        THEN CONCAT(YEAR(CURDATE()), '-07-01')
+        ELSE CONCAT(YEAR(CURDATE())-1, '-07-01')
+    END
+    AND CURDATE()
+  AND (soitem.typeid = 10 OR soitem.typeid = 12 OR soitem.typeid = 80)
+GROUP BY SALESYEAR, SALESMONTH, MONTHYEAR, PERIOD, PERIODORDER, CURRENTMONTH, PREVIOUSMONTH
+
+UNION ALL
+
+SELECT
+    YEAR(DATE_ADD(postso.postdate, INTERVAL 1 YEAR)) AS SALESYEAR,
+    MONTH(DATE_ADD(postso.postdate, INTERVAL 1 YEAR)) AS SALESMONTH,
+    DATE_FORMAT(DATE_ADD(postso.postdate, INTERVAL 1 YEAR), '%b %Y') AS MONTHYEAR,
+    CASE
+        WHEN DAY(postso.postdate) BETWEEN 1 AND 7 THEN '1-7'
+        WHEN DAY(postso.postdate) BETWEEN 8 AND 14 THEN '8-14'
+        WHEN DAY(postso.postdate) BETWEEN 15 AND 21 THEN '15-21'
+        WHEN DAY(postso.postdate) BETWEEN 22 AND 28 THEN '22-28'
+        ELSE '29-31'
+    END AS PERIOD,
+    CASE
+        WHEN DAY(postso.postdate) BETWEEN 1 AND 7 THEN 1
+        WHEN DAY(postso.postdate) BETWEEN 8 AND 14 THEN 2
+        WHEN DAY(postso.postdate) BETWEEN 15 AND 21 THEN 3
+        WHEN DAY(postso.postdate) BETWEEN 22 AND 28 THEN 4
+        ELSE 5
+    END AS PERIODORDER,
+    SUM(((SOITEM.UNITPRICE + (SOITEM.ADJUSTAMOUNT / (CASE WHEN SOITEM.QTYTOFULFILL = 0 THEN 1 ELSE SOITEM.QTYTOFULFILL END))) * POSTSOITEM.QTY)) AS WEEKLYSALES,
+    2 AS PERIODTYPE,
+    DATE_FORMAT(DATE_ADD(postso.postdate, INTERVAL 1 YEAR), '%b-%y') AS CURRENTMONTH,
+    DATE_FORMAT(postso.postdate, '%b-%y') AS PREVIOUSMONTH,
+    Company.Name as COMPANY
+FROM postsoitem
+    JOIN soitem ON postsoitem.soitemid = soitem.id
+    LEFT JOIN postso ON postso.id = postsoitem.postsoid
+    JOIN Company on Company.Id = 1
+WHERE postso.postdate BETWEEN
+    DATE_SUB(
+        CASE WHEN MONTH(CURDATE()) >= 7
+            THEN CONCAT(YEAR(CURDATE()), '-07-01')
+            ELSE CONCAT(YEAR(CURDATE())-1, '-07-01')
+        END,
+        INTERVAL 1 YEAR
+    )
+    AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR)
+  AND (soitem.typeid = 10 OR soitem.typeid = 12 OR soitem.typeid = 80)
+GROUP BY SALESYEAR, SALESMONTH, MONTHYEAR, PERIOD, PERIODORDER, CURRENTMONTH, PREVIOUSMONTH
+ORDER BY SALESYEAR, SALESMONTH, PERIODORDER, PERIODTYPE]]>
+	</queryString>
+	<field name="SALESYEAR" class="java.lang.Integer"/>
+	<field name="SALESMONTH" class="java.lang.Integer"/>
+	<field name="MONTHYEAR" class="java.lang.String"/>
+	<field name="PERIOD" class="java.lang.String"/>
+	<field name="WEEKLYSALES" class="java.math.BigDecimal"/>
+	<field name="PERIODTYPE" class="java.lang.Integer"/>
+	<field name="CURRENTMONTH" class="java.lang.String"/>
+	<field name="PREVIOUSMONTH" class="java.lang.String"/>
+	<field name="COMPANY" class="java.lang.String"/>
+	<field name="PERIODORDER" class="java.lang.String"/>
+	<variable name="CURRENT_WEEK" class="java.math.BigDecimal" resetType="Group" resetGroup="WeekGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{PERIODTYPE} == 1 ? $F{WEEKLYSALES} : 0]]></variableExpression>
+	</variable>
+	<variable name="PREVIOUS_WEEK" class="java.math.BigDecimal" resetType="Group" resetGroup="WeekGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{PERIODTYPE} == 2 ? $F{WEEKLYSALES} : 0]]></variableExpression>
+	</variable>
+	<variable name="CURRENT_MONTH_RUNNING" class="java.math.BigDecimal" resetType="Group" resetGroup="MonthGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{PERIODTYPE} == 1 ? $F{WEEKLYSALES} : 0]]></variableExpression>
+	</variable>
+	<variable name="PREVIOUS_MONTH_RUNNING" class="java.math.BigDecimal" resetType="Group" resetGroup="MonthGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{PERIODTYPE} == 2 ? $F{WEEKLYSALES} : 0]]></variableExpression>
+	</variable>
+	<group name="MonthGroup">
+		<groupExpression><![CDATA[$F{MONTHYEAR}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<textField>
+					<reportElement x="0" y="0" width="100" height="20" uuid="a1a2a3a4-b5b6-c7c8-d9d0-e1e2e3e4e5e6"/>
+					<box leftPadding="2">
+						<bottomPen lineWidth="0.5" lineColor="#CCCCCC"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{MONTHYEAR}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="5"/>
+		</groupFooter>
+	</group>
+	<group name="WeekGroup">
+		<groupExpression><![CDATA[$F{MONTHYEAR} + $F{PERIOD}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="20">
+				<textField>
+					<reportElement x="0" y="0" width="100" height="20" uuid="b1b2b3b4-c5c6-d7d8-e9e0-f1f2f3f4f5f6"/>
+					<box leftPadding="15">
+						<pen lineWidth="0.25"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{PERIOD}]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤#,##0.00">
+					<reportElement x="100" y="0" width="100" height="20" uuid="c1c2c3c4-d5d6-e7e8-f9f0-a1a2a3a4a5a6"/>
+					<box rightPadding="2">
+						<pen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{CURRENT_WEEK}]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤#,##0.00">
+					<reportElement x="200" y="0" width="100" height="20" uuid="d1d2d3d4-e5e6-f7f8-a9a0-b1b2b3b4b5b6"/>
+					<box rightPadding="2">
+						<pen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{CURRENT_MONTH_RUNNING}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="300" y="0" width="80" height="20" uuid="e1e2e3e4-f5f6-a7a8-b9b0-c1c2c3c4c5c6"/>
+					<box leftPadding="2">
+						<pen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{PREVIOUSMONTH}]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤#,##0.00">
+					<reportElement x="380" y="0" width="100" height="20" uuid="f1f2f3f4-a5a6-b7b8-c9c0-d1d2d3d4d5d6"/>
+					<box rightPadding="2">
+						<pen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{PREVIOUS_MONTH_RUNNING}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="50">
+			<textField>
+				<reportElement x="0" y="0" width="732" height="25" uuid="d1d2d3d4-e5e6-f7f8-a9a0-b1b2b3b4b5b6"/>
+				<textElement textAlignment="Center">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMPANY}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="25" width="732" height="25" uuid="e1e2e3e4-f5f6-a7a8-b9b0-c1c2c3c4c5c6"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Weekly Sales - Year over Year Comparison]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="20">
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="20" uuid="a2a3a4a5-b6b7-c8c9-d0d1-e2e3e4e5e6e7"/>
+				<box leftPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Period]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="0" width="100" height="20" uuid="b2b3b4b5-c6c7-d8d9-e0e1-f2f3f4f5f6f7"/>
+				<box rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Weekly Sales]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="200" y="0" width="100" height="20" uuid="c2c3c4c5-d6d7-e8e9-f0f1-a2a3a4a5a6a7"/>
+				<box rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Monthly Sales]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="300" y="0" width="80" height="20" uuid="d2d3d4d5-e6e7-f8f9-a0a1-b2b3b4b5b6b7"/>
+				<box leftPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Previous Month]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="380" y="0" width="100" height="20" uuid="e2e3e4e5-f6f7-a8a9-b0b1-c2c3c4c5c6c7"/>
+				<box rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Previous Monthly Sales]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band/>
+	</detail>
+	<pageFooter>
+		<band height="20">
+			<textField>
+				<reportElement x="600" y="0" width="132" height="20" uuid="a2a3a4a5-b6b7-c8c9-d0d1-e2e3e4e5e6e7"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

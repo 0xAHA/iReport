@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bottomMargin="0" columnWidth="345" leftMargin="0" name="subSalesBackorder" orientation="Landscape" pageHeight="540" pageWidth="345" rightMargin="0" topMargin="0" whenNoDataType="AllSectionsNoDetail" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style fontName="Open Sans" fontSize="9" isBold="false" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="9" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="10" isBold="false" isDefault="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="10" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="12" isBold="false" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="12" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="14" isBold="false" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="14" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="10" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="10b" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="12" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="12b" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="14" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="14b" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="16" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="16b" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="18" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="18b" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="24" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="24b" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="10" isBold="false" isItalic="true" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="10i" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="12" isBold="false" isItalic="true" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="12i" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="10" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="true" name="10bu" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="24" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="header1" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="18" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="header2" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="16" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="header3" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="14" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="addressHeader" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="12" isBold="false" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="date" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="12" isBold="false" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="type" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="10" isBold="false" isItalic="true" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="address" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="10" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="column_head" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="10" isBold="false" isDefault="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="body" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="9" isBold="false" isDefault="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="note" pdfEncoding="Cp1252"/>
+	<parameter class="java.lang.String" isForPrompting="false" name="path">
+		<defaultValueExpression><![CDATA["../SalesOrder/"]]></defaultValueExpression>
+	</parameter>
+	<parameter class="java.lang.Object" isForPrompting="false" name="module">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter class="java.lang.String" isForPrompting="false" name="REPORTDESCRIPTION">
+		<defaultValueExpression><![CDATA["Place Description of Report HERE."]]></defaultValueExpression>
+	</parameter>
+	<parameter class="java.lang.String" isForPrompting="false" name="sort">
+		<parameterDescription><![CDATA[1,PartNumber,2,PartDescription,3,SONumber,4,DateToFulfill,5,QuantityNeeded,6,QuantityAvailable]]></parameterDescription>
+		<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+	</parameter>
+	<parameter class="java.lang.String" isForPrompting="false" name="soNum">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter class="java.lang.String" isForPrompting="false" name="productNum">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter class="java.lang.String" isForPrompting="false" name="locationGroupID">
+		<defaultValueExpression><![CDATA["-1"]]></defaultValueExpression>
+	</parameter>
+	<parameter class="java.lang.String" isForPrompting="false" name="ISSUBREPORTONLY"/>
+	<parameter class="java.lang.Boolean" isForPrompting="false" name="ShowPOForShortItems">
+		<defaultValueExpression><![CDATA[new Boolean(false)]]></defaultValueExpression>
+	</parameter>
+	<parameter class="java.lang.String" isForPrompting="false" name="partID"/>
+	<queryString>
+		<![CDATA[SELECT part.num AS partnum, po.num AS ponum, (poitem.qtytofulfill - poitem.qtyfulfilled) AS qty,
+    COALESCE(uomconversion.factor, 1) AS uomfactor, COALESCE(uomconversion.multiply, 1) AS uommultiply,
+    poitem.datescheduledfulfillment
+
+FROM po
+    LEFT JOIN poitem ON po.id = poitem.poid
+    LEFT JOIN part ON poitem.partid = part.id
+    LEFT JOIN uomconversion ON (part.uomid = uomconversion.touomid AND poitem.uomid = uomconversion.fromuomid)
+
+WHERE poitem.statusid IN (10, 20, 30, 40)
+  AND poitem.typeid = 10
+  AND poitem.partid LIKE $P{partID}
+  AND po.locationgroupid IN ($P!{locationGroupID})]]>
+	</queryString>
+	<field class="java.lang.String" name="PARTNUM"/>
+	<field class="java.lang.String" name="PONUM"/>
+	<field class="java.lang.Double" name="QTY"/>
+	<field class="java.math.BigDecimal" name="UOMFACTOR"/>
+	<field class="java.math.BigDecimal" name="UOMMULTIPLY"/>
+	<field class="java.sql.Timestamp" name="DATESCHEDULEDFULFILLMENT"/>
+	<variable class="java.lang.String" name="PriceDecimal" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_PRICE")]]></variableExpression>
+	</variable>
+	<variable class="java.lang.String" name="QtyDecimal" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<variable class="java.lang.String" name="CostDecimal" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_COST")]]></variableExpression>
+	</variable>
+	<variable class="java.lang.String" name="DateFormat" resetType="None">
+		<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Prevent"/>
+	</title>
+	<pageHeader>
+		<band splitType="Prevent"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Prevent"/>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Prevent">
+			<printWhenExpression><![CDATA[new Boolean($F{QTY}.doubleValue() > 0 && $F{QTY} != null)]]></printWhenExpression>
+			<textField hyperlinkType="Reference" isBlankWhenNull="true" isStretchWithOverflow="true">
+				<reportElement forecolor="#000099" height="14" key="textField" width="150" x="0" y="0"/>
+				<box leftPadding="0" rightPadding="15">
+					<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<bottomPen lineColor="#000000" lineWidth="0.0"/>
+					<rightPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PO# " + $F{PONUM}]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["PONum"]]></anchorNameExpression>
+				<hyperlinkReferenceExpression><![CDATA[$F{PONUM}]]></hyperlinkReferenceExpression>
+			</textField>
+			<textField isBlankWhenNull="true" isStretchWithOverflow="true" pattern="">
+				<reportElement height="14" key="textField" width="65" x="150" y="0"/>
+				<box>
+					<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<bottomPen lineColor="#000000" lineWidth="0.0"/>
+					<rightPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new Double(($F{QTY}.doubleValue() * $F{UOMMULTIPLY}.doubleValue()) / $F{UOMFACTOR}.doubleValue())]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<textField isBlankWhenNull="true" isStretchWithOverflow="true" pattern="">
+				<reportElement height="14" key="textField" width="130" x="215" y="0"/>
+				<box leftPadding="15">
+					<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<bottomPen lineColor="#000000" lineWidth="0.0"/>
+					<rightPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DATESCHEDULEDFULFILLMENT}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{DateFormat}]]></patternExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Prevent"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Prevent"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Prevent"/>
+	</summary>
+</jasperReport>

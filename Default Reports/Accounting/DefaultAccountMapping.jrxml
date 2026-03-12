@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bottomMargin="20" columnWidth="552" leftMargin="30" name="DefaultAccountMapping" pageHeight="792" pageWidth="612" rightMargin="30" topMargin="20" uuid="a10724bb-df66-4016-9539-d92d3754f3f9" whenNoDataType="AllSectionsNoDetail" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter class="java.lang.String" isForPrompting="false" name="REPORTDESCRIPTION">
+		<defaultValueExpression><![CDATA["Prints a listing of Fishbowl accounts and the default account they tie to in QuickBooks."]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT SUBSTRING(sysproperties.syskey FROM 9 FOR 1) AS fbaccount1, SUBSTRING(sysproperties.syskey FROM 10 FOR 100) AS fbaccount2,
+    asaccount.name AS qbaccount, company.name AS company
+
+FROM sysproperties
+    JOIN asaccount ON sysproperties.sysvalue = asaccount.id
+    JOIN company ON company.id = 1
+
+WHERE syskey LIKE 'Acct ID%']]>
+	</queryString>
+	<field class="java.lang.String" name="FBACCOUNT1"/>
+	<field class="java.lang.String" name="FBACCOUNT2"/>
+	<field class="java.lang.String" name="QBACCOUNT"/>
+	<field class="java.lang.String" name="COMPANY"/>
+	<variable class="java.lang.String" name="FBAccount" resetType="None">
+		<variableExpression><![CDATA[$F{FBACCOUNT1}.toUpperCase() + $F{FBACCOUNT2}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="64" splitType="Stretch">
+			<textField isBlankWhenNull="true" isStretchWithOverflow="true">
+				<reportElement height="10" key="textField-1" uuid="be04fa3f-157f-4299-bb30-f899b8ce545c" width="552" x="0" y="54"/>
+				<textElement>
+					<font fontName="Open Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" "]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" isStretchWithOverflow="true" pattern="">
+				<reportElement backcolor="#FFFFFF" forecolor="#000000" height="14" key="textField-2" mode="Transparent" uuid="67275db3-68a9-46de-8880-d5d67618334b" width="552" x="0" y="40"/>
+				<box>
+					<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<bottomPen lineColor="#000000" lineWidth="0.0"/>
+					<rightPen lineColor="#FFFFFF" lineStyle="Solid" lineWidth="0.0"/>
+				</box>
+				<textElement rotation="None" textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Open Sans" isBold="false" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" pdfEncoding="Cp1252" size="10"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" "]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement backcolor="#FFFFFF" forecolor="#000000" height="22" key="staticText-1" mode="Transparent" uuid="42cfa96f-4c4d-4c41-9e32-0fcb1f9bf3c0" width="552" x="0" y="18"/>
+				<box>
+					<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<bottomPen lineColor="#000000" lineWidth="0.0"/>
+					<rightPen lineColor="#FFFFFF" lineStyle="Solid" lineWidth="0.0"/>
+				</box>
+				<textElement rotation="None" textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Open Sans" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" pdfEncoding="Cp1252" size="16"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Default Account Mapping]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true" isStretchWithOverflow="true">
+				<reportElement height="18" key="textField-3" uuid="bdce3b75-1065-430c-b346-b3fc429c863f" width="552" x="0" y="0"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" isBold="true" size="13"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMPANY}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement height="16" key="staticText-2" uuid="f4d3055f-321f-47e0-b05c-84520d43d3f6" width="250" x="0" y="0"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" isBold="true" size="11"/>
+				</textElement>
+				<text><![CDATA[Fishbowl Account]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement height="16" key="staticText-3" uuid="85639608-ffd3-4e94-8e37-a7c09c6c33d5" width="250" x="302" y="0"/>
+				<textElement markup="none" textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" isBold="true" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Account"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement height="1" key="line-1" uuid="dec81793-ff6b-448f-9a19-6ea0243dd1fe" width="552" x="0" y="16"/>
+			</line>
+			<staticText>
+				<reportElement height="16" key="staticText-2" uuid="68aceade-c891-4a3c-a79a-0648aecfb02d" width="52" x="250" y="0"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" isBold="true" size="11"/>
+				</textElement>
+				<text/>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isBlankWhenNull="true" isStretchWithOverflow="true">
+				<reportElement height="14" key="textField-4" uuid="e6eed9a5-2163-497d-98ef-d59fc68bf9be" width="250" x="0" y="0"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{FBAccount}.equals("Non-Inventory") ?
+    "Non-Inventory" :
+    com.evnt.util.Util.addSpacesToCamelBackStr($V{FBAccount})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" isStretchWithOverflow="true">
+				<reportElement height="14" key="textField-5" uuid="38a4f8a2-bdb0-45b5-bac9-a74a1e582cf5" width="250" x="302" y="0"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{QBACCOUNT}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement forecolor="#CCCCCC" height="1" key="line-4" uuid="a3819fbd-3638-4e2d-8c35-417fec1e0412" width="552" x="0" y="14"/>
+			</line>
+			<textField isBlankWhenNull="true" isStretchWithOverflow="true">
+				<reportElement height="14" key="textField-4" uuid="16769058-22e4-4343-8206-e87ce4042a24" width="52" x="250" y="0"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="14" splitType="Stretch">
+			<textField evaluationTime="Report" isBlankWhenNull="true" pattern="">
+				<reportElement backcolor="#FFFFFF" forecolor="#000000" height="14" key="textField" mode="Transparent" uuid="8375bfe1-857e-4a2c-9298-9c3ba22d5851" width="36" x="514" y="0"/>
+				<box>
+					<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<bottomPen lineColor="#000000" lineWidth="0.0"/>
+					<rightPen lineColor="#FFFFFF" lineStyle="Solid" lineWidth="0.0"/>
+				</box>
+				<textElement rotation="None" textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" pattern="">
+				<reportElement backcolor="#FFFFFF" forecolor="#000000" height="14" key="textField" mode="Transparent" uuid="c15beea6-7022-474c-ba7e-63e1b2ee31a0" width="183" x="331" y="0"/>
+				<box>
+					<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<bottomPen lineColor="#000000" lineWidth="0.0"/>
+					<rightPen lineColor="#FFFFFF" lineStyle="Solid" lineWidth="0.0"/>
+				</box>
+				<textElement rotation="None" textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" pattern="">
+				<reportElement backcolor="#FFFFFF" forecolor="#000000" height="14" key="textField" mode="Transparent" uuid="fed7b706-1e05-4bfd-9d69-fb0afd774bfd" width="331" x="0" y="0"/>
+				<box>
+					<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<bottomPen lineColor="#000000" lineWidth="0.0"/>
+					<rightPen lineColor="#FFFFFF" lineStyle="Solid" lineWidth="0.0"/>
+				</box>
+				<textElement rotation="None" textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.LONG)).format(new Date())]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

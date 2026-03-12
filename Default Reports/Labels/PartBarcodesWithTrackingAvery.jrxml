@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PartBarcodesWithTrackingAvery" columnCount="3" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="194" leftMargin="14" rightMargin="14" topMargin="36" bottomMargin="36" uuid="80ac0c55-778a-43ea-bb40-55e0e93c4374">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5026296018031553"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="ireport.callouts" value="##Wed Oct 18 14:45:43 MDT 2017"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="default" isDefault="true" fontName="SansSerif" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="18" fontName="SansSerif" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<parameter name="REPORTDESCRIPTION" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Prints part barcodes on Avery 8160 paper. One label will print for each primary part tracking number (or quantity if no tracking exists) from a specific location."]]></defaultValueExpression>
+	</parameter>
+	<parameter name="StartAtLabel" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="QuantityPerPartTrackingOverride" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
+	</parameter>
+	<parameter name="partNum" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="locationID" class="java.lang.String">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[CALL CREATELIST($P!{StartAtLabel} - 1, 'CL');
+
+SELECT distinct part.num, CAST(sum(tag.qty) as unsigned) as locationqty, tag.locationid, parttracking.typeid as serialnum
+From part
+    JOIN tag on part.id = tag.partid
+    JOIN location ON tag.locationid = location.id
+    LEFT JOIN parttotracking on part.id = parttotracking.partid and parttotracking.primaryflag = 1
+    LEFT JOIN parttracking on parttotracking.parttrackingid = parttracking.id
+WHERE part.id > 0
+    AND part.activeflag = 1
+    AND part.typeid = 10
+    AND UPPER(part.num) LIKE UPPER($P{partNum})
+    AND location.id LIKE $P{locationID}
+group by 1, 3, 4
+
+UNION ALL
+
+SELECT 0,0,0,0
+FROM TMP_CL
+ORDER BY 1]]>
+	</queryString>
+	<field name="NUM" class="java.lang.String"/>
+	<field name="LOCATIONQTY" class="java.lang.Integer"/>
+	<field name="LOCATIONID" class="java.lang.Integer"/>
+	<field name="SERIALNUM" class="java.lang.Integer"/>
+	<variable name="DateFormat" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+	</variable>
+	<variable name="PriceDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_PRICE")]]></variableExpression>
+	</variable>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<variable name="CostDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_COST")]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="72" splitType="Stretch">
+			<subreport isUsingCache="true">
+				<reportElement key="subreport" x="0" y="0" width="194" height="72" uuid="aa02c462-84a4-47b6-b9ed-8ff18f08b483"/>
+				<subreportParameter name="Count">
+					<subreportParameterExpression><![CDATA[$F{SERIALNUM} != null  && $P{QuantityPerPartTrackingOverride} == 0 ? 1 : ($P{QuantityPerPartTrackingOverride} == 0 ? $F{LOCATIONQTY} : $P{QuantityPerPartTrackingOverride})]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="locationID">
+					<subreportParameterExpression><![CDATA[$P{locationID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="partNum">
+					<subreportParameterExpression><![CDATA[$F{NUM}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["../Labels/subPartBarcodesWithTrackingAvery.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

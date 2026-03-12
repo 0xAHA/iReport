@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PO_Receiving_Label_50x30mm" pageWidth="142" pageHeight="85" columnWidth="142" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a7c8f3e1-2b4d-4c89-b5e6-1d9e8a4f7c2b">
+	<property name="ireport.zoom" value="1.8150000000000073"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="barcode" hAlign="Center" vAlign="Middle"/>
+	<parameter name="poNum" class="java.lang.String">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="partNum" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    po.num AS PONUM,
+    part.num AS PARTNUM,
+    part.description AS PARTDESC,
+    receiptitem.id AS RECEIPTITEMID,
+    receiptitem.qty AS QTY,
+    uom.code AS UOM,
+    COALESCE(
+        trackinginfosn.serialnum,
+        trackingtext.info,
+        DATE_FORMAT(trackingdate.info, '%d/%m/%Y')
+    ) AS TRACKING,
+    COALESCE(
+        parttracking_sn.name,
+        parttracking_text.name,
+        parttracking_date.name
+    ) AS TRACKINGTYPE
+FROM receipt
+JOIN po ON receipt.poid = po.id AND receipt.ordertypeid = 10
+JOIN receiptitem ON receiptitem.receiptid = receipt.id
+JOIN part ON receiptitem.partid = part.id
+LEFT JOIN uom ON receiptitem.uomid = uom.id
+LEFT JOIN trackingtext ON trackingtext.tagid = receiptitem.tagid
+LEFT JOIN parttracking parttracking_text ON parttracking_text.id = trackingtext.parttrackingid
+LEFT JOIN trackinginfo ti_sn ON ti_sn.recordid = receiptitem.id
+    AND ti_sn.tableid = 1259138490
+LEFT JOIN trackinginfosn ON trackinginfosn.trackinginfoid = ti_sn.id
+LEFT JOIN parttracking parttracking_sn ON parttracking_sn.id = ti_sn.parttrackingid
+LEFT JOIN trackingdate ON trackingdate.tagid = receiptitem.tagid
+LEFT JOIN parttracking parttracking_date ON parttracking_date.id = trackingdate.parttrackingid
+WHERE po.num LIKE $P{poNum}
+    AND part.num LIKE $P{partNum}
+ORDER BY part.num, TRACKING]]>
+	</queryString>
+	<field name="PONUM" class="java.lang.String"/>
+	<field name="PARTNUM" class="java.lang.String"/>
+	<field name="PARTDESC" class="java.lang.String"/>
+	<field name="RECEIPTITEMID" class="java.lang.Integer"/>
+	<field name="QTY" class="java.lang.Double"/>
+	<field name="UOM" class="java.lang.String"/>
+	<field name="TRACKING" class="java.lang.String"/>
+	<field name="TRACKINGTYPE" class="java.lang.String"/>
+	<detail>
+		<band height="85" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="2" y="2" width="140" height="14" uuid="e4b5c9d1-7a3f-4e89-b2e9-5f8c3d1a6e2b"/>
+				<textElement>
+					<font fontName="Open Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PARTNUM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2" y="16" width="140" height="14" uuid="c2d8e5f1-9b4a-4c78-a3e6-7d9f1b2c5a8e"/>
+				<textElement>
+					<font fontName="Open Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PARTDESC}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement style="barcode" x="2" y="30" width="140" height="26" uuid="f8a3c7e2-5d9b-4a1f-8e6c-3b7d2f5a9c1e"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128B" drawText="false" checksumRequired="false" barWidth="1" barHeight="35">
+					<jr:codeExpression><![CDATA[$F{PARTNUM}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2" y="57" width="140" height="9" uuid="b5e8d3f2-6a9c-4e1b-7d8f-9c2a5b1e4d7c">
+					<printWhenExpression><![CDATA[$F{TRACKING} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TRACKINGTYPE} + ": " + $F{TRACKING}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="66" width="142" height="1" uuid="e7d2f5a3-9b4c-4e1a-8d6f-2c5a7b9e4d1c"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<componentElement>
+				<reportElement style="barcode" x="2" y="68" width="140" height="15" uuid="b4e7d2f5-8a3c-4e9b-7d1f-6c5a9b2e4d8f">
+					<printWhenExpression><![CDATA[$F{TRACKING} != null]]></printWhenExpression>
+				</reportElement>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128B" drawText="false" checksumRequired="false" barWidth="1" barHeight="15">
+					<jr:codeExpression><![CDATA[$F{TRACKING}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+		</band>
+	</detail>
+</jasperReport>

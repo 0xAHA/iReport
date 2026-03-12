@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ProductBarcodesByReceiptAvery" columnCount="3" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="194" leftMargin="14" rightMargin="14" topMargin="36" bottomMargin="36" uuid="80ac0c55-778a-43ea-bb40-55e0e93c4374">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="default" isDefault="true" fontName="SansSerif" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="18" fontName="SansSerif" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<parameter name="REPORTDESCRIPTION" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Prints Product Barcodes for items received on a specific date. Formatted for Avery 8160 Labels"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowPrice" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Boolean(true)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowDescription" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Boolean(true)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="poNum" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["../Labels/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRange1" class="java.util.Date">
+		<parameterDescription><![CDATA[This Month]]></parameterDescription>
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRange2" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="StartAtLabel" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[CALL CreateList(($P!{StartAtLabel} - 1), 'createlist');
+SELECT po.num AS poNumber, poitem.partid AS partid, receiptitem.qty AS qty, product.num  AS productNumber,
+    uomconversion.factor AS UOMFactor, uomconversion.multiply AS UOMMulti, 1 AS selectOrder
+
+FROM PO
+    LEFT JOIN poitem ON po.id = poitem.poid
+    LEFT JOIN part ON poitem.partid = part.id
+    JOIN product ON (part.id = product.partid)
+    JOIN uom ON (product.uomid = uom.id)
+    LEFT JOIN uomconversion ON ((product.uomid = uomconversion.touomid) AND (poitem.uomid = uomconversion.fromuomid))
+    JOIN receiptitem ON poitem.id = receiptitem.poitemid
+    LEFT JOIN receipt ON receipt.id = receiptitem.receiptid
+
+WHERE UPPER(po.num) LIKE UPPER($P{poNum})
+  AND receiptitem.dateReceived Between $P{dateRange1} and DATE_SUB($P{dateRange2}, INTERVAL 1 SECOND)
+
+UNION ALL
+
+SELECT '' ,null,0,(SELECT product.num FROM product LIMIT 0,1),null,null,0
+FROM tmp_createlist
+
+Order By 7,4,1]]>
+	</queryString>
+	<field name="PONUMBER" class="java.lang.String"/>
+	<field name="PARTID" class="java.lang.Integer"/>
+	<field name="QTY" class="java.lang.Double"/>
+	<field name="PRODUCTNUMBER" class="java.lang.String"/>
+	<field name="UOMFACTOR" class="java.lang.Double"/>
+	<field name="UOMMULTI" class="java.lang.Double"/>
+	<field name="SELECTORDER" class="java.lang.Integer"/>
+	<variable name="CountSub" class="java.lang.Double">
+		<variableExpression><![CDATA[($F{UOMMULTI} != null) ?
+    ($F{UOMMULTI}.intValue() ==1) ?
+        new Double($F{QTY}.doubleValue() * $F{UOMFACTOR}.doubleValue()) :
+        new Double($F{QTY}.doubleValue() / $F{UOMFACTOR}.doubleValue()) :
+    $F{QTY}]]></variableExpression>
+	</variable>
+	<variable name="Count" class="java.lang.Integer">
+		<variableExpression><![CDATA[new Integer($V{CountSub}.intValue())]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="72" splitType="Stretch">
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-1" x="0" y="0" width="194" height="72" uuid="ccd4502c-ba84-40a6-a8d5-72e71f621eb3"/>
+				<subreportParameter name="Count">
+					<subreportParameterExpression><![CDATA[$V{Count}.toString()]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="productNum">
+					<subreportParameterExpression><![CDATA[$F{PRODUCTNUMBER}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="selectOrder">
+					<subreportParameterExpression><![CDATA[$F{SELECTORDER}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ShowPrice">
+					<subreportParameterExpression><![CDATA[$P{ShowPrice}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ShowDescription">
+					<subreportParameterExpression><![CDATA[$P{ShowDescription}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{path} + "subSingleProductBarcodesAvery.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

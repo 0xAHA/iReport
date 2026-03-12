@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CombinedShippingDocument" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d32b3387-ee95-418c-8134-191f1d9b7880">
+	<property name="ireport.zoom" value="0.8264462809917361"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["../SalesOrder/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="module" class="java.lang.Object" isForPrompting="false">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="colShippingTerms" class="java.lang.Boolean">
+		<parameterDescription><![CDATA[Order Shipping Terms]]></parameterDescription>
+		<defaultValueExpression><![CDATA["PropertyNotMultiCurrency"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="colSalesPerson" class="java.lang.Boolean">
+		<parameterDescription><![CDATA[Order Sales Person]]></parameterDescription>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="colPaymentTerms" class="java.lang.Boolean">
+		<parameterDescription><![CDATA[Order Payment Terms]]></parameterDescription>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="colFOBPoint" class="java.lang.Boolean">
+		<parameterDescription><![CDATA[Order FOB Point]]></parameterDescription>
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="colShipVia" class="java.lang.Boolean">
+		<parameterDescription><![CDATA[Order Carrier]]></parameterDescription>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="colReqShipDate" class="java.lang.Boolean">
+		<parameterDescription><![CDATA[Order Requested Ship Date]]></parameterDescription>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="colItemLineNumber" class="java.lang.Boolean">
+		<parameterDescription><![CDATA[Item Line Number]]></parameterDescription>
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="colType" class="java.lang.Boolean">
+		<parameterDescription><![CDATA[Item Type]]></parameterDescription>
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="colItemNumberAndDescription" class="java.lang.Boolean">
+		<parameterDescription><![CDATA[Item Number And Description]]></parameterDescription>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="colUnitPrice" class="java.lang.Boolean">
+		<parameterDescription><![CDATA[Item Unit Price]]></parameterDescription>
+		<defaultValueExpression><![CDATA["PropertyNotMulti Currency"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="colQtyShipped" class="java.lang.Boolean">
+		<parameterDescription><![CDATA[Item Qty Shipped]]></parameterDescription>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="colExtendedPrice" class="java.lang.Boolean">
+		<parameterDescription><![CDATA[Item Extended Price]]></parameterDescription>
+		<defaultValueExpression><![CDATA["PropertyNotMulti Currency"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cbOrderNumber" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[SO,SO Number,PO,Customer PO Number,Ship,Ship Number]]></parameterDescription>
+		<defaultValueExpression><![CDATA["Ship"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="colCurrencyUnitPrice" class="java.lang.Boolean" isForPrompting="false">
+		<property name="show" value="Multi Currency"/>
+		<parameterDescription><![CDATA[Item Currency Unit Price]]></parameterDescription>
+		<defaultValueExpression><![CDATA["PropertyMulti Currency"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="colCurrencyExtendedPrice" class="java.lang.Boolean" isForPrompting="false">
+		<property name="show" value="Multi Currency"/>
+		<parameterDescription><![CDATA[Item Currency Extended Price]]></parameterDescription>
+		<defaultValueExpression><![CDATA["PropertyMulti Currency"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="colOrderCurrency" class="java.lang.Boolean" isForPrompting="false">
+		<property name="show" value="Multi Currency"/>
+		<parameterDescription><![CDATA[Order Currency]]></parameterDescription>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="colOrderCurrencyRate" class="java.lang.Boolean" isForPrompting="false">
+		<property name="show" value="Multi Currency"/>
+		<parameterDescription><![CDATA[Order Currency Rate]]></parameterDescription>
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="carrier" class="java.lang.String">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path_1" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["../Custom/"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT Distinct
+Ship.Id as ShipId,
+CASE WHEN CustomFieldByName(Customer.CustomFields,'Shipping Document') = 'Delivery Docket & Invoice' THEN '1'
+       WHEN CustomFieldByName(Customer.CustomFields,'Shipping Document') = 'Delivery Docket' THEN '2'
+        WHEN CustomFieldByName(Customer.CustomFields,'Shipping Document') = 'Tax Invoice' THEN '3'
+         WHEN CustomFieldByName(Customer.CustomFields,'Shipping Document') = 'None' THEN '4'
+          ELSE '1' END as PW
+
+FROM Ship
+Join Carrier on Carrier.Id = Ship.CarrierId
+INNER JOIN ShipItem ON Ship.id = ShipItem.shipId
+Left Join So on So.Id = Ship.SoId
+Left join Customer on Customer.Id = So.CustomerId
+Where Ship.StatusId = 20
+and Carrier.Name LIKE $P{carrier}]]>
+	</queryString>
+	<field name="ShipId" class="java.lang.Integer"/>
+	<field name="PW" class="java.lang.String"/>
+	<title>
+		<band height="108">
+			<subreport runToBottom="true">
+				<reportElement x="0" y="0" width="595" height="108" uuid="62ff8dbb-184f-4113-95cd-0ba51f69a1eb">
+					<printWhenExpression><![CDATA[$F{PW}.equals("1") || $F{PW}.equals("3")]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="carrier">
+					<subreportParameterExpression><![CDATA[$P{carrier}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{path_1} + "ShippingSummary.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<detail>
+		<band height="108" splitType="Stretch">
+			<printWhenExpression><![CDATA[$F{PW}.equals("1") || $F{PW}.equals("3")]]></printWhenExpression>
+			<subreport runToBottom="true">
+				<reportElement x="0" y="0" width="595" height="108" uuid="9d66f053-b920-4641-81f8-1fd9b03fe505">
+					<printWhenExpression><![CDATA[$F{PW}.equals("1") || $F{PW}.equals("3")]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="colShippingTerms">
+					<subreportParameterExpression><![CDATA[$P{colShippingTerms}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="colOrderCurrencyRate">
+					<subreportParameterExpression><![CDATA[$P{colOrderCurrencyRate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="shipID">
+					<subreportParameterExpression><![CDATA[$F{ShipId}.toString()]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="module">
+					<subreportParameterExpression><![CDATA[$P{module}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="colPaymentTerms">
+					<subreportParameterExpression><![CDATA[$P{colPaymentTerms}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="colCurrencyExtendedPrice">
+					<subreportParameterExpression><![CDATA[$P{colCurrencyExtendedPrice}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="colExtendedPrice">
+					<subreportParameterExpression><![CDATA[$P{colExtendedPrice}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="colQtyShipped">
+					<subreportParameterExpression><![CDATA[$P{colQtyShipped}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="colFOBPoint">
+					<subreportParameterExpression><![CDATA[$P{colFOBPoint}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="colSalesPerson">
+					<subreportParameterExpression><![CDATA[$P{colSalesPerson}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="colItemLineNumber">
+					<subreportParameterExpression><![CDATA[$P{colItemLineNumber}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="colItemNumberAndDescription">
+					<subreportParameterExpression><![CDATA[$P{colItemNumberAndDescription}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="colUnitPrice">
+					<subreportParameterExpression><![CDATA[$P{colUnitPrice}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="colShipVia">
+					<subreportParameterExpression><![CDATA[$P{colShipVia}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cbOrderNumber">
+					<subreportParameterExpression><![CDATA[$P{cbOrderNumber}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="colCurrencyUnitPrice">
+					<subreportParameterExpression><![CDATA[$P{colCurrencyUnitPrice}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="colType">
+					<subreportParameterExpression><![CDATA[$P{colType}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="path">
+					<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="colReqShipDate">
+					<subreportParameterExpression><![CDATA[$P{colReqShipDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="colOrderCurrency">
+					<subreportParameterExpression><![CDATA[$P{colOrderCurrency}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{path_1} + "ShippingInvoice_Custom.jasper"
+]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="108">
+			<printWhenExpression><![CDATA[$F{PW}.equals("1") || $F{PW}.equals("2")]]></printWhenExpression>
+			<subreport runToBottom="true">
+				<reportElement x="0" y="0" width="595" height="108" uuid="80aaa445-a04c-4d93-a5e4-4c89f7781b81">
+					<printWhenExpression><![CDATA[$F{PW}.equals("1") || $F{PW}.equals("2")]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="shipID">
+					<subreportParameterExpression><![CDATA[$F{ShipId}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="module">
+					<subreportParameterExpression><![CDATA[$P{module}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="path">
+					<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{path_1} + "PackingList_Custom.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

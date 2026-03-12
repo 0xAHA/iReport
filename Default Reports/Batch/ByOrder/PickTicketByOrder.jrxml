@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PickTicket" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="892be6b4-9b8b-489a-afa7-d89485933fa7">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="ireport.callouts" value="##Mon Jun 11 11:12:42 MDT 2018\ncallouts.1.text=dallen.baldwin\nrevision 6/11/18 \ncallouts.1.bounds=69,20,150,75"/>
+	<parameter name="orderNumbersPickNumbers" class="java.lang.String">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="module" class="java.lang.Object" isForPrompting="false">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cbShowBarcodeAs" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Order,Order Num,Pick,Pick Num]]></parameterDescription>
+		<defaultValueExpression><![CDATA["Order"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowAddress" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Boolean(false)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowCountry" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Boolean(false)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORTDESCRIPTION" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Batch By Order - A list of Parts to Pick, where to get them, and where to put them after picking."]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowBarcode" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckShowCommitted" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[30,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Show SO Item Description" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cbPrimarySortBy" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[mainlocation.sortorder,Location Sort Order,mainlocation.name,Location Name]]></parameterDescription>
+		<defaultValueExpression><![CDATA["Location Name"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cbSecondarySortBy" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[1,Line Item,part.num,Part]]></parameterDescription>
+		<defaultValueExpression><![CDATA["Line Item"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ReportTitle" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT
+    pick.num AS PICKNUM
+
+FROM
+    pick
+
+WHERE pick.num IN ($P!{orderNumbersPickNumbers})
+
+ORDER BY pick.num]]>
+	</queryString>
+	<field name="PICKNUM" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<subreport runToBottom="true">
+				<reportElement x="0" y="0" width="612" height="14" isPrintInFirstWholeBand="true" uuid="409cd7b4-4896-4bcd-a0a9-45cdf53d8e9e"/>
+				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+				<subreportParameter name="Show SO Item Description">
+					<subreportParameterExpression><![CDATA[$P{Show SO Item Description}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ShowAddress">
+					<subreportParameterExpression><![CDATA[$P{ShowAddress}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cbSecondarySortBy">
+					<subreportParameterExpression><![CDATA[$P{cbSecondarySortBy}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="module">
+					<subreportParameterExpression><![CDATA[$P{module}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cbShowBarcodeAs">
+					<subreportParameterExpression><![CDATA[$P{cbShowBarcodeAs}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ckShowCommitted">
+					<subreportParameterExpression><![CDATA[$P{ckShowCommitted}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cbPrimarySortBy">
+					<subreportParameterExpression><![CDATA[$P{cbPrimarySortBy}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="pickNum">
+					<subreportParameterExpression><![CDATA[$F{PICKNUM}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ShowCountry">
+					<subreportParameterExpression><![CDATA[$P{ShowCountry}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ShowBarcode">
+					<subreportParameterExpression><![CDATA[$P{ShowBarcode}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["../Picking/PickTicket.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

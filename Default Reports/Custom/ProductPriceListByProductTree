@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Product Price List by Product Tree" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7008eef0-629d-433f-9352-35d0c2526557">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="productTree1" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="productTree2" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowCost" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowWholesale" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowSell" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowVendor" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+producttree.name AS PRODUCT_TREE_NAME,
+product.num AS PRODUCT_CODE,
+product.description AS PRODUCT_DESCRIPTION,
+productUOM.code AS PACKAGING,
+vendor.name AS VENDOR,
+vendorparts.lastcost AS VENDOR_COST_EXC,
+IF(partTaxRate.rate is null, vendorparts.lastcost, vendorparts.lastcost + (vendorparts.lastcost * partTaxRate.rate)) AS VENDOR_COST_INC,
+partTaxRate.code AS PURCHASE_TAX_CODE,
+part.stdcost AS WHOLESALE_PRICE_EXC,
+part.stdcost + (part.stdcost * productTaxRate.rate) AS WHOLESALE_PRICE_INC,
+product.price AS SELL_PRICE_EXC,
+product.price + (product.price * productTaxRate.rate) AS SELL_PRICE_INC,
+productTaxRate.code AS SELL_TAX_CODE,
+packagingSize.info AS packagingSize
+
+FROM product
+Left Join ProductToTree On ProductToTree.ProductId = Product.Id
+Left Join ProductTree on ProductTree.Id = ProductToTree.ProductTreeId
+LEFT JOIN part ON part.id = product.partid
+LEFT JOIN partcost ON partcost.partid = part.id
+LEFT JOIN vendorparts ON vendorparts.partid = part.id
+LEFT JOIN vendor ON vendor.id = vendorparts.vendorid
+LEFT JOIN taxrate AS productTaxRate ON productTaxRate.id = product.taxid
+LEFT JOIN taxrate AS partTaxRate ON partTaxRate.id = part.taxid
+LEFT JOIN uom AS productUOM ON productUOM.id = product.uomid
+LEFT JOIN customvarcharlong AS packagingSize ON packagingSize.recordid = product.id AND packagingSize.customfieldid = 13
+
+
+WHERE part.id > 0
+AND part.activeflag = 1
+AND product.activeflag = 1
+AND part.typeid = 10
+AND ((COALESCE(producttree.id,0) IN ($P!{productTree1})) OR ((COALESCE(producttree.id,0) LIKE $P{productTree2})))
+
+ORDER BY producttree.name, product.num]]>
+	</queryString>
+	<field name="PRODUCT_TREE_NAME" class="java.lang.String"/>
+	<field name="PRODUCT_CODE" class="java.lang.String"/>
+	<field name="PRODUCT_DESCRIPTION" class="java.lang.String"/>
+	<field name="PACKAGING" class="java.lang.String"/>
+	<field name="VENDOR" class="java.lang.String"/>
+	<field name="VENDOR_COST_EXC" class="java.math.BigDecimal"/>
+	<field name="VENDOR_COST_INC" class="java.lang.Double"/>
+	<field name="PURCHASE_TAX_CODE" class="java.lang.String"/>
+	<field name="WHOLESALE_PRICE_EXC" class="java.math.BigDecimal"/>
+	<field name="WHOLESALE_PRICE_INC" class="java.lang.Double"/>
+	<field name="SELL_PRICE_EXC" class="java.math.BigDecimal"/>
+	<field name="SELL_PRICE_INC" class="java.lang.Double"/>
+	<field name="SELL_TAX_CODE" class="java.lang.String"/>
+	<field name="packagingSize" class="java.lang.String"/>
+	<variable name="PriceDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_PRICE")]]></variableExpression>
+	</variable>
+	<group name="PT">
+		<groupExpression><![CDATA[$F{PRODUCT_TREE_NAME}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<textField>
+					<reportElement x="0" y="0" width="100" height="20" uuid="408a1ff0-5844-4f88-930a-7eb22e5c816e"/>
+					<textElement verticalAlignment="Bottom">
+						<font size="10" isBold="true" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PRODUCT_TREE_NAME} == null ? "Not in Product Tree" : $F{PRODUCT_TREE_NAME}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="11"/>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="22" splitType="Stretch">
+			<staticText>
+				<reportElement key="Title" mode="Transparent" x="0" y="0" width="802" height="22" forecolor="#000000" backcolor="#FFFFFF" uuid="bd377786-72df-4d98-910f-877d11e81651"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="16" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Product Price List by Product Tree]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="33" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="802" height="33" uuid="66ab3952-c7d5-41e3-8364-d371dedd018e"/>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="33" uuid="fb1c134b-e336-4fe1-a29d-16ee53cde53e"/>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[CODE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="0" width="110" height="33" uuid="915f4618-0fca-4ece-900f-1ac147a71ac0"/>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[DESCRIPTION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="265" y="0" width="47" height="33" uuid="90fdf1f0-bb49-40ad-a224-d6ae596cec3f"/>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[PACK
+SIZE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="312" y="0" width="80" height="33" uuid="20af5225-840a-4951-b31c-2848ee3d6dd9">
+					<printWhenExpression><![CDATA[$P{ShowVendor}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[VENDOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="392" y="0" width="55" height="33" uuid="9b869780-3d62-4b0d-aee7-40c4484222de">
+					<printWhenExpression><![CDATA[$P{ShowCost}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[VENDOR
+COST EXC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="447" y="0" width="55" height="33" uuid="bd1cefa3-8bf0-4de7-9bd8-6eb493018a48">
+					<printWhenExpression><![CDATA[$P{ShowCost}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[VENDOR
+COST INC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="502" y="0" width="40" height="33" uuid="09bb1b73-99fb-4fcd-af98-8e33274fe6d9">
+					<printWhenExpression><![CDATA[$P{ShowCost}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[BUY
+TAX
+CODE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="542" y="0" width="55" height="33" uuid="f4976f3f-cbc6-4517-a992-d208d6f6d3c9">
+					<printWhenExpression><![CDATA[$P{ShowWholesale}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[WHOLESALE
+PRICE EXC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="597" y="0" width="55" height="33" uuid="31e1dba3-8c02-41b9-b54d-a88303b7fcaa">
+					<printWhenExpression><![CDATA[$P{ShowWholesale}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[WHOLESALE
+PRICE INC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="652" y="0" width="55" height="33" uuid="d9d7d60a-6a7c-4182-b4b1-b94f69f0c2a7">
+					<printWhenExpression><![CDATA[$P{ShowSell}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[SELL
+PRICE EXC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="707" y="0" width="55" height="33" uuid="fc338cea-5002-4629-993e-07e87f672d9f">
+					<printWhenExpression><![CDATA[$P{ShowSell}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[SELL
+PRICE INC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="762" y="0" width="40" height="33" uuid="f173f189-0e11-4388-9d69-cc189eb0f021">
+					<printWhenExpression><![CDATA[$P{ShowSell} || $P{ShowWholesale}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[SELL
+TAX
+CODE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="210" y="0" width="55" height="33" uuid="aa29d9fd-c47d-4dbd-be2e-3e98400b9df2"/>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[PACKAGING]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="802" height="20" uuid="932103f6-80b1-434f-8632-2f2221f39816"/>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="100" height="20" uuid="c17c2315-099e-484a-8d8e-dbf751f71ddd"/>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRODUCT_CODE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="100" y="0" width="110" height="20" uuid="eefaacca-e97f-4251-b76c-97b3056c4db0"/>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRODUCT_DESCRIPTION}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="265" y="0" width="47" height="20" uuid="c3c7e6d7-0d43-423d-a3c9-23f9ffbfd5ae"/>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{packagingSize}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="312" y="0" width="80" height="20" uuid="30062147-9038-4f93-a340-363811238eca">
+					<printWhenExpression><![CDATA[$P{ShowVendor}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VENDOR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="392" y="0" width="55" height="20" uuid="b097c16d-b91e-4823-80c8-5c3d5db8fdb5">
+					<printWhenExpression><![CDATA[$P{ShowCost}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VENDOR_COST_EXC}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{PriceDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="447" y="0" width="55" height="20" uuid="2933ddf0-88d5-4300-9f74-6ef8426a7d0c">
+					<printWhenExpression><![CDATA[$P{ShowCost}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VENDOR_COST_INC}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{PriceDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="502" y="0" width="40" height="20" uuid="9e7b9a0d-371e-4a12-8169-a1232f52d5b6">
+					<printWhenExpression><![CDATA[$P{ShowCost}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PURCHASE_TAX_CODE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="542" y="0" width="55" height="20" uuid="de8cd876-d613-47e7-a091-122943dc77cf">
+					<printWhenExpression><![CDATA[$P{ShowWholesale}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{WHOLESALE_PRICE_EXC}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{PriceDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="597" y="0" width="55" height="20" uuid="0ac93877-8980-439c-8fb6-19557ca110bd">
+					<printWhenExpression><![CDATA[$P{ShowWholesale}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{WHOLESALE_PRICE_INC}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{PriceDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="652" y="0" width="55" height="20" uuid="85439d5b-e834-47fb-8047-b00897c5de0f">
+					<printWhenExpression><![CDATA[$P{ShowSell}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SELL_PRICE_EXC}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{PriceDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="707" y="0" width="55" height="20" uuid="94b732c1-39f6-48f3-9719-f426a5bc8403">
+					<printWhenExpression><![CDATA[$P{ShowSell}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SELL_PRICE_INC}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{PriceDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="762" y="0" width="40" height="20" uuid="61ab81a2-fca7-4f5a-bf6f-1e5f16688381">
+					<printWhenExpression><![CDATA[$P{ShowSell} || $P{ShowWholesale}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SELL_TAX_CODE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="210" y="0" width="55" height="20" uuid="5d094204-bd98-489a-b97c-9c79fa41c7d3"/>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PACKAGING}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

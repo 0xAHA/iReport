@@ -1,0 +1,1256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Sales Production Demand" pageWidth="792" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="732" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="fd605475-f775-4ed9-ab31-e0e83901c99a">
+	<property name="ireport.callouts" value="##Wed Mar 25 15:35:47 MDT 2015\ncallouts.3.pins=619,208;\ncallouts.3.text=table 2 Finished Goods summary\n\ncallouts.2.pins=266,203;\ncallouts.2.text=table 3 Raw Goods Summary.\ncallouts.1.text=Version 1 \n3/20/15\ncallouts.3.bounds=597,267,150,75\ncallouts.2.bounds=198,256,150,75\ncallouts.1.bounds=-7,352,150,75"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Short Summary" uuid="78c6e0e3-c9c6-4706-ab23-a81655ba3323">
+		<parameter name="dateRange1" class="java.util.Date" isForPrompting="false">
+			<parameterDescription><![CDATA[This Month]]></parameterDescription>
+			<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+		</parameter>
+		<parameter name="dateRange2" class="java.util.Date" isForPrompting="false">
+			<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+		</parameter>
+		<parameter name="customerID" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="partNum" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="soNum" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="locationGroupID" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA["-1"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="suggestedStart" class="java.util.Date" isForPrompting="false"/>
+		<queryString>
+			<![CDATA[SELECT
+    part.num as partNum,
+    coalesce(tag.qty,0) as onHand,
+    sum(soitem.qtytofulfill) as qtyOrdered,
+    coalesce(tag.qty,0) - sum(soitem.qtytofulfill) as qtyShort,
+    date_sub(so.datefirstship, interval coalesce(bom.estimatedduration,0) minute) as suggestedStart
+
+FROM soitem
+
+    INNER JOIN company ON company.id = 1
+    INNER JOIN so ON soitem.soid = so.id
+    INNER JOIN customer ON so.customerid = customer.id
+    INNER JOIN locationgroup ON so.locationgroupid = locationgroup.id
+
+    INNER JOIN product ON soitem.productid = product.id
+    INNER JOIN uom ON soitem.uomid = uom.id
+    LEFT OUTER JOIN part ON product.partid = part.id
+    LEFT OUTER JOIN bomitem ON part.id = bomitem.partid AND bomitem.typeid = 10 AND bomitem.bomid = part.defaultbomid
+    LEFT OUTER JOIN bom ON bomitem.bomid = bom.id
+    LEFT JOIN (SELECT SUM(tag.qty) AS QTY, tag.partid
+                FROM tag
+                JOIN location ON tag.locationid = location.id
+                GROUP BY 2) AS Tag ON part.id = tag.partid
+
+WHERE so.statusid < 60
+  AND so.datecreated BETWEEN $P{dateRange1} AND date_sub($P{dateRange2}, interval 1 second)
+  AND part.num LIKE '$P!{partNum}'
+  AND so.num LIKE '$P!{soNum}'
+  AND locationgroup.id IN ($P!{locationGroupID})
+  AND COALESCE(customer.id,0) LIKE '$P!{customerID}'
+  AND bom.id is not null
+
+GROUP BY part.id
+
+HAVING qtyShort < 0
+
+ORDER BY part.num]]>
+		</queryString>
+		<field name="partNum" class="java.lang.String"/>
+		<field name="onHand" class="java.lang.Double"/>
+		<field name="qtyOrdered" class="java.lang.Double">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="qtyShort" class="java.lang.Double"/>
+		<field name="suggestedStart" class="java.sql.Timestamp"/>
+		<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+			<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+		</variable>
+		<variable name="CostDecimal" class="java.lang.String" resetType="None">
+			<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_COST")]]></variableExpression>
+		</variable>
+		<variable name="DateFormat" class="java.lang.String" resetType="None">
+			<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+		</variable>
+	</subDataset>
+	<subDataset name="Raw Goods" uuid="08f988d4-623b-4928-a21e-035cc68eb515">
+		<parameter name="bomID" class="java.lang.String" isForPrompting="false"/>
+		<parameter name="lgid" class="java.lang.Integer" isForPrompting="false"/>
+		<queryString>
+			<![CDATA[select
+    if(coalesce(stage4items.typeid, stage3items.typeid, stage2items.typeid) = 10,
+    null,
+    coalesce(stage4items.id, stage3items.id, stage2items.id)) as stageid,
+    stage4items.id as stage4id,
+    stage3items.id as stage3id,
+    stage2items.id as stage2id,
+
+    coalesce(stage4part.num,stage3part.num,stage2part.num,part.num) as partNumber,
+    coalesce(stage4part.description,stage3part.description,stage2part.description,part.description) as partDescription,
+    coalesce(stage4items.quantity,stage3items.quantity,stage2items.quantity,bomitem.quantity) as needed,
+    case
+        when stage4items.id is not null then coalesce(stage4tag.qty,0)
+        when stage3items.id is not null then coalesce(stage3tag.qty,0)
+        when stage2items.id is not null then coalesce(stage2tag.qty,0)
+        else coalesce(tag.qty,0)
+    end as onHand,
+    uom.code as partUOM
+
+from bomitem
+JOIN bom on bom.id = bomitem.bomid
+JOIN part on bomitem.partid = part.id
+JOIN uom on part.uomid = uom.id
+LEFT JOIN uomconversion ON (uomconversion.touomid = part.uomid AND uomconversion.fromuomid = bomitem.uomid)
+LEFT JOIN (SELECT SUM(tag.qty) as qty, tag.partid, location.locationgroupid AS locationgroupid
+               from tag
+	     JOIN location ON tag.locationid = location.id
+               group by 2,3) as tag on bomitem.partid = tag.partid and tag.locationgroupid = $P!{lgid}
+
+left join bomitem stage2items on stage2items.bomid = bomitem.stagebomid
+left join part stage2part on stage2part.id = stage2items.partid
+LEFT JOIN (SELECT SUM(tag.qty) as qty, tag.partid, location.locationgroupid AS locationgroupid
+               from tag
+	     JOIN location ON tag.locationid = location.id
+               group by 2,3) as stage2tag on stage2items.partid = stage2tag.partid and stage2tag.locationgroupid = $P!{lgid}
+
+left join bomitem stage3items on stage3items.bomid = stage2items.stagebomid
+left join part stage3part on stage3part.id = stage3items.partid
+LEFT JOIN (SELECT SUM(tag.qty) as qty, tag.partid, location.locationgroupid AS locationgroupid
+               from tag
+	     JOIN location ON tag.locationid = location.id
+               group by 2,3) as stage3tag on stage3items.partid = stage3tag.partid and stage3tag.locationgroupid = $P!{lgid}
+
+left join bomitem stage4items on stage4items.bomid = stage3items.stagebomid
+left join part stage4part on stage4part.id = stage4items.partid
+LEFT JOIN (SELECT SUM(tag.qty) as qty, tag.partid, location.locationgroupid AS locationgroupid
+               from tag
+	     JOIN location ON tag.locationid = location.id
+               group by 2,3) as stage4tag on stage4items.partid = stage4tag.partid and stage4tag.locationgroupid = $P!{lgid}
+
+where bomitem.typeid not in (10,31)
+AND bom.id = $P!{bomID}
+AND part.typeid = 10
+AND coalesce(stage2part.typeid,10) = 10
+AND coalesce(stage3part.typeid,10) = 10
+AND coalesce(stage4part.typeid,10) = 10
+
+group by stage4items.id, stage3items.id, stage2items.id, bomitem.id
+order by bomitem.sortidconfig, stage2items.sortidconfig, stage3items.sortidconfig, stage4items.sortidconfig, stageid]]>
+		</queryString>
+		<field name="partNumber" class="java.lang.String"/>
+		<field name="partDescription" class="java.lang.String"/>
+		<field name="needed" class="java.lang.Double"/>
+		<field name="onHand" class="java.lang.Double"/>
+		<field name="partUOM" class="java.lang.String"/>
+		<field name="stageid" class="java.lang.Integer"/>
+		<field name="stage4id" class="java.lang.Integer"/>
+		<field name="stage3id" class="java.lang.Integer"/>
+		<field name="stage2id" class="java.lang.Integer"/>
+		<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+			<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+		</variable>
+		<variable name="DateFormat" class="java.lang.String" resetType="None">
+			<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+		</variable>
+		<variable name="totalNeeded" class="java.lang.Double" calculation="Sum">
+			<variableExpression><![CDATA[$F{needed}]]></variableExpression>
+		</variable>
+	</subDataset>
+	<subDataset name="RawGoodsShort" uuid="3d777595-400e-4336-9e84-50f96895a5a0">
+		<parameter name="locationGroupID" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA["-1"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="bomList" class="java.lang.String" isForPrompting="false"/>
+		<parameter name="dateRange1" class="java.util.Date" isForPrompting="false">
+			<parameterDescription><![CDATA[This Month]]></parameterDescription>
+			<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+		</parameter>
+		<parameter name="dateRange2" class="java.util.Date" isForPrompting="false">
+			<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+		</parameter>
+		<parameter name="customerID" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="partNum" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="soNum" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select distinct
+    if(coalesce(stage4items.typeid, stage3items.typeid, stage2items.typeid) = 10,
+    null,
+    coalesce(stage4items.id, stage3items.id, stage2items.id)) as stageid,
+    stage4items.id as stage4id,
+    stage3items.id as stage3id,
+    stage2items.id as stage2id,
+
+    coalesce(stage4part.num,stage3part.num,stage2part.num,part.num) as partNumber,
+    coalesce(stage4part.description,stage3part.description,stage2part.description,part.description) as partDescription,
+    coalesce(stage4items.quantity,stage3items.quantity,stage2items.quantity,bomitem.quantity) as needed,
+    case
+        when stage4items.id is not null then coalesce(stage4tag.qty,0)
+        when stage3items.id is not null then coalesce(stage3tag.qty,0)
+        when stage2items.id is not null then coalesce(stage2tag.qty,0)
+        else coalesce(tag.qty,0)
+    end as onHand,
+    uom.code as partUOM,
+    (SELECT
+            min(so.datefirstship)
+
+        FROM soitem
+
+            INNER JOIN so ON soitem.soid = so.id
+            INNER JOIN customer ON so.customerid = customer.id
+            INNER JOIN locationgroup ON so.locationgroupid = locationgroup.id
+
+            INNER JOIN product ON soitem.productid = product.id
+            INNER JOIN uom ON soitem.uomid = uom.id
+            LEFT OUTER JOIN part tempPart ON product.partid = tempPart.id
+            LEFT OUTER JOIN bomitem ON tempPart.id = bomitem.partid AND bomitem.typeid = 10 AND bomitem.bomid = tempPart.defaultbomid
+            LEFT OUTER JOIN bom ON bomitem.bomid = bom.id
+            LEFT JOIN (SELECT SUM(tag.qty) AS QTY, tag.partid, locationgroup.id AS locationGroupId
+                        FROM tag
+                        JOIN location ON tag.locationid = location.id
+                        JOIN locationgroup ON location.locationgroupid = locationgroup.id
+                        GROUP BY 2,3) AS Tag ON tempPart.id = tag.partid AND so.locationgroupid = tag.locationgroupid
+
+        WHERE so.statusid < 60
+        AND COALESCE(tag.qty,0) - soitem.qtytofulfill < 0
+        AND so.datecreated BETWEEN $P{dateRange1} AND date_sub($P{dateRange2}, interval 1 second)
+        AND tempPart.num LIKE '$P!{partNum}'
+        AND so.num LIKE '$P!{soNum}'
+        AND locationgroup.id IN ($P!{locationGroupID})
+        AND COALESCE(customer.id,0) LIKE '$P!{customerID}'
+        AND bom.id is not null
+        AND tempPart.defaultbomid = coalesce(bomitem.bomid,stage2items.bomid,stage3items.bomid,stage4items.bomid)) as startDate,
+        (select sum(estimatedduration) * 60000 from bom where (id = bomitem.bomid OR id = stage4items.bomid OR id = stage3items.bomid OR stage2items.bomid)) as bomTime
+
+from bomitem
+JOIN bom on bom.id = bomitem.bomid
+JOIN part on bomitem.partid = part.id
+JOIN uom on part.uomid = uom.id
+LEFT JOIN uomconversion ON (uomconversion.touomid = part.uomid AND uomconversion.fromuomid = bomitem.uomid)
+LEFT JOIN (SELECT SUM(tag.qty) as qty, tag.partid, location.locationgroupid AS locationgroupid
+               from tag
+	     JOIN location ON tag.locationid = location.id
+               group by 2,3) as tag on bomitem.partid = tag.partid and tag.locationgroupid IN ($P!{locationGroupID})
+
+left join bomitem stage2items on stage2items.bomid = bomitem.stagebomid
+left join part stage2part on stage2part.id = stage2items.partid
+LEFT JOIN (SELECT SUM(tag.qty) as qty, tag.partid, location.locationgroupid AS locationgroupid
+               from tag
+	     JOIN location ON tag.locationid = location.id
+               group by 2,3) as stage2tag on stage2items.partid = stage2tag.partid and stage2tag.locationgroupid IN ($P!{locationGroupID})
+
+left join bomitem stage3items on stage3items.bomid = stage2items.stagebomid
+left join part stage3part on stage3part.id = stage3items.partid
+LEFT JOIN (SELECT SUM(tag.qty) as qty, tag.partid, location.locationgroupid AS locationgroupid
+               from tag
+	     JOIN location ON tag.locationid = location.id
+               group by 2,3) as stage3tag on stage3items.partid = stage3tag.partid and stage3tag.locationgroupid IN ($P!{locationGroupID})
+
+left join bomitem stage4items on stage4items.bomid = stage3items.stagebomid
+left join part stage4part on stage4part.id = stage4items.partid
+LEFT JOIN (SELECT SUM(tag.qty) as qty, tag.partid, location.locationgroupid AS locationgroupid
+               from tag
+	     JOIN location ON tag.locationid = location.id
+               group by 2,3) as stage4tag on stage4items.partid = stage4tag.partid and stage4tag.locationgroupid IN ($P!{locationGroupID})
+
+where bomitem.typeid not in (10,31)
+AND bom.id IN($P!{bomList})
+AND part.typeid = 10
+AND coalesce(stage2part.typeid,10) = 10
+AND coalesce(stage3part.typeid,10) = 10
+AND coalesce(stage4part.typeid,10) = 10
+
+group by stage4items.id, stage3items.id, stage2items.id, bomitem.id
+
+having onhand - needed < 0
+
+order by partNumber,startDate]]>
+		</queryString>
+		<field name="partNumber" class="java.lang.String"/>
+		<field name="partDescription" class="java.lang.String"/>
+		<field name="needed" class="java.lang.Double"/>
+		<field name="onHand" class="java.lang.Double"/>
+		<field name="partUOM" class="java.lang.String"/>
+		<field name="stageid" class="java.lang.Integer"/>
+		<field name="stage4id" class="java.lang.Integer"/>
+		<field name="stage3id" class="java.lang.Integer"/>
+		<field name="stage2id" class="java.lang.Integer"/>
+		<field name="startDate" class="java.sql.Timestamp"/>
+		<field name="bomTime" class="java.lang.Double"/>
+		<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+			<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+		</variable>
+		<variable name="DateFormat" class="java.lang.String" resetType="None">
+			<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+		</variable>
+		<variable name="totalNeeded" class="java.lang.Double" resetType="Group" resetGroup="Part" calculation="Sum">
+			<variableExpression><![CDATA[$F{needed}]]></variableExpression>
+		</variable>
+		<variable name="earliestDateScheduled" class="java.sql.Timestamp" resetType="Group" resetGroup="Part" calculation="Lowest">
+			<variableExpression><![CDATA[$F{startDate}]]></variableExpression>
+		</variable>
+		<group name="Part">
+			<groupExpression><![CDATA[$F{partNumber}]]></groupExpression>
+		</group>
+	</subDataset>
+	<parameter name="dateRange1" class="java.util.Date" isForPrompting="false">
+		<parameterDescription><![CDATA[This Month]]></parameterDescription>
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRange2" class="java.util.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="customerID" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="partNum" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="soNum" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="locationGroupID" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["-1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowRawGoods" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORTDESCRIPTION" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Shows the time and inventory demand generated by open Sales Orders."]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    company.name as company,
+    so.num as soNum,
+    so.datefirstship as dateScheduled,
+    date_sub(so.datefirstship, interval coalesce(bom.estimatedduration,0) minute) as suggestedStartDate,
+    customer.name as customer,
+    locationgroup.name as locationGroup,
+    locationgroup.id as lgid,
+
+    part.num as partNum,
+    part.description as partDescription,
+    coalesce(tag.qty,0) as onHand,
+    uom.code as uom,
+    soitem.qtytofulfill as qtyOrdered,
+    (coalesce(tag.qty,0) - qtyallocated.qty) as qtyShort,
+    bom.id as bomID
+
+FROM soitem
+
+    INNER JOIN company ON company.id = 1
+    INNER JOIN so ON soitem.soid = so.id
+    INNER JOIN customer ON so.customerid = customer.id
+    INNER JOIN locationgroup ON so.locationgroupid = locationgroup.id
+
+    INNER JOIN product ON soitem.productid = product.id
+    INNER JOIN uom ON soitem.uomid = uom.id
+    LEFT OUTER JOIN part ON product.partid = part.id
+    LEFT OUTER JOIN bomitem ON part.id = bomitem.partid AND bomitem.typeid = 10 AND bomitem.bomid = part.defaultbomid
+    LEFT OUTER JOIN bom ON bomitem.bomid = bom.id
+    LEFT JOIN (SELECT SUM(tag.qty) AS QTY, tag.partid, locationgroup.id AS locationGroupId
+                FROM tag
+                JOIN location ON tag.locationid = location.id
+                JOIN locationgroup ON location.locationgroupid = locationgroup.id
+                GROUP BY 2) AS Tag ON part.id = tag.partid
+    LEFT OUTER JOIN qtyallocated on qtyallocated.partid = part.id
+
+WHERE so.statusid < 60
+  AND (coalesce(tag.qty,0) - qtyallocated.qty) < 0
+  AND so.datecreated BETWEEN $P{dateRange1} AND date_sub($P{dateRange2}, interval 1 second)
+  AND part.num LIKE '$P!{partNum}'
+  AND so.num LIKE '$P!{soNum}'
+  AND locationgroup.id IN ($P!{locationGroupID})
+  AND COALESCE(customer.id,0) LIKE '$P!{customerID}'
+  AND bom.id is not null
+
+ORDER BY locationgroup.name, COALESCE(customer.name, 'zzz'), so.num]]>
+	</queryString>
+	<field name="company" class="java.lang.String"/>
+	<field name="soNum" class="java.lang.String"/>
+	<field name="dateScheduled" class="java.sql.Timestamp"/>
+	<field name="suggestedStartDate" class="java.sql.Timestamp"/>
+	<field name="customer" class="java.lang.String"/>
+	<field name="locationGroup" class="java.lang.String"/>
+	<field name="partNum" class="java.lang.String"/>
+	<field name="partDescription" class="java.lang.String"/>
+	<field name="onHand" class="java.math.BigDecimal"/>
+	<field name="qtyOrdered" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="qtyShort" class="java.math.BigDecimal"/>
+	<field name="bomID" class="java.lang.Integer"/>
+	<field name="uom" class="java.lang.String"/>
+	<field name="lgid" class="java.lang.Integer"/>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<variable name="CostDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_COST")]]></variableExpression>
+	</variable>
+	<variable name="DateFormat" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+	</variable>
+	<variable name="SoNumList" class="java.lang.String">
+		<variableExpression><![CDATA[$V{SoNumList} != null ? $V{SoNumList}+ ",'" + $F{soNum} + "'" : "'" + $F{soNum} + "'"]]></variableExpression>
+	</variable>
+	<variable name="bomList" class="java.lang.String">
+		<variableExpression><![CDATA[$V{bomList} == null
+    ? Integer.toString($F{bomID})
+    : $V{bomList} + "," + Integer.toString($F{bomID})]]></variableExpression>
+	</variable>
+	<group name="Location Group">
+		<groupExpression><![CDATA[$F{locationGroup}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="0" y="0" width="732" height="14" uuid="7448913e-3703-485e-a106-f5851cb8a5b1"/>
+					<box leftPadding="10">
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<font fontName="Open Sans" size="10" isBold="true" isUnderline="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{locationGroup}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="10"/>
+		</groupFooter>
+	</group>
+	<group name="Need Type">
+		<groupExpression><![CDATA[$F{customer} != null ? "A" : "z"]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<textField isBlankWhenNull="true">
+					<reportElement x="0" y="0" width="732" height="14" uuid="07f93821-6492-457b-9a84-94c6613fc9c9"/>
+					<box leftPadding="15">
+						<pen lineColor="#999999"/>
+						<topPen lineColor="#999999"/>
+						<leftPen lineColor="#999999"/>
+						<bottomPen lineWidth="1.0" lineColor="#999999"/>
+						<rightPen lineColor="#999999"/>
+					</box>
+					<textElement>
+						<font fontName="Open Sans" size="10" isBold="true" isUnderline="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{customer} != null ? "Customer Needed" : "Stock Needed"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="10"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="65" splitType="Prevent">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-13" mode="Transparent" x="0" y="40" width="732" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="23f0c8fe-d81d-4aac-ad27-59e3e1c61ba7">
+					<printWhenExpression><![CDATA[true]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{dateRange1}.getYear() == -900 && $P{dateRange2}.getYear() == 1100
+  ? "Date Range: All"
+  : "Date Range: " + new SimpleDateFormat($V{DateFormat}).format($P{dateRange1}) + " - " +
+new SimpleDateFormat($V{DateFormat}).format($P{dateRange2}.getTime()-86400000)]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="732" height="18" uuid="eca80a15-359c-4934-be74-1f5d3a6f98cf"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{company}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="18" width="732" height="22" uuid="29099685-004c-49e4-8e21-5b543c243fd5"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sales Production Demand]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="33" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="67" height="32" uuid="86fed485-9987-4508-a869-1c49055a585d"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SO #]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="67" y="0" width="143" height="32" uuid="d985cb9b-e976-4e8e-b94d-76c7fbbbab40"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Customer]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="210" y="0" width="153" height="32" uuid="81cac42a-3a14-42ee-b7a7-0174c272652a"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Part #]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="363" y="0" width="65" height="32" uuid="d243a576-0890-48ae-b981-45c4a7520cc8"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Schedule Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="504" y="0" width="76" height="32" uuid="4b1ead2a-9054-4668-af34-de69ea1cdbae"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Qty Ordered]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="580" y="0" width="76" height="32" uuid="e6721488-faea-4898-95d1-3b5147920e34"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[On Hand]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="656" y="0" width="76" height="32" uuid="d9ec238a-fb7f-4949-b0ee-ac0da2db7e09"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Short]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="428" y="0" width="76" height="32" uuid="e844faeb-78c3-4c3f-8c02-7f334c0437ba"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Suggested Start]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="32" width="732" height="1" uuid="44abd82e-2364-441e-aeda-f1b1ebaeea0b"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<componentElement>
+				<reportElement key="table 1" x="27" y="15" width="706" height="1" isRemoveLineWhenBlank="true" uuid="7561613b-1b69-4392-ba7b-fe1c8a4f2666">
+					<printWhenExpression><![CDATA[$P{ShowRawGoods}]]></printWhenExpression>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Raw Goods" uuid="14ab31a8-8581-464f-9658-d208a46a2314">
+						<datasetParameter name="bomID">
+							<datasetParameterExpression><![CDATA[$F{bomID}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="lgid">
+							<datasetParameterExpression><![CDATA[$F{lgid}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:columnGroup width="705" uuid="e07f364c-ae6b-4849-a4e4-e3f3cbb86e7b">
+						<jr:tableHeader height="6" rowSpan="1"/>
+						<jr:tableFooter height="8" rowSpan="1">
+							<line>
+								<reportElement x="0" y="0" width="705" height="1" uuid="39c80b0f-8c97-4af2-bed4-3d5f66ffa1a7"/>
+							</line>
+						</jr:tableFooter>
+						<jr:column width="177" uuid="19a969ee-759b-4d13-9c85-c37c0bcde0ba">
+							<jr:columnHeader height="16" rowSpan="1">
+								<box>
+									<pen lineColor="#999999"/>
+									<topPen lineColor="#999999"/>
+									<leftPen lineColor="#999999"/>
+									<bottomPen lineWidth="1.0" lineColor="#999999"/>
+									<rightPen lineColor="#999999"/>
+								</box>
+								<staticText>
+									<reportElement x="0" y="0" width="177" height="16" uuid="832a6567-e933-4501-82ac-c4bf632c1a6a"/>
+									<box leftPadding="3" rightPadding="3"/>
+									<textElement verticalAlignment="Bottom">
+										<font fontName="Open Sans" size="10" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Raw Good Part #]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell height="14" rowSpan="1">
+								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="177" height="14" uuid="225083c5-d6c0-45f6-a274-9a397490d940"/>
+									<box leftPadding="3" rightPadding="3"/>
+									<textElement>
+										<font fontName="Open Sans" size="10"/>
+									</textElement>
+									<textFieldExpression><![CDATA[($F{stageid} == null ? "" : "    ") +
+($F{stage3id} == null ? "" : "    ") +
+($F{stage4id} == null ? "" : "    ") + $F{partNumber}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="300" uuid="cabc6ad4-cc8c-4f1c-97b9-0d6e533af1a0">
+							<jr:columnHeader height="16" rowSpan="1">
+								<box>
+									<pen lineColor="#999999"/>
+									<topPen lineColor="#999999"/>
+									<leftPen lineColor="#999999"/>
+									<bottomPen lineWidth="1.0" lineColor="#999999"/>
+									<rightPen lineColor="#999999"/>
+								</box>
+								<staticText>
+									<reportElement x="0" y="0" width="300" height="16" uuid="d72d0227-483b-4199-b27a-fbf2279e6e17"/>
+									<box leftPadding="3" rightPadding="3"/>
+									<textElement verticalAlignment="Bottom">
+										<font fontName="Open Sans" size="10" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Description]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell height="14" rowSpan="1">
+								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="300" height="14" uuid="8c18e487-ad7e-4980-88d7-5f824a72d625"/>
+									<box leftPadding="3" rightPadding="3"/>
+									<textElement>
+										<font fontName="Open Sans" size="10"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{partDescription}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="76" uuid="6c0cc4a4-07d8-441b-8795-f70b319a5d5e">
+							<jr:columnHeader height="16" rowSpan="1">
+								<box>
+									<pen lineColor="#999999"/>
+									<topPen lineColor="#999999"/>
+									<leftPen lineColor="#999999"/>
+									<bottomPen lineWidth="1.0" lineColor="#999999"/>
+									<rightPen lineColor="#999999"/>
+								</box>
+								<staticText>
+									<reportElement x="0" y="0" width="76" height="16" uuid="22bd2b2f-0d24-4609-bee2-886a662eaccc"/>
+									<box leftPadding="3" rightPadding="3"/>
+									<textElement textAlignment="Right" verticalAlignment="Bottom">
+										<font fontName="Open Sans" size="10" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Needed]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell height="14" rowSpan="1">
+								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="45" height="14" uuid="8af579c3-f4f2-4e96-847c-44f388a2f0a0"/>
+									<box leftPadding="3" rightPadding="3"/>
+									<textElement textAlignment="Right">
+										<font fontName="Open Sans" size="10"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{needed}]]></textFieldExpression>
+									<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+								</textField>
+								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+									<reportElement x="45" y="0" width="31" height="14" uuid="9498b4b6-8340-4e73-89e1-e9b768be57bb"/>
+									<box leftPadding="3" rightPadding="3"/>
+									<textElement>
+										<font fontName="Open Sans" size="10"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{partUOM}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="76" uuid="c3a13490-d85b-44cb-97da-00952b5d31b8">
+							<jr:columnHeader height="16" rowSpan="1">
+								<box>
+									<pen lineColor="#999999"/>
+									<topPen lineColor="#999999"/>
+									<leftPen lineColor="#999999"/>
+									<bottomPen lineWidth="1.0" lineColor="#999999"/>
+									<rightPen lineColor="#999999"/>
+								</box>
+								<staticText>
+									<reportElement x="0" y="0" width="76" height="16" uuid="14b0744f-3db3-4b25-bff7-96faad7a2ec8"/>
+									<box leftPadding="3" rightPadding="3"/>
+									<textElement textAlignment="Right" verticalAlignment="Bottom">
+										<font fontName="Open Sans" size="10" isBold="true"/>
+									</textElement>
+									<text><![CDATA[On Hand]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell height="14" rowSpan="1">
+								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="76" height="14" uuid="fc99ee3d-79bb-40e6-9878-ec6d7a01ef65"/>
+									<box leftPadding="3" rightPadding="3"/>
+									<textElement textAlignment="Right">
+										<font fontName="Open Sans" size="10"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{onHand}]]></textFieldExpression>
+									<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="76" uuid="71504e67-d0be-4332-8200-579f5d548790">
+							<jr:columnHeader height="16" rowSpan="1">
+								<box>
+									<pen lineColor="#999999"/>
+									<topPen lineColor="#999999"/>
+									<leftPen lineColor="#999999"/>
+									<bottomPen lineWidth="1.0" lineColor="#999999"/>
+									<rightPen lineColor="#999999"/>
+								</box>
+								<staticText>
+									<reportElement x="0" y="0" width="76" height="16" uuid="01f03514-12d5-4bac-9c40-88eb5fc42d2c"/>
+									<box leftPadding="3" rightPadding="3"/>
+									<textElement textAlignment="Right" verticalAlignment="Bottom">
+										<font fontName="Open Sans" size="10" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Short]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell height="14" rowSpan="1">
+								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="76" height="14" forecolor="#CD0000" uuid="fdb41868-e788-418b-9b34-929af01f6d99"/>
+									<box leftPadding="3" rightPadding="3"/>
+									<textElement textAlignment="Right">
+										<font fontName="Open Sans" size="10"/>
+									</textElement>
+									<textFieldExpression><![CDATA[( $F{needed} > $F{onHand} ? Math.abs($F{onHand} - $F{needed}) : "" )]]></textFieldExpression>
+									<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:columnGroup>
+				</jr:table>
+			</componentElement>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="67" height="14" forecolor="#000099" uuid="1b2cffdb-b015-4bcf-8e81-e15a51a12b07"/>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement>
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{soNum}]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["SONum"]]></anchorNameExpression>
+				<hyperlinkReferenceExpression><![CDATA[$F{soNum}]]></hyperlinkReferenceExpression>
+				<hyperlinkTooltipExpression><![CDATA[$F{soNum}]]></hyperlinkTooltipExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+				<reportElement stretchType="RelativeToBandHeight" x="67" y="0" width="143" height="14" forecolor="#000099" uuid="8fe04302-b810-4cb2-b396-8674edd183d5"/>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement>
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{customer}]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["customerName"]]></anchorNameExpression>
+				<hyperlinkReferenceExpression><![CDATA[$F{customer}]]></hyperlinkReferenceExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+				<reportElement stretchType="RelativeToBandHeight" x="210" y="0" width="153" height="14" forecolor="#000099" uuid="adb31d29-749f-4fdf-8732-45c2fb40f8e8"/>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement>
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{partNum}]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["partNum"]]></anchorNameExpression>
+				<hyperlinkReferenceExpression><![CDATA[$F{partNum}]]></hyperlinkReferenceExpression>
+				<hyperlinkTooltipExpression><![CDATA[]]></hyperlinkTooltipExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="363" y="0" width="65" height="14" uuid="eb0f0772-6df8-4ca7-886d-abcea08ea536"/>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dateScheduled}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{DateFormat}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="580" y="0" width="76" height="14" uuid="36a027c7-7f02-496d-b471-7d6c243ad50d"/>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement textAlignment="Right">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{onHand}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="656" y="0" width="76" height="14" forecolor="#CD0000" uuid="1d30bf2b-db6a-4b7c-8b32-a8ee01833b51"/>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement textAlignment="Right">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtyShort}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="428" y="0" width="76" height="14" uuid="eba79162-d9d4-40e2-a84e-67bd0ce5fd3e"/>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{suggestedStartDate}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{DateFormat}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="549" y="0" width="31" height="14" uuid="90723b2f-0c29-49f0-ab7c-a67a36021bdd"/>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement>
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{uom}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="504" y="0" width="45" height="14" uuid="6b02f91c-ed48-4139-b9bb-b24f25eddd8e"/>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement textAlignment="Right">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtyOrdered}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<line>
+				<reportElement positionType="Float" x="0" y="14" width="732" height="1" isRemoveLineWhenBlank="true" uuid="86c97bc1-f5af-4de9-abb5-0c534eb86187">
+					<printWhenExpression><![CDATA[$P{ShowRawGoods}]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="1.0"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="15" splitType="Stretch">
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" mode="Transparent" x="722" y="0" width="10" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="477bda20-8f8d-4284-8314-0a7002a1215e"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" mode="Transparent" x="539" y="0" width="183" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="078c0d23-f9f1-49d0-9783-c6d414b6f86c"/>
+				<box leftPadding="3" rightPadding="1">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of"]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" mode="Transparent" x="0" y="0" width="502" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="af3cec32-3639-48a2-b7f3-a9d93877018e"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.LONG)).format(new Date())]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="44" splitType="Stretch">
+			<componentElement>
+				<reportElement key="table" x="372" y="0" width="360" height="44" uuid="c6e23cc1-34b1-4de1-8a60-91e653c259c3"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Short Summary" uuid="3deb78bc-a280-4d58-93c3-4a3551a7c80a">
+						<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+						<datasetParameter name="suggestedStart">
+							<datasetParameterExpression><![CDATA[$F{suggestedStartDate}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="120" uuid="0417393f-557c-456d-82e5-48587e170799">
+						<jr:tableHeader height="18" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="120" height="18" uuid="e5c75d25-bb57-4fa9-8633-7e4972ab2f6b"/>
+								<box>
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Open Sans" size="12" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Finished Goods Short]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:columnHeader height="18" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="120" height="18" uuid="6c8dfe57-2c6d-4b5a-86b5-8771be6e1d9a"/>
+								<box>
+									<bottomPen lineWidth="1.0"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Open Sans" size="12" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Part Number]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="14" rowSpan="1">
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+								<reportElement x="0" y="0" width="120" height="14" forecolor="#000099" uuid="51d6b1cc-0466-420f-9479-c1e4c237333a"/>
+								<textElement>
+									<font fontName="Open Sans" size="10"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{partNum}]]></textFieldExpression>
+								<anchorNameExpression><![CDATA["partNum"]]></anchorNameExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="60" uuid="aff38f41-0f2c-4700-a3fc-50d699adf5ac">
+						<jr:tableHeader height="18" rowSpan="1"/>
+						<jr:columnHeader height="18" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="60" height="18" uuid="c0c9434a-fe3a-44ef-a5c8-13b1ff7b7bf4"/>
+								<box>
+									<bottomPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Open Sans" size="12" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Date]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="14" rowSpan="1">
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="60" height="14" uuid="96001360-9fb3-43d5-a78a-e608565931ed"/>
+								<textElement textAlignment="Right" verticalAlignment="Top">
+									<font fontName="Open Sans"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{suggestedStart}]]></textFieldExpression>
+								<patternExpression><![CDATA[$V{DateFormat}]]></patternExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="60" uuid="c306f272-a5c6-4f23-8b4e-057b322ed947">
+						<jr:tableHeader height="18" rowSpan="1"/>
+						<jr:columnHeader height="18" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="60" height="18" uuid="72090f89-b714-4c3a-a3f6-c0e95d321f7e"/>
+								<box>
+									<bottomPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Open Sans" size="12" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Needed]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="14" rowSpan="1">
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="60" height="14" uuid="cddbf48f-17aa-4424-9889-7675505a6a9f"/>
+								<textElement textAlignment="Right" verticalAlignment="Top">
+									<font fontName="Open Sans" size="10"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{qtyOrdered}]]></textFieldExpression>
+								<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="60" uuid="9f2d1de3-a7f7-4126-8566-50bce1bfb15c">
+						<jr:tableHeader height="18" rowSpan="1"/>
+						<jr:columnHeader height="18" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="60" height="18" uuid="6b9840a6-b73a-4b07-9cde-0611ca686c2e"/>
+								<box>
+									<bottomPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Open Sans" size="12" isBold="true"/>
+								</textElement>
+								<text><![CDATA[On Hand]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="14" rowSpan="1">
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="60" height="14" uuid="0175f956-e151-46e4-a6cc-38a8c4cbc250"/>
+								<textElement textAlignment="Right" verticalAlignment="Top">
+									<font fontName="Open Sans" size="10"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{onHand}]]></textFieldExpression>
+								<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="60" uuid="c7cdc4be-6898-4b6a-9dab-25bb446f0851">
+						<jr:tableHeader height="18" rowSpan="1"/>
+						<jr:columnHeader height="18" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="60" height="18" uuid="42a7d4d4-b929-4a29-bd65-20363da0e4d3"/>
+								<box>
+									<bottomPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Open Sans" size="12" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Short]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="14" rowSpan="1">
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="60" height="14" forecolor="#CD0000" uuid="1282042f-8b35-4ffc-bb1f-fa6050844213"/>
+								<textElement textAlignment="Right" verticalAlignment="Top">
+									<font fontName="Open Sans" size="10"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{qtyShort}]]></textFieldExpression>
+								<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<componentElement>
+				<reportElement key="RawGoodsSummaryTable" x="0" y="0" width="360" height="44" uuid="bb75bb8b-c5cb-4589-a2c3-986a617318d5">
+					<printWhenExpression><![CDATA[$P{ShowRawGoods}]]></printWhenExpression>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="AllSectionsNoDetail">
+					<datasetRun subDataset="RawGoodsShort" uuid="6691f946-7b5a-4105-9b1d-bdb8582c5f35">
+						<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+						<datasetParameter name="bomList">
+							<datasetParameterExpression><![CDATA[$V{bomList}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="locationGroupID">
+							<datasetParameterExpression><![CDATA[$P{locationGroupID}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="120" uuid="f4507114-3b74-47ac-8fac-981b2e52e7d9">
+						<jr:tableHeader height="18" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="120" height="18" uuid="4d16c205-e46f-4044-8740-fda39a9e3866"/>
+								<box>
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Open Sans" size="12" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Raw Goods Short]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:groupFooter groupName="Part">
+							<jr:cell height="14" rowSpan="1">
+								<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+									<reportElement x="0" y="0" width="120" height="14" forecolor="#000099" uuid="c7c17cfe-b948-4a75-bcf3-e06402cbd5e3"/>
+									<textElement>
+										<font fontName="Open Sans" size="10"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{partNumber}]]></textFieldExpression>
+									<anchorNameExpression><![CDATA["partNum"]]></anchorNameExpression>
+								</textField>
+							</jr:cell>
+						</jr:groupFooter>
+						<jr:columnHeader height="18" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="120" height="18" uuid="39f8fdfb-c9e4-4d53-81ae-9f165a2f601f"/>
+								<box>
+									<bottomPen lineWidth="1.0"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Open Sans" size="12" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Part Number]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="1" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="60" uuid="7e2dfec5-85f1-4447-a320-2992b207cfb1">
+						<jr:tableHeader height="18" rowSpan="1"/>
+						<jr:groupFooter groupName="Part">
+							<jr:cell height="14" rowSpan="1">
+								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="60" height="14" uuid="a6b7f106-5a94-405f-a6f1-a286809c20f4"/>
+									<textElement textAlignment="Right" verticalAlignment="Top">
+										<font fontName="Open Sans"/>
+									</textElement>
+									<textFieldExpression><![CDATA[new SimpleDateFormat($V{DateFormat}).format($V{earliestDateScheduled}.getTime() - $F{bomTime})]]></textFieldExpression>
+								</textField>
+							</jr:cell>
+						</jr:groupFooter>
+						<jr:columnHeader height="18" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="60" height="18" uuid="a5dd7851-b585-40ce-a114-bb6115756030"/>
+								<box>
+									<bottomPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Open Sans" size="12" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Date]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="1" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="60" uuid="93b74b7d-a2b3-482e-a35e-dacb373ebfab">
+						<jr:tableHeader height="18" rowSpan="1"/>
+						<jr:groupFooter groupName="Part">
+							<jr:cell height="14" rowSpan="1">
+								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="60" height="14" uuid="70361ea5-d1ef-4bd5-96a3-a1f30bda4cd4"/>
+									<textElement textAlignment="Right" verticalAlignment="Top">
+										<font fontName="Open Sans" size="10"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{totalNeeded}]]></textFieldExpression>
+									<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+								</textField>
+							</jr:cell>
+						</jr:groupFooter>
+						<jr:columnHeader height="18" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="60" height="18" uuid="49024cd6-7b42-4c31-864e-da89dec05fcd"/>
+								<box>
+									<bottomPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Open Sans" size="12" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Needed]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="1" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="60" uuid="83a421c7-bfb0-4eb1-853e-3622ecdfb008">
+						<jr:tableHeader height="18" rowSpan="1"/>
+						<jr:groupFooter groupName="Part">
+							<jr:cell height="14" rowSpan="1">
+								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="60" height="14" uuid="d891c916-251f-44db-bae9-880e70940c80"/>
+									<textElement textAlignment="Right" verticalAlignment="Top">
+										<font fontName="Open Sans" size="10"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{onHand}]]></textFieldExpression>
+									<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+								</textField>
+							</jr:cell>
+						</jr:groupFooter>
+						<jr:columnHeader height="18" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="60" height="18" uuid="b2e7ceea-ad5a-42cd-bc02-cad1e9a551f0"/>
+								<box>
+									<bottomPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Open Sans" size="12" isBold="true"/>
+								</textElement>
+								<text><![CDATA[On Hand]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="1" rowSpan="1"/>
+					</jr:column>
+					<jr:column width="60" uuid="c1f7f056-251a-441e-8be7-c346354a11d0">
+						<jr:tableHeader height="18" rowSpan="1"/>
+						<jr:groupFooter groupName="Part">
+							<jr:cell height="14" rowSpan="1">
+								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="60" height="14" forecolor="#CD0000" uuid="fc442e91-2970-4ed8-9784-d6a3e5c595b4"/>
+									<textElement textAlignment="Right" verticalAlignment="Top">
+										<font fontName="Open Sans" size="10"/>
+									</textElement>
+									<textFieldExpression><![CDATA[Math.abs($F{onHand} - $V{totalNeeded})]]></textFieldExpression>
+									<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+								</textField>
+							</jr:cell>
+						</jr:groupFooter>
+						<jr:columnHeader height="18" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="60" height="18" uuid="7f1c5066-50e5-4a23-88bb-a4909a05e9f9"/>
+								<box>
+									<bottomPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Open Sans" size="12" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Short]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="1" rowSpan="1"/>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</summary>
+</jasperReport>

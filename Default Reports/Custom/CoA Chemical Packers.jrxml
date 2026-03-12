@@ -1,0 +1,480 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CoA Chemical Packers" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1510f9f1-fa14-4e47-a5fa-e0e3dc53fac5">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="96"/>
+	<parameter name="module" class="java.lang.Object" isForPrompting="false">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="woNum" class="java.lang.String">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    wo.num                                    AS woNum,
+    part.num                                  AS partNum,
+    product.num                               AS productNum,
+    wo.dateFinished                           AS dateFinished,
+    CONCAT(sysuser.firstName, ' ', sysuser.lastName) AS userName,
+    trackinginfo.info                         AS batchNum,
+    CustomFieldByName(wo.customfields, 'pH (@20°C)')      AS result_ph,
+    CustomFieldByName(wo.customfields, 'Specific Gravity') AS result_sg,
+    CustomFieldByName(wo.customfields, 'Solid Content (%)') AS result_sc,
+    CustomFieldByName(wo.customfields, 'Notes')           AS result_notes,
+    CustomFieldByName(bom.customfields, 'ph Max')        AS phMax,
+    CustomFieldByName(bom.customfields, 'pH Min')        AS phMin,
+    CustomFieldByName(bom.customfields, 'SG Max')        AS sgMax,
+    CustomFieldByName(bom.customfields, 'SG Min')        AS sgMin,
+    CustomFieldByName(bom.customfields, 'Solids Max')    AS scMax,
+    CustomFieldByName(bom.customfields, 'Solids Min')    AS scMin
+
+FROM WO AS wo
+INNER JOIN woItem
+    ON wo.id = woItem.woId
+INNER JOIN moItem AS mi
+    ON woItem.moItemId = mi.id
+INNER JOIN bom
+    ON mi.bomId = bom.id
+INNER JOIN part
+    ON woItem.partId = part.id
+INNER JOIN product
+    ON product.partId = part.id
+INNER JOIN sysuser
+    ON wo.userId = sysuser.id
+LEFT JOIN trackinginfo
+    ON trackinginfo.recordid = woItem.id
+    AND trackinginfo.tableid = -355941248
+    AND trackinginfo.parttrackingid = 5
+
+WHERE
+    wo.num LIKE $P{woNum}
+    AND woItem.typeID = 10;
+]]>
+	</queryString>
+	<field name="woNum" class="java.lang.String"/>
+	<field name="partNum" class="java.lang.String"/>
+	<field name="productNum" class="java.lang.String"/>
+	<field name="dateFinished" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="userName" class="java.lang.String"/>
+	<field name="batchNum" class="java.lang.String"/>
+	<field name="result_ph" class="java.lang.String"/>
+	<field name="result_sc" class="java.lang.String"/>
+	<field name="result_sg" class="java.lang.String"/>
+	<field name="result_notes" class="java.lang.String"/>
+	<field name="scMin" class="java.lang.String"/>
+	<field name="scMax" class="java.lang.String"/>
+	<field name="phMin" class="java.lang.String"/>
+	<field name="phMax" class="java.lang.String"/>
+	<field name="sgMin" class="java.lang.String"/>
+	<field name="sgMax" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="140" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="139" uuid="5c756752-eaa1-4374-bdba-5f43fa823928"/>
+			</rectangle>
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle">
+				<reportElement stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="204" y="40" width="170" height="98" uuid="7c196a18-9c25-4e91-9268-88170641ecbd"/>
+				<imageExpression><![CDATA[com.evnt.util.ImageUtil.decodeImage(((com.evnt.eve.modules.ReportHelperModule) $P{module}).getImageData("Company", 1, true))]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="0" y="15" width="555" height="25" uuid="6e5269dc-ace5-4592-91f2-92b5f7f63825"/>
+				<textElement textAlignment="Center">
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CERTIFICATE OF ANALYSIS"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="633" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="550" width="555" height="83" uuid="84a43d42-105a-4308-9297-868142c7218a"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="230" width="555" height="309" uuid="8dcd91f8-8b71-4370-8fd6-e09c70a4314a"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="6" width="555" height="216" uuid="e2541c1d-fdc0-479b-b351-d71cac3140d4"/>
+			</rectangle>
+			<textField isStretchWithOverflow="true">
+				<reportElement isPrintRepeatedValues="false" x="20" y="432" width="512" height="93" uuid="780865eb-b45f-40ae-8c76-e74d1d9816db"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Notes:  " + $F{result_notes}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="93" y="36" width="171" height="27" uuid="c126036a-f8da-4725-ae28-a6838a9de686"/>
+				<textElement verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA["BATCH NUMBER"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="93" y="73" width="171" height="27" uuid="3776286b-eb72-4474-b7a7-ecbc448ad63e"/>
+				<textElement verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PRODUCT NAME"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="93" y="111" width="171" height="27" uuid="fb40aa86-434e-4cdd-857b-7851031ee014"/>
+				<textElement verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SAMPLE DATE"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="93" y="152" width="171" height="27" uuid="9d9cc3be-212c-491f-a957-d0c3ca696a47"/>
+				<textElement verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA["DATE TESTED"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="278" y="73" width="171" height="27" uuid="5c148709-f013-4088-aec8-2be141478d23"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{productNum}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="278" y="111" width="171" height="27" uuid="ca6a9622-246d-4ded-a381-d9b26213d3c7"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dateFinished}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="278" y="36" width="171" height="27" uuid="e9e71596-4416-494c-8d69-f2ee34f2a274"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{batchNum}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="278" y="152" width="171" height="27" uuid="a4ea5e08-c46e-48bc-9cc2-4a3105605551"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dateFinished}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="20" y="265" width="151" height="27" uuid="39922796-a603-4f15-9d3c-983045108dd7"/>
+				<textElement textAlignment="Center">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Test"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="171" y="265" width="149" height="27" uuid="6ef6951d-6ef6-4202-934c-d7bbc232fa95"/>
+				<textElement textAlignment="Center">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Spec"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="332" y="265" width="100" height="27" uuid="9b873908-6abd-4606-be58-82966c81b946"/>
+				<textElement textAlignment="Center">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Result"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="432" y="265" width="100" height="27" uuid="93001653-43ce-419b-910b-bd84b0dda001"/>
+				<textElement textAlignment="Center">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pass/Fail"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="20" y="307" width="151" height="27" uuid="35df55b8-9d2e-4841-8e1f-5a8d7b46dda2"/>
+				<textElement textAlignment="Center">
+					<font size="18" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Ph (@20°C)"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="432" y="307" width="100" height="27" uuid="4b41e6ec-1037-47b8-bc89-0898caabec48"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="18" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(
+  $F{result_ph} != null && !$F{result_ph}.trim().isEmpty()
+  && $F{phMin}      != null && !$F{phMin}.trim().isEmpty()
+  && $F{phMax}      != null && !$F{phMax}.trim().isEmpty()
+)
+?
+(
+  (Double.valueOf($F{result_ph}) >= Double.valueOf($F{phMin})
+   && Double.valueOf($F{result_ph}) <= Double.valueOf($F{phMax}))
+    ? "PASS"
+    : "FAIL"
+)
+:
+""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="332" y="307" width="100" height="27" uuid="3f83a19c-9c59-41e8-8763-3b62ace10fce"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="18" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{result_ph} != null && !$F{result_ph}.trim().isEmpty()
+  ? new java.text.DecimalFormat("0.0#########")
+      .format(Double.valueOf($F{result_ph}))
+  : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="171" y="307" width="149" height="27" uuid="c0238ea2-7393-469e-bd51-1f858d374f66"/>
+				<textElement textAlignment="Center">
+					<font size="18" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(
+  $F{phMin} != null
+  && !$F{phMin}.trim().isEmpty()
+    ? new java.text.DecimalFormat("0.0#########")
+        .format(Double.valueOf($F{phMin}))
+    : ""
+)
++
+(
+  ($F{phMin} != null
+   && !$F{phMin}.trim().isEmpty())
+  && ($F{phMax} != null
+      && !$F{phMax}.trim().isEmpty())
+    ? " - "
+    : ""
+)
++
+(
+  $F{phMax} != null
+  && !$F{phMax}.trim().isEmpty()
+    ? new java.text.DecimalFormat("0.0#########")
+        .format(Double.valueOf($F{phMax}))
+    : ""
+)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="171" y="346" width="149" height="27" uuid="cbf1da8d-f1b6-4e31-98bc-b0331abd961a"/>
+				<textElement textAlignment="Center">
+					<font size="18" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(
+  $F{sgMin} != null
+  && !$F{sgMin}.trim().isEmpty()
+    ? new java.text.DecimalFormat("0.0#########")
+        .format(Double.valueOf($F{sgMin}))
+    : ""
+)
++
+(
+  ($F{sgMin} != null
+   && !$F{sgMin}.trim().isEmpty())
+  && ($F{sgMax} != null
+      && !$F{sgMax}.trim().isEmpty())
+    ? " - "
+    : ""
+)
++
+(
+  $F{sgMax} != null
+  && !$F{sgMax}.trim().isEmpty()
+    ? new java.text.DecimalFormat("0.0#########")
+        .format(Double.valueOf($F{sgMax}))
+    : ""
+)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="20" y="346" width="151" height="27" uuid="0d4e21e9-14cb-460f-b7a6-657c6a62a955"/>
+				<textElement textAlignment="Center">
+					<font size="18" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Specific Gravity"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="332" y="346" width="100" height="27" uuid="7dcd527d-4e77-495e-83af-7034a6a4337b"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="18" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{result_sg} != null && !$F{result_sg}.trim().isEmpty()
+  ? new java.text.DecimalFormat("0.0#########")
+      .format(Double.valueOf($F{result_sg}))
+  : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="432" y="346" width="100" height="27" uuid="b60ab23b-0358-48e7-9da2-769f9ac3c549"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="18" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(
+  $F{result_sg} != null && !$F{result_sg}.trim().isEmpty()
+  && $F{sgMin}      != null && !$F{sgMin}.trim().isEmpty()
+  && $F{sgMax}      != null && !$F{sgMax}.trim().isEmpty()
+)
+?
+(
+  (Double.valueOf($F{result_sg}) >= Double.valueOf($F{sgMin})
+   && Double.valueOf($F{result_sg}) <= Double.valueOf($F{sgMax}))
+    ? "PASS"
+    : "FAIL"
+)
+:
+""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="171" y="386" width="149" height="27" uuid="1bf1e6d9-ea0f-4b57-af4d-6b1df73b37f5"/>
+				<textElement textAlignment="Center">
+					<font size="18" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(
+  $F{scMin} != null
+  && !$F{scMin}.trim().isEmpty()
+    ? new java.text.DecimalFormat("0.0#########")
+        .format(Double.valueOf($F{scMin})) + "%"
+    : ""
+)
++
+(
+  ($F{scMin} != null
+   && !$F{scMin}.trim().isEmpty())
+  && ($F{scMax} != null
+      && !$F{scMax}.trim().isEmpty())
+    ? " - "
+    : ""
+)
++
+(
+  $F{scMax} != null
+  && !$F{scMax}.trim().isEmpty()
+    ? new java.text.DecimalFormat("0.0#########")
+        .format(Double.valueOf($F{scMax}))
+    : ""
+)
+
++ "%"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="20" y="386" width="151" height="27" uuid="755c309b-9147-46e0-9d5f-9a82c4810054"/>
+				<textElement textAlignment="Center">
+					<font size="18" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Solid Content"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="332" y="386" width="100" height="27" uuid="1c6b4d90-20e8-4fcb-9099-2ed5bee70384"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="18" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{result_sc} != null && !$F{result_sc}.trim().isEmpty()
+  ? new java.text.DecimalFormat("0.0#########")
+      .format(Double.valueOf($F{result_sc})) + "%"
+  : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="432" y="386" width="100" height="27" uuid="13858533-7486-49fc-9d0f-28754832e39d"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="18" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(
+  $F{result_sc} != null && !$F{result_sc}.trim().isEmpty()
+  && $F{scMin}      != null && !$F{scMin}.trim().isEmpty()
+  && $F{scMax}      != null && !$F{scMax}.trim().isEmpty()
+)
+?
+(
+  (Double.valueOf($F{result_sc}) >= Double.valueOf($F{scMin})
+   && Double.valueOf($F{result_sc}) <= Double.valueOf($F{scMax}))
+    ? "PASS"
+    : "FAIL"
+)
+:
+""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="13" y="577" width="80" height="27" uuid="030e6867-e3eb-49b7-bc4a-b254fc8bdfc8"/>
+				<textElement verticalAlignment="Middle">
+					<font size="18" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Analyst:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="93" y="577" width="220" height="27" uuid="78f142b5-4b95-4bcd-ba10-9faa2864bdb4"/>
+				<textElement verticalAlignment="Middle">
+					<font size="18" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{userName}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

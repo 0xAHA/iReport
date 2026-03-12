@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="historicalPartCost" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="552" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="9dbf5081-a12d-428c-a287-482721326029">
+	<property name="ireport.zoom" value="1.8627639691774651"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="cbCostingMethod" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Average Cost,Average Cost,Standard Cost,Standard Cost,FIFO Cost,FIFO Cost,LIFO Cost,LIFO Cost]]></parameterDescription>
+		<defaultValueExpression><![CDATA["Average Cost"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="partNum" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckShowInactiveParts" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[0,1]]></parameterDescription>
+		<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="vendorID" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ReportOnDate" class="java.util.Date" isForPrompting="false">
+		<property name="Sort" value="1"/>
+		<parameterDescription><![CDATA[end]]></parameterDescription>
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckShowPartsCreatedAfterDate" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[0,1]]></parameterDescription>
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckShowPartsWithZeroQuantity" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[LEFT,INNER]]></parameterDescription>
+		<defaultValueExpression><![CDATA["INNER"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ReportTitle" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT PART.NUM AS PARTNUM,
+       PART.DESCRIPTION AS DESCRIPTION,
+       VENDOR.NAME AS NAME,
+       COALESCE(PARTCOSTHISTORY.AVGCOST, 0) AS AVGCOST,
+       COALESCE(PARTCOSTHISTORY.STDCOST, 0) AS STDCOST,
+       COALESCE(PARTCOSTHISTORY.NEXTCOST, 0) AS NEXTCOST,
+       COALESCE(PARTCOSTHISTORY.TOTALCOST, 0) AS TOTALCOST,
+       COALESCE(PARTCOSTHISTORY.QUANTITY, 0) AS QUANTITY,
+       UOM.CODE AS UOM,
+       PART.DATECREATED AS DATECREATED,
+       CURRENCY.SYMBOL AS SYMBOL
+
+FROM Part
+     JOIN (SELECT max(partcosthistory.id) AS costid, partcosthistory.partid AS partcostid
+           FROM partcosthistory
+           WHERE CAST(partcosthistory.datecaptured AS DATE) = CAST(DATE_SUB($P{ReportOnDate}, INTERVAL 1 SECOND)AS DATE)
+           GROUP BY partcosthistory.partid) AS maxcostdate ON part.id = maxcostdate.partcostid
+     $P!{ckShowPartsWithZeroQuantity} JOIN PartCostHistory ON maxcostdate.costid = partcosthistory.id
+     LEFT OUTER JOIN VendorParts ON VendorParts.partId = Part.id AND VendorParts.defaultFlag = 1
+     LEFT OUTER JOIN Vendor ON VendorParts.vendorId = Vendor.id
+     LEFT OUTER JOIN Uom ON Part.uomId = Uom.id
+     LEFT OUTER JOIN Currency ON Currency.homeCurrency = 1
+
+WHERE Part.typeId = 10
+  AND COALESCE(vendor.id, 0) LIKE $P{vendorID}
+  AND Part.activeFlag IN ($P!{ckShowInactiveParts},1)
+  AND Part.num LIKE $P{partNum}
+
+ORDER BY Part.num]]>
+	</queryString>
+	<field name="PARTNUM" class="java.lang.String"/>
+	<field name="DESCRIPTION" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="NAME" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="AVGCOST" class="java.lang.Double"/>
+	<field name="STDCOST" class="java.lang.Double"/>
+	<field name="NEXTCOST" class="java.lang.Double"/>
+	<field name="TOTALCOST" class="java.lang.Double"/>
+	<field name="QUANTITY" class="java.lang.Double"/>
+	<field name="UOM" class="java.lang.String"/>
+	<field name="DATECREATED" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="SYMBOL" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="PriceDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_PRICE")]]></variableExpression>
+	</variable>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<variable name="CostDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_COST")]]></variableExpression>
+	</variable>
+	<variable name="DateFormat" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+	</variable>
+	<variable name="ReportTotal" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$P{cbCostingMethod}.equals("Average Cost") ?
+    $F{AVGCOST} * $F{QUANTITY} :
+    $P{cbCostingMethod}.equals("Standard Cost") ?
+        $F{STDCOST} * $F{QUANTITY} :
+        $F{NEXTCOST} * $F{QUANTITY}]]></variableExpression>
+	</variable>
+	<variable name="isMultiCurrency" class="java.lang.Boolean">
+		<variableExpression><![CDATA[com.evnt.eve.modules.CurrencyModule.isMultiCurrency()]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="73" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="552" height="49" uuid="3e7b32f8-c6b0-4c34-92d7-743c6a59c22c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Open Sans" size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ReportTitle}.equals("%") ? "Historical Part Cost" : $P{ReportTitle}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="49" width="552" height="14" uuid="b19fa8cd-5afb-4ab3-b3b8-826130d60f2b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Open Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Report For: " + (new SimpleDateFormat($V{DateFormat})).format($P{ReportOnDate}.getTime() - 86400000)]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="17" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="79" height="16" uuid="a0ab7159-c1a3-4fc3-83ad-ebe9edc226a0"/>
+				<box leftPadding="3">
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Part]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="79" y="0" width="181" height="16" uuid="71514662-6efa-45f2-a586-7263e73d7e66"/>
+				<box leftPadding="3">
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Description]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="260" y="0" width="61" height="16" uuid="d06d439b-2515-47ad-9a1f-4a02ae836347"/>
+				<box leftPadding="10">
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Quantity]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="321" y="0" width="34" height="16" uuid="013b881f-7983-4097-976c-1400ba77aa4d"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="355" y="0" width="100" height="16" uuid="1fa9dc7d-6b54-4be0-bc6d-9f08412dfe5b"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unit Cost]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="0" width="97" height="16" uuid="4afcf555-ce5a-4812-99a8-eaa65460cae8"/>
+				<box rightPadding="3">
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Cost]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="16" width="552" height="1" uuid="063e11cd-9e26-43a2-8dab-9acf99f6f6fb"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="79" height="14" uuid="7de8b3d7-de41-45b9-a17e-891eb216c4bf"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PARTNUM}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="79" y="0" width="181" height="14" uuid="cc80aff8-1430-49db-8ca9-df9294d14b7f"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCRIPTION}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="260" y="0" width="61" height="14" uuid="fb4e158b-2114-4d84-be52-73192f9b437f"/>
+				<box rightPadding="3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{QUANTITY}.doubleValue() <= 0 && $F{DATECREATED}.before($P{ReportOnDate}) ?
+"N/A" :
+$F{QUANTITY}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="321" y="0" width="34" height="14" uuid="4b51697d-ecf4-418c-ae94-8a03d07a61ed"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{QUANTITY}.doubleValue() <= 0 && $F{DATECREATED}.before($P{ReportOnDate}) ?
+"" :
+$F{UOM}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="355" y="0" width="100" height="14" uuid="a863f23c-7f21-4d6b-b878-552236098398"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{QUANTITY}.doubleValue() <= 0 ? "N/A"
+:
+$V{isMultiCurrency} ?
+$P{cbCostingMethod}.equals("Average Cost") ?
+    com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, $F{AVGCOST}, $V{CostDecimal}) :
+    $P{cbCostingMethod}.equals("Standard Cost") ?
+        com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, $F{STDCOST}, $V{CostDecimal}) :
+        com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, $F{NEXTCOST}, $V{CostDecimal})
+:
+$P{cbCostingMethod}.equals("Average Cost") ?
+    $F{AVGCOST} :
+    $P{cbCostingMethod}.equals("Standard Cost") ?
+        $F{STDCOST} :
+        $F{NEXTCOST}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{CostDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="455" y="0" width="97" height="14" uuid="fce57620-912c-4197-b1d8-15604f272930"/>
+				<box rightPadding="3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{QUANTITY}.doubleValue() <= 0 ? "N/A"
+:
+$V{isMultiCurrency} ?
+$P{cbCostingMethod}.equals("Average Cost") ?
+    com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, $F{AVGCOST} * $F{QUANTITY}, $V{CostDecimal}) :
+    $P{cbCostingMethod}.equals("Standard Cost") ?
+        com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, $F{STDCOST} * $F{QUANTITY}, $V{CostDecimal}) :
+        com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, $F{NEXTCOST} * $F{QUANTITY}, $V{CostDecimal})
+:
+$P{cbCostingMethod}.equals("Average Cost") ?
+    $F{AVGCOST} * $F{QUANTITY} :
+    $P{cbCostingMethod}.equals("Standard Cost") ?
+        $F{STDCOST} * $F{QUANTITY} :
+        $F{NEXTCOST} * $F{QUANTITY}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{CostDecimal}]]></patternExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="17" splitType="Stretch">
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-13" mode="Transparent" x="504" y="3" width="48" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="4c0ce29c-32b9-40a7-a11f-9dc6729b8480"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-12" mode="Transparent" x="321" y="3" width="183" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="5a00d2be-42d0-4c2a-91c0-ec5df61ca532"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-14" mode="Transparent" x="0" y="3" width="321" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="9d20b973-f64b-4af4-b71a-d0faa557ae5a"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.LONG)).format(new Date())]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="51">
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-14" mode="Transparent" x="0" y="37" width="321" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="bee36481-9912-4761-9c50-a6beb0c96717"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.LONG)).format(new Date())]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-12" mode="Transparent" x="321" y="37" width="183" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="982e1be6-8107-4993-bbf0-d312894ddf28"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-13" mode="Transparent" x="504" y="37" width="48" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="6040ef7b-a313-4923-9b03-ab16e0a97038"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="405" y="3" width="147" height="14" uuid="8d3d7516-cbda-45c9-830f-761798fb2511"/>
+				<box rightPadding="3">
+					<topPen lineWidth="1.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Open Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{isMultiCurrency} ?
+com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, $V{ReportTotal}, $V{CostDecimal})
+:
+$V{ReportTotal}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{CostDecimal}]]></patternExpression>
+			</textField>
+			<staticText>
+				<reportElement x="355" y="3" width="50" height="14" uuid="5cde5173-61d5-40b9-b74c-1d112b0bfc37"/>
+				<box>
+					<topPen lineWidth="1.5"/>
+				</box>
+				<textElement>
+					<font fontName="Open Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total:]]></text>
+			</staticText>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

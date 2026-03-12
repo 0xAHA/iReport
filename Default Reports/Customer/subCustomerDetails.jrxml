@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bottomMargin="0" columnWidth="720" leftMargin="0" name="subCustomerDetails" orientation="Landscape" pageHeight="576" pageWidth="720" rightMargin="0" topMargin="0" uuid="befb32cb-2733-4309-ac8b-bdc16fb6ffec" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter class="java.lang.String" isForPrompting="false" name="path">
+		<defaultValueExpression><![CDATA["../Customer/"]]></defaultValueExpression>
+	</parameter>
+	<parameter class="java.lang.Object" isForPrompting="false" name="module">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter class="java.lang.String" name="ISSUBREPORTONLY"/>
+	<parameter class="java.lang.Boolean" isForPrompting="false" name="IncludeJobs">
+		<defaultValueExpression><![CDATA[new Boolean(true)]]></defaultValueExpression>
+	</parameter>
+	<parameter class="java.lang.String" isForPrompting="false" name="customerID">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter class="java.lang.Boolean" isForPrompting="false" name="ShowCountry">
+		<defaultValueExpression><![CDATA[new Boolean(false)]]></defaultValueExpression>
+	</parameter>
+	<parameter class="java.lang.String" isForPrompting="false" name="cbAddressType">
+		<parameterDescription><![CDATA[%, All, Main Office, Main Office, Home, Home, Remit To, Remit To, Bill To, Bill To, Ship To, Ship To]]></parameterDescription>
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter class="java.lang.Boolean" isForPrompting="false" name="ShowContactInfo">
+		<defaultValueExpression><![CDATA[new Boolean(true)]]></defaultValueExpression>
+	</parameter>
+	<parameter class="java.lang.Integer" isForPrompting="false" name="SubCounter">
+		<defaultValueExpression><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT customer.name AS customername, address.name AS addressname, addresstype.name AS addresstypename,
+    address.address, address.city, address.zip, stateconst.name AS state, countryconst.name AS country,
+    contact.contactname, contact.datus, contacttype.name AS contacttypename, address.id AS addressid,
+    COALESCE(countryconst.abbreviation,'') AS countryabbr, COALESCE(stateconst.code,'') AS stateabbr,
+    customer.id AS customerid, company.name AS company
+
+FROM customer
+    INNER JOIN address ON customer.accountid = address.accountid
+    INNER JOIN addresstype ON address.typeid = addresstype.id
+    LEFT JOIN contact ON (customer.accountid = contact.accountid AND address.id = contact.addressid)
+    LEFT JOIN contacttype ON contact.typeid = contacttype.id
+    LEFT JOIN countryconst ON address.countryid = countryconst.id
+    LEFT JOIN stateconst ON address.stateid = stateconst.id
+    INNER JOIN company ON company.id = 1
+
+WHERE customer.parentid LIKE $P{customerID}
+  AND UPPER(addresstype.name) LIKE UPPER($P{cbAddressType})
+
+ORDER BY UPPER(customer.name), UPPER(address.name), UPPER(contact.contactname)]]>
+	</queryString>
+	<field class="java.lang.String" name="CUSTOMERNAME">
+		<fieldDescription/>
+	</field>
+	<field class="java.lang.String" name="ADDRESSNAME">
+		<fieldDescription/>
+	</field>
+	<field class="java.lang.String" name="ADDRESSTYPENAME">
+		<fieldDescription/>
+	</field>
+	<field class="java.lang.String" name="ADDRESS">
+		<fieldDescription/>
+	</field>
+	<field class="java.lang.String" name="CITY">
+		<fieldDescription/>
+	</field>
+	<field class="java.lang.String" name="ZIP">
+		<fieldDescription/>
+	</field>
+	<field class="java.lang.String" name="STATE">
+		<fieldDescription/>
+	</field>
+	<field class="java.lang.String" name="COUNTRY">
+		<fieldDescription/>
+	</field>
+	<field class="java.lang.String" name="CONTACTNAME">
+		<fieldDescription/>
+	</field>
+	<field class="java.lang.String" name="DATUS">
+		<fieldDescription/>
+	</field>
+	<field class="java.lang.String" name="CONTACTTYPENAME">
+		<fieldDescription/>
+	</field>
+	<field class="java.lang.Integer" name="ADDRESSID">
+		<fieldDescription/>
+	</field>
+	<field class="java.lang.String" name="COUNTRYABBR">
+		<fieldDescription/>
+	</field>
+	<field class="java.lang.String" name="STATEABBR">
+		<fieldDescription/>
+	</field>
+	<field class="java.lang.Integer" name="CUSTOMERID">
+		<fieldDescription/>
+	</field>
+	<field class="java.lang.String" name="COMPANY">
+		<fieldDescription/>
+	</field>
+	<variable calculation="System" class="java.lang.Integer" name="Counter" resetType="None">
+		<variableExpression><![CDATA[$P{SubCounter} + 1]]></variableExpression>
+	</variable>
+	<variable calculation="System" class="java.lang.String" name="spacing" resetType="None">
+		<variableExpression><![CDATA[$V{Counter} == 1 ?
+    "&nbsp;&nbsp;&nbsp;" :
+    $V{Counter} == 2 ?
+        "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" :
+        $V{Counter} == 3 ?
+            "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" :
+            $V{Counter} == 4 ?
+                "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" :
+                $V{Counter} == 5 ?
+                    "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" :
+                    ""]]></variableExpression>
+	</variable>
+	<group name="Customer">
+		<groupExpression><![CDATA[$F{CUSTOMERNAME}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<textField hyperlinkType="Reference" isBlankWhenNull="true" isStretchWithOverflow="true">
+					<reportElement forecolor="#000099" height="14" key="textField-8" uuid="133aaa57-0f7f-458f-8057-2101ff9631a3" width="720" x="0" y="0"/>
+					<box leftPadding="0">
+						<bottomPen lineColor="#000000" lineWidth="1.0"/>
+					</box>
+					<textElement markup="html">
+						<font fontName="Open Sans" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[((com.evnt.eve.modules.ReportHelperModule) $P{module}).getCustomerParentName(Integer.parseInt($P{customerID})) + ":" + $F{CUSTOMERNAME}]]></textFieldExpression>
+					<anchorNameExpression><![CDATA["CustomerName"]]></anchorNameExpression>
+					<hyperlinkReferenceExpression><![CDATA[((com.evnt.eve.modules.ReportHelperModule) $P{module}).getCustomerParentName(Integer.parseInt($P{customerID})) + ":" + $F{CUSTOMERNAME}]]></hyperlinkReferenceExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="10">
+				<printWhenExpression><![CDATA[$P{IncludeJobs}]]></printWhenExpression>
+				<subreport>
+					<reportElement height="10" uuid="7e1ea997-bc0e-4dc6-9300-028a32434246" width="720" x="0" y="0"/>
+					<subreportParameter name="module">
+						<subreportParameterExpression><![CDATA[$P{module}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SubCounter">
+						<subreportParameterExpression><![CDATA[$V{Counter}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="path">
+						<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="IncludeJobs">
+						<subreportParameterExpression><![CDATA[$P{IncludeJobs}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="ShowCountry">
+						<subreportParameterExpression><![CDATA[$P{ShowCountry}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="ShowContactInfo">
+						<subreportParameterExpression><![CDATA[$P{ShowContactInfo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="customerID">
+						<subreportParameterExpression><![CDATA[$F{CUSTOMERID}.toString()]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="cbAddressType">
+						<subreportParameterExpression><![CDATA[$P{cbAddressType}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path} + "subCustomerDetails.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Address">
+		<groupExpression><![CDATA[$F{ADDRESSID}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<textField isBlankWhenNull="true" pattern="">
+					<reportElement backcolor="#FFFFFF" forecolor="#000000" height="14" key="textField" mode="Transparent" uuid="e800c84d-3519-41f9-9224-f7985b39f09e" width="71" x="586" y="0"/>
+					<box>
+						<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+						<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+						<bottomPen lineColor="#000000" lineWidth="0.0"/>
+						<rightPen lineColor="#FFFFFF" lineStyle="Solid" lineWidth="0.0"/>
+					</box>
+					<textElement rotation="None" textAlignment="Left" verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="false" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" pdfEncoding="Cp1252" size="10"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ZIP}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true" isStretchWithOverflow="true" pattern="">
+					<reportElement backcolor="#FFFFFF" forecolor="#000000" height="14" key="textField" mode="Transparent" uuid="14da6129-f6eb-41a6-9481-10260688b1bf" width="130" x="0" y="0"/>
+					<box leftPadding="10">
+						<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+						<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+						<bottomPen lineColor="#000000" lineWidth="0.0"/>
+						<rightPen lineColor="#FFFFFF" lineStyle="Solid" lineWidth="0.0"/>
+					</box>
+					<textElement rotation="None" textAlignment="Left" verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="false" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" pdfEncoding="Cp1252" size="10"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ADDRESSNAME}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true" pattern="">
+					<reportElement backcolor="#FFFFFF" forecolor="#000000" height="14" key="textField" mode="Transparent" uuid="86d05db7-180f-4bea-b88f-13157a096e9c" width="177" x="347" y="0"/>
+					<box>
+						<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+						<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+						<bottomPen lineColor="#000000" lineWidth="0.0"/>
+						<rightPen lineColor="#FFFFFF" lineStyle="Solid" lineWidth="0.0"/>
+					</box>
+					<textElement rotation="None" textAlignment="Left" verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="false" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" pdfEncoding="Cp1252" size="10"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CITY}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true" isStretchWithOverflow="true" pattern="">
+					<reportElement backcolor="#FFFFFF" forecolor="#000000" height="14" key="textField-1" mode="Transparent" uuid="d72f7217-8818-43a3-b801-dd365bf47b3d" width="63" x="657" y="0">
+						<printWhenExpression><![CDATA[$P{ShowCountry}]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+						<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+						<bottomPen lineColor="#000000" lineWidth="0.0"/>
+						<rightPen lineColor="#FFFFFF" lineStyle="Solid" lineWidth="0.0"/>
+					</box>
+					<textElement rotation="None" textAlignment="Left" verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="false" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" pdfEncoding="Cp1252" size="10"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{COUNTRYABBR}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true" isStretchWithOverflow="true" pattern="">
+					<reportElement backcolor="#FFFFFF" forecolor="#000000" height="14" key="textField" mode="Transparent" uuid="86c8d280-ae64-4d58-94ac-32bd5dab5b5c" width="217" x="130" y="0"/>
+					<box>
+						<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+						<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+						<bottomPen lineColor="#000000" lineWidth="0.0"/>
+						<rightPen lineColor="#FFFFFF" lineStyle="Solid" lineWidth="0.0"/>
+					</box>
+					<textElement rotation="None" textAlignment="Left" verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="false" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" pdfEncoding="Cp1252" size="10"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ADDRESS}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true" pattern="">
+					<reportElement backcolor="#FFFFFF" forecolor="#000000" height="14" key="textField" mode="Transparent" uuid="0b56924a-ac07-4b7e-b160-bd7066916bb8" width="62" x="524" y="0"/>
+					<box>
+						<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+						<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+						<bottomPen lineColor="#000000" lineWidth="0.0"/>
+						<rightPen lineColor="#FFFFFF" lineStyle="Solid" lineWidth="0.0"/>
+					</box>
+					<textElement rotation="None" textAlignment="Left" verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="false" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" pdfEncoding="Cp1252" size="10"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{STATEABBR}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Contact">
+		<groupExpression><![CDATA[$F{ADDRESSID}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<printWhenExpression><![CDATA[$P{ShowContactInfo}]]></printWhenExpression>
+				<textField isBlankWhenNull="true" isStretchWithOverflow="true" pattern="">
+					<reportElement backcolor="#FFFFFF" forecolor="#000000" height="14" key="textField" mode="Transparent" uuid="720e0320-79d9-421a-80f2-39ca5e4671b6" width="720" x="0" y="0"/>
+					<box leftPadding="20">
+						<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+						<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+						<bottomPen lineColor="#000000" lineWidth="1.0"/>
+						<rightPen lineColor="#FFFFFF" lineStyle="Solid" lineWidth="0.0"/>
+					</box>
+					<textElement rotation="None" textAlignment="Left" verticalAlignment="Top">
+						<font fontName="Open Sans" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" pdfEncoding="Cp1252" size="10"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Contacts"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="10" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{ShowContactInfo}]]></printWhenExpression>
+			<textField isBlankWhenNull="true" isStretchWithOverflow="true" pattern="">
+				<reportElement backcolor="#FFFFFF" forecolor="#000000" height="14" key="textField" mode="Transparent" uuid="add05fc2-d9ec-4b4f-99eb-d655c60941a7" width="347" x="0" y="0"/>
+				<box leftPadding="25">
+					<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<bottomPen lineColor="#000000" lineWidth="0.0"/>
+					<rightPen lineColor="#FFFFFF" lineStyle="Solid" lineWidth="0.0"/>
+				</box>
+				<textElement rotation="None" textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Open Sans" isBold="false" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" pdfEncoding="Cp1252" size="10"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[( ($F{CONTACTNAME} !=null)  ? ("(" + $F{CONTACTTYPENAME} + ") " + $F{CONTACTNAME}) : "")]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" isStretchWithOverflow="true" pattern="">
+				<reportElement backcolor="#FFFFFF" forecolor="#000000" height="14" key="textField" mode="Transparent" uuid="92532043-611e-4973-b2d2-14e20cf2bcf4" width="177" x="347" y="0"/>
+				<box leftPadding="0">
+					<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<bottomPen lineColor="#000000" lineWidth="0.0"/>
+					<rightPen lineColor="#FFFFFF" lineStyle="Solid" lineWidth="0.0"/>
+				</box>
+				<textElement rotation="None" textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Open Sans" isBold="false" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" pdfEncoding="Cp1252" size="10"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DATUS}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="1" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+	<noData>
+		<band/>
+	</noData>
+</jasperReport>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MLB WO Battery Label 38x90 OneOff_Sub" pageWidth="255" pageHeight="107" orientation="Landscape" columnWidth="251" leftMargin="2" rightMargin="2" topMargin="2" bottomMargin="2" uuid="a1f7a7d6-9e1a-4db3-9897-23bfeb2631aa">
+    <property name="ireport.zoom" value="1.4641000000000006"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+    
+    <style name="default"/>
+    <style name="18" fontName="SansSerif" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+    
+    <parameter name="partNum" class="java.lang.String"/>
+    <parameter name="serialNum" class="java.lang.String"/>
+    <parameter name="dateFinished" class="java.util.Date"/>
+    
+    <queryString>
+        <![CDATA[SELECT
+    distinct part.num as partNum,
+    parttracking.typeid as serialNum
+FROM part
+LEFT JOIN parttotracking ON part.id = parttotracking.partid AND parttotracking.primaryflag = 1
+LEFT JOIN parttracking ON parttotracking.parttrackingid = parttracking.id
+WHERE part.id > 0
+AND part.activeflag = 1
+AND part.typeid = 10
+AND UPPER(part.num) LIKE UPPER($P{partNum})
+AND (parttracking.typeid = $P{serialNum} OR $P{serialNum} = '%')
+ORDER BY part.num, serialNum]]>
+    </queryString>
+    
+    <field name="partNum" class="java.lang.String"/>
+    <field name="serialNum" class="java.lang.Integer"/>
+    
+    <variable name="DateFormat" class="java.lang.String" resetType="None">
+        <variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+    </variable>
+    
+    <detail>
+        <band height="103" splitType="Stretch">
+            <textField isBlankWhenNull="true">
+                <reportElement key="textField-1" style="default" x="0" y="5" width="251" height="21" uuid="d155cd57-8514-4d9d-861f-f01fb9b29813"/>
+                <box>
+                    <topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="0.0" lineColor="#000000"/>
+                    <rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="Open Sans" size="15" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{partNum}]]></textFieldExpression>
+            </textField>
+            <componentElement>
+                <reportElement style="18" stretchType="RelativeToBandHeight" x="0" y="27" width="251" height="37" uuid="b9578ee9-2b09-4d82-be12-a1fad6de540e"/>
+                <jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false" barWidth="0" barHeight="0">
+                    <jr:codeExpression><![CDATA[$F{partNum}]]></jr:codeExpression>
+                </jr:barbecue>
+            </componentElement>
+            <textField isBlankWhenNull="true">
+                <reportElement key="textField-1" style="default" x="0" y="59" width="124" height="22" uuid="467e1fd0-7c62-4857-bb98-ce195ee03af2"/>
+                <box leftPadding="3">
+                    <topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="0.0" lineColor="#000000"/>
+                    <rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="Open Sans" size="14" isBold="false"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{serialNum}]]></textFieldExpression>
+            </textField>
+            <textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+                <reportElement key="textField-1" style="default" x="0" y="81" width="124" height="22" uuid="8f38f0bf-b70a-4a61-b015-a086db6406c9"/>
+                <box leftPadding="3">
+                    <topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="0.0" lineColor="#000000"/>
+                    <rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="Open Sans" size="14" isBold="false"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{dateFinished}]]></textFieldExpression>
+                <patternExpression><![CDATA[$V{DateFormat}]]></patternExpression>
+            </textField>
+            <componentElement>
+                <reportElement style="18" x="124" y="64" width="127" height="34" uuid="6bd1397f-0b87-4f42-a71a-9eaa90724682"/>
+                <jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false" barWidth="0" barHeight="0">
+                    <jr:codeExpression><![CDATA[$F{serialNum}]]></jr:codeExpression>
+                </jr:barbecue>
+            </componentElement>
+        </band>
+    </detail>
+</jasperReport>

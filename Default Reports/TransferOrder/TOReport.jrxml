@@ -1,0 +1,905 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TOReport" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="552" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="76be7293-de4d-448f-8d8e-806ae1530aa8">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="Barcode" hAlign="Center" vAlign="Middle">
+		<box topPadding="0"/>
+	</style>
+	<parameter name="toNum" class="java.lang.String">
+		<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["../TranserOrder/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="module" class="java.lang.Object" isForPrompting="false">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRangeNone" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="REPORTDESCRIPTION" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Basic Report for Transfer Orders."]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowRevision" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Boolean(false)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckShowCountry" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[1,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowBarcode" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cbLogoAlignment" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[top,Top,left,Left]]></parameterDescription>
+		<defaultValueExpression><![CDATA["left"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowCompanyName" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowCompanyAddress" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT xo.num as XONum, xo.typeid as XOTypeID, xotype.name as XOType, xostatus.name as XOStatus, xo.fromlgid as XOFromLGID, fromlg.name as XOFromLGName,
+    xo.fromattn as XOFromATTN, xo.fromname as XOFromName, xo.fromaddress as XOFromAddress, xo.fromcity as XOFromCity, xo.fromzip as XOFromZip,
+    fromState.name as XOFromState, fromcountry.name as XOFromCountry, xo.shiptolgid as XOToLGID, tolg.name as XOToLGName, xo.shiptoattn as XOToATTN,
+    xo.shiptoname as XOToName, xo.shiptoaddress as XOToAddress, xo.shiptocity as XOToCity, xo.shiptozip as XOToZip, toState.name as XOToState,
+    toCountry.name as XOToCountry, xo.ownerisfrom as XOOwnerIsFrom, xo.revisionnum as XORevisionNum, xo.datelastmodified as XODateLastModified,
+    xo.datecreated as XODateCreated, xo.dateissued as XODateIssued, xo.dateconfirmed as XODateConfirmed, xo.datefirstship as XODateFirstShip,
+    xo.datecompleted as XODateCompleted, xo.datescheduled as XODateScheduled, carrier.name as XOCarrier, xo.note as XONote,
+    xoitemtype.name as XOItemType, xoitemstatus.name as XOItemStatus, xoitem.lineitem as XOLineItem, xoitem.partnum as XOItemPartNum,
+    xoitem.description as XOItemPartDescription, xoitem.note as XOItemNote, xoitem.qtytofulfill as XOItemQtyToFulfill, xoitem.qtyfulfilled as XOItemQtyFulfilled,
+    xoitem.qtypicked as XOItemQtyPicked, uom.code as XOItemUOM, xoitem.datelastfulfillment as XOItemDateLastFulfillment,
+    xoitem.datescheduledfulfillment as XOItemDateScheduledFulfillment, xoitem.revisionnum as XOItemRevisionNum,
+    putawayloc.name as XOPutAwayLocation, company.name AS company,
+    (SELECT s2.sysvalue
+        FROM sysproperties s2
+        WHERE s2.syskey = 'Barcodes have DI'
+        ) AS BarcodesHaveDI
+
+FROM xotype, carrier, xoitemtype, uom, xo
+    LEFT OUTER JOIN countryconst fromcountry ON fromcountry.id = xo.fromcountryid
+    LEFT OUTER JOIN countryconst tocountry ON tocountry.id = xo.shiptocountryid
+    LEFT OUTER JOIN stateconst fromState ON xo.fromstateid = fromState.id
+    LEFT OUTER JOIN stateconst toState ON xo.shiptostateid = toState.id
+    LEFT OUTER JOIN xoitem ON xoitem.xoid = xo.id
+    LEFT OUTER JOIN xoitemstatus ON xoitemstatus.id = xoitem.statusid
+    LEFT OUTER JOIN xostatus ON xostatus.id = xo.statusid
+    LEFT OUTER JOIN locationgroup fromLG ON fromLG.id = xo.fromlgid
+    LEFT OUTER JOIN locationgroup toLG ON toLG.id = xo.shiptolgid
+    LEFT OUTER JOIN tag ON tag.id = xo.mainlocationtagid
+    LEFT OUTER JOIN location putAwayLoc ON tag.locationid = putAwayLoc.id
+    JOIN company ON company.id = 1
+
+WHERE xo.num = $P{toNum}
+  AND xo.typeid = xotype.id
+  AND xo.carrierid = carrier.id
+  AND xoitem.xoid = xo.id
+  AND xoitem.typeid = xoitemtype.id
+  AND uom.id = xoitem.uomid
+
+ORDER BY xoitem.lineitem]]>
+	</queryString>
+	<field name="XONUM" class="java.lang.String"/>
+	<field name="XOTYPEID" class="java.lang.Integer"/>
+	<field name="XOTYPE" class="java.lang.String"/>
+	<field name="XOSTATUS" class="java.lang.String"/>
+	<field name="XOFROMLGID" class="java.lang.Integer"/>
+	<field name="XOFROMLGNAME" class="java.lang.String"/>
+	<field name="XOFROMATTN" class="java.lang.String"/>
+	<field name="XOFROMNAME" class="java.lang.String"/>
+	<field name="XOFROMADDRESS" class="java.lang.String"/>
+	<field name="XOFROMCITY" class="java.lang.String"/>
+	<field name="XOFROMZIP" class="java.lang.String"/>
+	<field name="XOFROMSTATE" class="java.lang.String"/>
+	<field name="XOFROMCOUNTRY" class="java.lang.String"/>
+	<field name="XOTOLGID" class="java.lang.Integer"/>
+	<field name="XOTOLGNAME" class="java.lang.String"/>
+	<field name="XOTOATTN" class="java.lang.String"/>
+	<field name="XOTONAME" class="java.lang.String"/>
+	<field name="XOTOADDRESS" class="java.lang.String"/>
+	<field name="XOTOCITY" class="java.lang.String"/>
+	<field name="XOTOZIP" class="java.lang.String"/>
+	<field name="XOTOSTATE" class="java.lang.String"/>
+	<field name="XOTOCOUNTRY" class="java.lang.String"/>
+	<field name="XOOWNERISFROM" class="java.lang.Integer"/>
+	<field name="XOREVISIONNUM" class="java.lang.Integer"/>
+	<field name="XODATELASTMODIFIED" class="java.sql.Timestamp"/>
+	<field name="XODATECREATED" class="java.sql.Timestamp"/>
+	<field name="XODATEISSUED" class="java.sql.Timestamp"/>
+	<field name="XODATECONFIRMED" class="java.sql.Timestamp"/>
+	<field name="XODATEFIRSTSHIP" class="java.sql.Timestamp"/>
+	<field name="XODATECOMPLETED" class="java.sql.Timestamp"/>
+	<field name="XODATESCHEDULED" class="java.sql.Timestamp"/>
+	<field name="XOCARRIER" class="java.lang.String"/>
+	<field name="XONOTE" class="java.lang.String"/>
+	<field name="XOITEMTYPE" class="java.lang.String"/>
+	<field name="XOITEMSTATUS" class="java.lang.String"/>
+	<field name="XOLINEITEM" class="java.lang.Integer"/>
+	<field name="XOITEMPARTNUM" class="java.lang.String"/>
+	<field name="XOITEMPARTDESCRIPTION" class="java.lang.String"/>
+	<field name="XOITEMNOTE" class="java.lang.String"/>
+	<field name="XOITEMQTYTOFULFILL" class="java.lang.Double"/>
+	<field name="XOITEMQTYFULFILLED" class="java.lang.Double"/>
+	<field name="XOITEMQTYPICKED" class="java.lang.Double"/>
+	<field name="XOITEMUOM" class="java.lang.String"/>
+	<field name="XOITEMDATELASTFULFILLMENT" class="java.sql.Timestamp"/>
+	<field name="XOITEMDATESCHEDULEDFULFILLMENT" class="java.sql.Timestamp"/>
+	<field name="XOITEMREVISIONNUM" class="java.lang.Integer"/>
+	<field name="XOPUTAWAYLOCATION" class="java.lang.String"/>
+	<field name="COMPANY" class="java.lang.String"/>
+	<field name="BARCODESHAVEDI" class="java.lang.String"/>
+	<variable name="ORDERNUMBER" class="java.lang.String">
+		<variableExpression><![CDATA[$F{BARCODESHAVEDI} == null ? $F{XONUM} :
+	$F{BARCODESHAVEDI}.equals("true") ? "T" + $F{XONUM} : $F{XONUM}]]></variableExpression>
+	</variable>
+	<variable name="PartInfo" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[((($F{XOITEMPARTNUM} == null) || ($F{XOITEMPARTNUM}.length() < 1))
+	? ""
+	: ($F{XOITEMPARTNUM})
++ ((($F{XOITEMPARTNUM} == null) || ($F{XOITEMPARTNUM}.length() < 1) || ($F{XOITEMPARTDESCRIPTION}.length() < 1) || ($F{XOITEMPARTDESCRIPTION}.length() < 1))
+	? ""
+	: " - ")
++ ((($F{XOITEMPARTDESCRIPTION}.length() < 1) || ($F{XOITEMPARTDESCRIPTION}.length() < 1))
+	? ""
+	: $F{XOITEMPARTDESCRIPTION}))]]></variableExpression>
+	</variable>
+	<variable name="QtyOrdered" class="java.lang.Double">
+		<variableExpression><![CDATA[($F{XOITEMQTYTOFULFILL} == null) ? new Double(0) : $F{XOITEMQTYTOFULFILL}]]></variableExpression>
+	</variable>
+	<variable name="Owner" class="java.lang.String">
+		<variableExpression><![CDATA[( $F{XOOWNERISFROM}.intValue() == 1 ? $F{XOFROMLGNAME} : $F{XOTOLGNAME} )]]></variableExpression>
+	</variable>
+	<variable name="OwnerLGID" class="java.lang.Integer" resetType="None">
+		<variableExpression><![CDATA[( $F{XOOWNERISFROM}.intValue() == 1 ? $F{XOFROMLGID} : $F{XOTOLGID} )]]></variableExpression>
+	</variable>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<variable name="DateFormat" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+	</variable>
+	<group name="ToFromLG">
+		<groupExpression><![CDATA[new Integer(1)]]></groupExpression>
+		<groupHeader>
+			<band height="17">
+				<textField isBlankWhenNull="true">
+					<reportElement key="textField-25" mode="Opaque" x="279" y="0" width="273" height="17" forecolor="#000000" backcolor="#EAEAEA" uuid="d4abe327-40ea-4feb-baf5-6ef13b1846da"/>
+					<box leftPadding="3" rightPadding="3">
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.5" lineColor="#000000"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+						<font fontName="Open Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA["To: " + $F{XOTOLGNAME}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement key="textField-24" mode="Opaque" x="0" y="0" width="263" height="17" forecolor="#000000" backcolor="#EAEAEA" uuid="c8a2f33e-1829-4f76-89d5-06bdb6f7ac49"/>
+					<box leftPadding="3" rightPadding="3">
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.5" lineColor="#000000"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+						<font fontName="Open Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA["From: " + $F{XOFROMLGNAME} + ( $F{XOTYPEID}.intValue() == 30 ? " - " + $F{XOPUTAWAYLOCATION} : "" )]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="ToFromAddresses">
+		<groupExpression><![CDATA[new Integer(1)]]></groupExpression>
+		<groupHeader>
+			<band height="54">
+				<printWhenExpression><![CDATA[new Boolean($F{XOTYPE}.equals("Shipping"))]]></printWhenExpression>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-21" mode="Transparent" x="0" y="0" width="263" height="44" forecolor="#000000" backcolor="#FFFFFF" uuid="04b8f6dc-dc48-4480-8f7f-5918d7b4273d"/>
+					<box topPadding="3" leftPadding="3" bottomPadding="3" rightPadding="3">
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans" size="10" isItalic="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{XOFROMATTN} == null ? "" : ($F{XOFROMATTN} + "\n")) +
+($F{XOFROMADDRESS} == null ? "" : ($F{XOFROMADDRESS} + "\n")) +
+($F{XOFROMCITY} == null ? "" : ($F{XOFROMCITY} + ", ")) +
+	($F{XOFROMSTATE} == null ? "  " : ($F{XOFROMSTATE} + "  ")) +
+	($F{XOFROMZIP} == null ? "" : $F{XOFROMZIP}) +
+($P{ckShowCountry}.equals("0") ? "" : "\n" + $F{XOFROMCOUNTRY})]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-26" mode="Transparent" x="279" y="0" width="273" height="44" forecolor="#000000" backcolor="#FFFFFF" uuid="61a5c0d7-ebe8-4286-a36a-d2c320d44a37"/>
+					<box topPadding="3" leftPadding="3" bottomPadding="3" rightPadding="3">
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans" size="10" isItalic="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{XOTOATTN} == null ? "" : ($F{XOTOATTN} + "\n")) +
+($F{XOTOADDRESS} == null ? "" : ($F{XOTOADDRESS} + "\n")) +
+($F{XOTOCITY} == null ? "" : ($F{XOTOCITY} + ", ")) +
+	($F{XOTOSTATE} == null ? "  " : ($F{XOTOSTATE} + "  ")) +
+	($F{XOTOZIP} == null ? "" : $F{XOTOZIP}) +
+($P{ckShowCountry}.equals("0") ? "" : "\n" + $F{XOTOCOUNTRY})]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-34" x="0" y="44" width="552" height="10" uuid="a8ba07a9-424a-40b6-9f44-c6029552f4ab"/>
+					<textElement>
+						<font fontName="Open Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" "]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="Notes">
+		<groupExpression><![CDATA[new Integer(1)]]></groupExpression>
+		<groupHeader>
+			<band height="29">
+				<printWhenExpression><![CDATA[new Boolean(($F{XONOTE} != null) && ($F{XONOTE}.length() > 0))]]></printWhenExpression>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-15" mode="Transparent" x="32" y="0" width="520" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="a81c5481-041d-4176-8fc5-1a14aebed5d0"/>
+					<box leftPadding="3" rightPadding="3">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{XONOTE}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-9" mode="Transparent" x="0" y="0" width="33" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="6ef3a308-17e6-4499-8267-069975e16dca"/>
+					<box bottomPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					</box>
+					<textElement verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans" size="10" isBold="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[Notes:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-34" x="0" y="19" width="552" height="10" uuid="255f3b03-6b05-41a3-b595-18b570c1d549"/>
+					<textElement>
+						<font fontName="Open Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" "]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="PackingInfo">
+		<groupExpression><![CDATA[new Integer(1)]]></groupExpression>
+		<groupHeader>
+			<band height="38">
+				<staticText>
+					<reportElement key="staticText-3" mode="Opaque" x="0" y="0" width="90" height="14" forecolor="#000000" backcolor="#EAEAEA" uuid="dd033333-1cc8-43f0-8f44-e39579a0541a"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+						<font fontName="Open Sans" isBold="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[Owner]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-4" mode="Opaque" x="90" y="0" width="90" height="14" forecolor="#000000" backcolor="#EAEAEA" uuid="36f53001-de74-421f-ab2e-78bd8ab11a5e"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+						<font fontName="Open Sans" isBold="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[Type]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-5" mode="Opaque" x="180" y="0" width="90" height="14" forecolor="#000000" backcolor="#EAEAEA" uuid="fcf6da2c-9095-4be3-9d87-8cca7e4705a1"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+						<font fontName="Open Sans" isBold="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[Status]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-6" mode="Opaque" x="270" y="0" width="90" height="14" forecolor="#000000" backcolor="#EAEAEA" uuid="73e61a89-0c7a-4c7f-a2ed-928a7a6fb31f"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+						<font fontName="Open Sans" isBold="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[Date Confirmed]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-7" mode="Opaque" x="360" y="0" width="90" height="14" forecolor="#000000" backcolor="#EAEAEA" uuid="a763fdd8-daa2-4e90-b0fc-0b32ed677632"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+						<font fontName="Open Sans" isBold="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[Ship Via]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-8" mode="Opaque" x="450" y="0" width="102" height="14" forecolor="#000000" backcolor="#EAEAEA" uuid="05cbdde4-ce9b-4455-b0f3-d55bf97083f8"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+						<font fontName="Open Sans" isBold="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[Date Scheduled]]></text>
+				</staticText>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-13" mode="Transparent" x="360" y="14" width="90" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="4e7c4a96-3ce3-4ea5-9b0e-8c6961f38192"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+						<font fontName="Open Sans"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{XOCARRIER}]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-14" mode="Transparent" x="450" y="14" width="102" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="9fa90409-e644-4f5b-ab77-29304fbdd871"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+						<font fontName="Open Sans"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{XODATESCHEDULED}]]></textFieldExpression>
+					<patternExpression><![CDATA[$V{DateFormat}]]></patternExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-27" mode="Transparent" x="90" y="14" width="90" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="c0c1be3c-c27f-44ed-9475-0b17267e2d9d"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+						<font fontName="Open Sans"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{XOTYPE}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-28" mode="Transparent" x="0" y="14" width="90" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="a2a33e09-4fb7-43aa-ab81-b7768797b288"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+						<font fontName="Open Sans"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{Owner}]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-29" mode="Transparent" x="270" y="14" width="90" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="ce73bc3f-f9ab-4523-a5ef-883936a581bf"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+						<font fontName="Open Sans"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{XODATECONFIRMED}]]></textFieldExpression>
+					<patternExpression><![CDATA[$V{DateFormat}]]></patternExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-30" mode="Transparent" x="180" y="14" width="90" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="b6b13c4e-82d8-4273-90e7-21cc34049c61"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+						<font fontName="Open Sans"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{XOSTATUS}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-34" x="0" y="28" width="552" height="10" uuid="c7a857ad-63a6-4da4-a837-04cd8cd80918"/>
+					<textElement>
+						<font fontName="Open Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" "]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="info" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[null]]></groupExpression>
+		<groupHeader>
+			<band height="28">
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-13" mode="Opaque" x="442" y="0" width="110" height="28" forecolor="#000000" backcolor="#EAEAEA" uuid="ea105d9c-4e91-4b12-a81b-314a81410475"/>
+					<box>
+						<topPen lineWidth="1.0" lineColor="#FFFFFF"/>
+						<leftPen lineWidth="1.0" lineColor="#FFFFFF"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="1.0" lineColor="#FFFFFF"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None">
+						<font fontName="Open Sans" size="10" isBold="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Qty to Transfer"]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-9" mode="Opaque" x="73" y="0" width="369" height="28" forecolor="#000000" backcolor="#EAEAEA" uuid="a29c9090-dc72-4b8f-b54e-aa339b00df1c"/>
+					<box>
+						<topPen lineWidth="1.0" lineColor="#FFFFFF"/>
+						<leftPen lineWidth="1.0" lineColor="#FFFFFF"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="1.0" lineColor="#FFFFFF"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None">
+						<font fontName="Open Sans" size="10" isBold="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Item / Description"]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-16" mode="Opaque" x="32" y="0" width="41" height="28" forecolor="#000000" backcolor="#EAEAEA" uuid="331044cb-53ee-4cae-93b2-d5228d0e91c1"/>
+					<box>
+						<topPen lineWidth="1.0" lineColor="#FFFFFF"/>
+						<leftPen lineWidth="1.0" lineColor="#FFFFFF"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="1.0" lineColor="#FFFFFF"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None">
+						<font fontName="Open Sans" size="10" isBold="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Type"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-15" mode="Opaque" x="0" y="0" width="32" height="28" forecolor="#000000" backcolor="#EAEAEA" uuid="6a592f37-e6a3-4ce9-af76-d73ae1d0400d"/>
+					<box>
+						<topPen lineWidth="1.0" lineColor="#FFFFFF"/>
+						<leftPen lineWidth="1.0" lineColor="#FFFFFF"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="1.0" lineColor="#FFFFFF"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None">
+						<font fontName="Open Sans" size="10" isBold="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Item\n#"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band height="134">
+			<frame>
+				<reportElement key="Top Logo" x="0" y="0" width="358" height="134" uuid="8f4c063f-d019-44b6-aa15-05ed17ab3003">
+					<printWhenExpression><![CDATA[$P{cbLogoAlignment}.equals("top")]]></printWhenExpression>
+				</reportElement>
+				<image scaleImage="RetainShape" vAlign="Bottom" isUsingCache="true">
+					<reportElement key="Logo" mode="Opaque" x="0" y="0" width="356" height="40" forecolor="#000000" backcolor="#FFFFFF" uuid="515d6c8a-9705-4679-93b6-be701452c9ce">
+						<printWhenExpression><![CDATA[new Boolean($P{module} != null)]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					</box>
+					<graphicElement fill="Solid">
+						<pen lineWidth="0.0" lineStyle="Solid"/>
+					</graphicElement>
+					<imageExpression><![CDATA[com.evnt.util.ImageUtil.decodeImage(((com.evnt.eve.modules.ReportHelperModule) $P{module}).getImageData("Company", 1, true))]]></imageExpression>
+				</image>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-23" positionType="Float" mode="Transparent" x="0" y="60" width="358" height="55" forecolor="#000000" backcolor="#FFFFFF" uuid="672c207b-0ca5-4a95-9fd4-6d60154ce7c0">
+						<printWhenExpression><![CDATA[$P{module} != null && $P{ShowCompanyAddress}]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="0" bottomPadding="3">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					</box>
+					<textElement verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[((com.evnt.eve.modules.ReportHelperModule) $P{module}).getCompanyReportAddress($V{OwnerLGID})]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="CompanyName" mode="Transparent" x="0" y="40" width="358" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="c662fe9f-c1fc-4e6c-b407-d72d9ac7b316">
+						<printWhenExpression><![CDATA[$P{ShowCompanyName}]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="0" bottomPadding="0">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					</box>
+					<textElement verticalAlignment="Middle" rotation="None">
+						<font fontName="Open Sans" size="14" isBold="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{COMPANY}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement key="Left Logo" x="0" y="0" width="358" height="134" uuid="0a4cbbb4-d0d4-4b03-a74d-1ddebe829537">
+					<printWhenExpression><![CDATA[$P{cbLogoAlignment}.equals("left")]]></printWhenExpression>
+				</reportElement>
+				<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle" isUsingCache="false">
+					<reportElement key="Logo" mode="Opaque" x="0" y="0" width="75" height="134" forecolor="#000000" backcolor="#FFFFFF" uuid="a3936bae-bfd2-46d1-971d-c96ca9e1d6b5">
+						<printWhenExpression><![CDATA[new Boolean($P{module} != null)]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					</box>
+					<graphicElement fill="Solid">
+						<pen lineWidth="0.0" lineStyle="Solid"/>
+					</graphicElement>
+					<imageExpression><![CDATA[com.evnt.util.ImageUtil.decodeImage(((com.evnt.eve.modules.ReportHelperModule) $P{module}).getImageData("Company", 1, true))]]></imageExpression>
+				</image>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-23" positionType="Float" mode="Transparent" x="75" y="53" width="283" height="55" forecolor="#000000" backcolor="#FFFFFF" uuid="4b25f317-1495-4b89-b337-b6efb13ed411">
+						<printWhenExpression><![CDATA[$P{module} != null && $P{ShowCompanyAddress}]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="3" bottomPadding="0">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					</box>
+					<textElement verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[((com.evnt.eve.modules.ReportHelperModule) $P{module}).getCompanyReportAddress($V{OwnerLGID})]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="CompanyName" mode="Transparent" x="75" y="33" width="283" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="2c32001c-a983-4ec1-945c-c0bd65c5a136">
+						<printWhenExpression><![CDATA[$P{ShowCompanyName}]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="3" bottomPadding="0">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					</box>
+					<textElement verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans" size="14" isBold="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{COMPANY}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<staticText>
+				<reportElement key="" mode="Transparent" x="358" y="0" width="194" height="24" forecolor="#000000" backcolor="#FFFFFF" uuid="cfb769d1-0d3e-474a-acaf-38e54ff8b732"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" rotation="None" markup="none">
+					<font fontName="Open Sans" size="17" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Transfer Order]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" mode="Opaque" x="358" y="33" width="125" height="17" backcolor="#EAEAEA" uuid="2aca9386-37a8-4078-9a23-a29429c38e3a"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Open Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Order #"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="483" y="33" width="69" height="17" backcolor="#EAEAEA" uuid="7d4e241f-4486-4599-a201-3bf362400a76"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Open Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="358" y="50" width="125" height="17" uuid="c8af145a-dce3-4d52-bf39-34a3fb62addf"/>
+				<box leftPadding="3" rightPadding="3">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{ORDERNUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="483" y="50" width="69" height="17" uuid="40e5e43b-7339-446d-8778-d4d4c9442e03"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{XODATEISSUED} == null) ? (new SimpleDateFormat($V{DateFormat}).format($F{XODATELASTMODIFIED})) : (new SimpleDateFormat($V{DateFormat}).format($F{XODATEISSUED}))]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{DateFormat}]]></patternExpression>
+			</textField>
+			<componentElement>
+				<reportElement style="Barcode" positionType="Float" x="359" y="77" width="193" height="47" uuid="9786a4f7-1890-4899-87d9-d117a535caea">
+					<printWhenExpression><![CDATA[$P{ShowBarcode}]]></printWhenExpression>
+				</reportElement>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128B" drawText="false" checksumRequired="false" barHeight="50" evaluationTime="Report">
+					<jr:codeExpression><![CDATA[$V{ORDERNUMBER}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band height="13">
+			<staticText>
+				<reportElement key="Zebra" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="552" height="13" backcolor="#EAEAEA" uuid="66b05356-936e-4258-b551-acce8aa083ae">
+					<printWhenExpression><![CDATA[$V{PAGE_COUNT}.intValue() % 2 == 0]]></printWhenExpression>
+				</reportElement>
+				<textElement markup="none">
+					<font fontName="Open Sans"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-3" stretchType="RelativeToTallestObject" mode="Transparent" x="442" y="0" width="72" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="21d43ad0-ba5b-4c45-b03c-b889387363f6"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{QtyOrdered}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-6" stretchType="RelativeToTallestObject" mode="Transparent" x="514" y="0" width="38" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="9fc14307-7a33-4b2c-b320-d61123a023db"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{XOITEMUOM}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-2" stretchType="RelativeToTallestObject" mode="Transparent" x="73" y="0" width="369" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="bd2e0734-1ea9-443b-a1a1-6c45682d8f17"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PartInfo} + ((($F{XOITEMNOTE} == null) || ($F{XOITEMNOTE}.equals(""))) ? "" : "\n  " + $F{XOITEMNOTE})]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-17" stretchType="RelativeToTallestObject" mode="Transparent" x="32" y="0" width="41" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="12cbcb0b-901b-43c4-805a-ca47867497b9"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{XOITEMTYPE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-1" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="32" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="97f7f593-ca48-4586-90e1-b7ec3603725a"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{XOLINEITEM}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="14">
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-37" mode="Transparent" x="0" y="0" width="234" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="e571bdd4-95b9-47a4-ad06-20b1a316fbb8"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.LONG)).format(new Date())]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-38" mode="Transparent" x="348" y="0" width="158" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="2f757cb8-128c-4e8d-b498-3a43af067c99"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-39" mode="Transparent" x="506" y="0" width="46" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="7c513844-57e6-434b-ad7a-228fbade2b3d"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" positionType="Float" mode="Transparent" x="234" y="0" width="45" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="7b18d8aa-1fb5-4981-9ff8-aff8e2144172">
+					<printWhenExpression><![CDATA[$P{ShowRevision}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="8" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Revision:"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" positionType="Float" mode="Transparent" x="279" y="0" width="69" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="ed60dda5-5c42-48d5-885a-9fb33a22a0cf">
+					<printWhenExpression><![CDATA[$P{ShowRevision}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{XOREVISIONNUM}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

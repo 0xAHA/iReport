@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TermsAndConditions_Synergy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="1e3b7589-b3c0-45ba-9a9e-bcceb87e775e">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_PATH" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["../PurchaseOrder/"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT 0 AS page_num UNION ALL
+SELECT 1 UNION ALL
+SELECT 2 UNION ALL
+SELECT 3 UNION ALL
+SELECT 4 UNION ALL
+SELECT 5 UNION ALL
+SELECT 6 UNION ALL
+SELECT 7 UNION ALL
+SELECT 8 UNION ALL
+SELECT 9 UNION ALL
+SELECT 10 UNION ALL
+SELECT 11 UNION ALL
+SELECT 12]]>
+	</queryString>
+	<field name="page_num" class="java.lang.Integer"/>
+	<detail>
+		<band height="752" splitType="Stretch">
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Top">
+				<reportElement x="0" y="0" width="555" height="752" uuid="a8c77f19-29e1-4b3e-9f77-142e6d39c82e"/>
+				<imageExpression><![CDATA[$P{IMAGES_PATH} + "tcPage_" + $F{page_num} + ".jpg"]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,763 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BaborSalesVsBudget" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="782" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="0c0bbbd3-cf24-4599-94ce-ce9bee8d318a">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="NegativeRed" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[((java.math.BigDecimal)$V{currentPeriodVar}).compareTo(java.math.BigDecimal.ZERO) < 0]]></conditionExpression>
+			<style forecolor="#CC0000"/>
+		</conditionalStyle>
+	</style>
+	<style name="NegativeRedYTD" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[((java.math.BigDecimal)$V{ytdVar}).compareTo(java.math.BigDecimal.ZERO) < 0]]></conditionExpression>
+			<style forecolor="#CC0000"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="dateRange1" class="java.sql.Date" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<parameterDescription><![CDATA[This Month]]></parameterDescription>
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRange2" class="java.sql.Date" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    COALESCE(CONCAT(su.firstName, ' ', su.lastName), 'Unassigned') AS salesPersonName,
+    COALESCE(ag.name, 'Uncategorised') AS customerGroup,
+    COALESCE(qbc.name, '') AS stateName,
+    c.name AS customerName,
+    COALESCE(CAST(CustomFieldByName(c.customFields, 'Annual Budget') AS DECIMAL(18,2)), 0) AS annualBudget,
+    COALESCE(CAST(CustomFieldByName(c.customFields, 'Jan Budget') AS DECIMAL(18,2)), 0) AS janBudget,
+    COALESCE(CAST(CustomFieldByName(c.customFields, 'Feb Budget') AS DECIMAL(18,2)), 0) AS febBudget,
+    COALESCE(CAST(CustomFieldByName(c.customFields, 'Mar Budget') AS DECIMAL(18,2)), 0) AS marBudget,
+    COALESCE(CAST(CustomFieldByName(c.customFields, 'Apr Budget') AS DECIMAL(18,2)), 0) AS aprBudget,
+    COALESCE(CAST(CustomFieldByName(c.customFields, 'May Budget') AS DECIMAL(18,2)), 0) AS mayBudget,
+    COALESCE(CAST(CustomFieldByName(c.customFields, 'Jun Budget') AS DECIMAL(18,2)), 0) AS junBudget,
+    COALESCE(CAST(CustomFieldByName(c.customFields, 'Jul Budget') AS DECIMAL(18,2)), 0) AS julBudget,
+    COALESCE(CAST(CustomFieldByName(c.customFields, 'Aug Budget') AS DECIMAL(18,2)), 0) AS augBudget,
+    COALESCE(CAST(CustomFieldByName(c.customFields, 'Sep Budget') AS DECIMAL(18,2)), 0) AS sepBudget,
+    COALESCE(CAST(CustomFieldByName(c.customFields, 'Oct Budget') AS DECIMAL(18,2)), 0) AS octBudget,
+    COALESCE(CAST(CustomFieldByName(c.customFields, 'Nov Budget') AS DECIMAL(18,2)), 0) AS novBudget,
+    COALESCE(CAST(CustomFieldByName(c.customFields, 'Dec Budget') AS DECIMAL(18,2)), 0) AS decBudget,
+    COALESCE(cpSales.currentPeriodActual, 0) AS currentPeriodActual,
+    COALESCE(ytdSales.ytdActual, 0) AS ytdActual
+FROM customer c
+LEFT JOIN accountgrouprelation agr ON agr.accountId = c.accountId
+LEFT JOIN accountgroup ag ON ag.id = agr.groupId
+LEFT JOIN qbclass qbc ON qbc.id = c.qbClassId
+LEFT JOIN sysuser su ON su.id = c.defaultSalesmanId
+LEFT JOIN (
+    SELECT
+        so.customerId,
+        SUM(postsoitem.totalPrice) AS currentPeriodActual
+    FROM postsoitem
+    INNER JOIN postso ON postso.id = postsoitem.postSOId
+    INNER JOIN so ON so.id = postso.soId
+    WHERE postso.postDate >= $P{dateRange1}
+      AND postso.postDate <= $P{dateRange2}
+    GROUP BY so.customerId
+) cpSales ON cpSales.customerId = c.id
+LEFT JOIN (
+    SELECT
+        so.customerId,
+        SUM(postsoitem.totalPrice) AS ytdActual
+    FROM postsoitem
+    INNER JOIN postso ON postso.id = postsoitem.postSOId
+    INNER JOIN so ON so.id = postso.soId
+    WHERE postso.postDate >= CONCAT(YEAR($P{dateRange2}), '-01-01')
+      AND postso.postDate <= $P{dateRange2}
+    GROUP BY so.customerId
+) ytdSales ON ytdSales.customerId = c.id
+WHERE (
+    COALESCE(CAST(CustomFieldByName(c.customFields, 'Annual Budget') AS DECIMAL(18,2)), 0) > 0
+    OR COALESCE(CAST(CustomFieldByName(c.customFields, 'Jan Budget') AS DECIMAL(18,2)), 0) > 0
+    OR COALESCE(CAST(CustomFieldByName(c.customFields, 'Feb Budget') AS DECIMAL(18,2)), 0) > 0
+    OR COALESCE(CAST(CustomFieldByName(c.customFields, 'Mar Budget') AS DECIMAL(18,2)), 0) > 0
+    OR COALESCE(CAST(CustomFieldByName(c.customFields, 'Apr Budget') AS DECIMAL(18,2)), 0) > 0
+    OR COALESCE(CAST(CustomFieldByName(c.customFields, 'May Budget') AS DECIMAL(18,2)), 0) > 0
+    OR COALESCE(CAST(CustomFieldByName(c.customFields, 'Jun Budget') AS DECIMAL(18,2)), 0) > 0
+    OR COALESCE(CAST(CustomFieldByName(c.customFields, 'Jul Budget') AS DECIMAL(18,2)), 0) > 0
+    OR COALESCE(CAST(CustomFieldByName(c.customFields, 'Aug Budget') AS DECIMAL(18,2)), 0) > 0
+    OR COALESCE(CAST(CustomFieldByName(c.customFields, 'Sep Budget') AS DECIMAL(18,2)), 0) > 0
+    OR COALESCE(CAST(CustomFieldByName(c.customFields, 'Oct Budget') AS DECIMAL(18,2)), 0) > 0
+    OR COALESCE(CAST(CustomFieldByName(c.customFields, 'Nov Budget') AS DECIMAL(18,2)), 0) > 0
+    OR COALESCE(CAST(CustomFieldByName(c.customFields, 'Dec Budget') AS DECIMAL(18,2)), 0) > 0
+    OR COALESCE(cpSales.currentPeriodActual, 0) > 0
+    OR COALESCE(ytdSales.ytdActual, 0) > 0
+)
+ORDER BY salesPersonName, customerGroup, qbc.name, c.name]]>
+	</queryString>
+	<field name="salesPersonName" class="java.lang.String"/>
+	<field name="customerGroup" class="java.lang.String"/>
+	<field name="stateName" class="java.lang.String"/>
+	<field name="customerName" class="java.lang.String"/>
+	<field name="annualBudget" class="java.math.BigDecimal"/>
+	<field name="janBudget" class="java.math.BigDecimal"/>
+	<field name="febBudget" class="java.math.BigDecimal"/>
+	<field name="marBudget" class="java.math.BigDecimal"/>
+	<field name="aprBudget" class="java.math.BigDecimal"/>
+	<field name="mayBudget" class="java.math.BigDecimal"/>
+	<field name="junBudget" class="java.math.BigDecimal"/>
+	<field name="julBudget" class="java.math.BigDecimal"/>
+	<field name="augBudget" class="java.math.BigDecimal"/>
+	<field name="sepBudget" class="java.math.BigDecimal"/>
+	<field name="octBudget" class="java.math.BigDecimal"/>
+	<field name="novBudget" class="java.math.BigDecimal"/>
+	<field name="decBudget" class="java.math.BigDecimal"/>
+	<field name="currentPeriodActual" class="java.math.BigDecimal"/>
+	<field name="ytdActual" class="java.math.BigDecimal"/>
+	<variable name="currentPeriodMonth" class="java.lang.Integer" resetType="None">
+		<variableExpression><![CDATA[Integer.valueOf(new java.text.SimpleDateFormat("M").format($P{dateRange1}))]]></variableExpression>
+	</variable>
+	<variable name="currentMonthBudget" class="java.math.BigDecimal" resetType="None">
+		<variableExpression><![CDATA[$F{annualBudget}.compareTo(java.math.BigDecimal.ZERO) > 0
+    ? $F{annualBudget}.divide(new java.math.BigDecimal(12), 2, java.math.RoundingMode.HALF_UP)
+    : (
+        $V{currentPeriodMonth}.intValue() == 1 ? $F{janBudget} :
+        $V{currentPeriodMonth}.intValue() == 2 ? $F{febBudget} :
+        $V{currentPeriodMonth}.intValue() == 3 ? $F{marBudget} :
+        $V{currentPeriodMonth}.intValue() == 4 ? $F{aprBudget} :
+        $V{currentPeriodMonth}.intValue() == 5 ? $F{mayBudget} :
+        $V{currentPeriodMonth}.intValue() == 6 ? $F{junBudget} :
+        $V{currentPeriodMonth}.intValue() == 7 ? $F{julBudget} :
+        $V{currentPeriodMonth}.intValue() == 8 ? $F{augBudget} :
+        $V{currentPeriodMonth}.intValue() == 9 ? $F{sepBudget} :
+        $V{currentPeriodMonth}.intValue() == 10 ? $F{octBudget} :
+        $V{currentPeriodMonth}.intValue() == 11 ? $F{novBudget} :
+        $F{decBudget}
+    )]]></variableExpression>
+	</variable>
+	<variable name="ytdMonthCount" class="java.lang.Integer" resetType="None">
+		<variableExpression><![CDATA[Integer.valueOf(new java.text.SimpleDateFormat("M").format($P{dateRange2}))]]></variableExpression>
+	</variable>
+	<variable name="ytdBudget" class="java.math.BigDecimal" resetType="None">
+		<variableExpression><![CDATA[$F{annualBudget}.compareTo(java.math.BigDecimal.ZERO) > 0
+    ? $F{annualBudget}.divide(new java.math.BigDecimal(12), 2, java.math.RoundingMode.HALF_UP).multiply(new java.math.BigDecimal($V{ytdMonthCount}))
+    : (
+        ($V{ytdMonthCount}.intValue() >= 1 ? $F{janBudget} : java.math.BigDecimal.ZERO)
+        .add($V{ytdMonthCount}.intValue() >= 2 ? $F{febBudget} : java.math.BigDecimal.ZERO)
+        .add($V{ytdMonthCount}.intValue() >= 3 ? $F{marBudget} : java.math.BigDecimal.ZERO)
+        .add($V{ytdMonthCount}.intValue() >= 4 ? $F{aprBudget} : java.math.BigDecimal.ZERO)
+        .add($V{ytdMonthCount}.intValue() >= 5 ? $F{mayBudget} : java.math.BigDecimal.ZERO)
+        .add($V{ytdMonthCount}.intValue() >= 6 ? $F{junBudget} : java.math.BigDecimal.ZERO)
+        .add($V{ytdMonthCount}.intValue() >= 7 ? $F{julBudget} : java.math.BigDecimal.ZERO)
+        .add($V{ytdMonthCount}.intValue() >= 8 ? $F{augBudget} : java.math.BigDecimal.ZERO)
+        .add($V{ytdMonthCount}.intValue() >= 9 ? $F{sepBudget} : java.math.BigDecimal.ZERO)
+        .add($V{ytdMonthCount}.intValue() >= 10 ? $F{octBudget} : java.math.BigDecimal.ZERO)
+        .add($V{ytdMonthCount}.intValue() >= 11 ? $F{novBudget} : java.math.BigDecimal.ZERO)
+        .add($V{ytdMonthCount}.intValue() >= 12 ? $F{decBudget} : java.math.BigDecimal.ZERO)
+    )]]></variableExpression>
+	</variable>
+	<variable name="currentPeriodVar" class="java.math.BigDecimal" resetType="None">
+		<variableExpression><![CDATA[$F{currentPeriodActual}.subtract($V{currentMonthBudget})]]></variableExpression>
+	</variable>
+	<variable name="ytdVar" class="java.math.BigDecimal" resetType="None">
+		<variableExpression><![CDATA[$F{ytdActual}.subtract($V{ytdBudget})]]></variableExpression>
+	</variable>
+	<!-- State group totals -->
+	<variable name="stateActualCP" class="java.math.BigDecimal" resetType="Group" resetGroup="stateGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{currentPeriodActual}]]></variableExpression>
+	</variable>
+	<variable name="stateBudgetCP" class="java.math.BigDecimal" resetType="Group" resetGroup="stateGroup" calculation="Sum">
+		<variableExpression><![CDATA[$V{currentMonthBudget}]]></variableExpression>
+	</variable>
+	<variable name="stateVarCP" class="java.math.BigDecimal" resetType="Group" resetGroup="stateGroup" calculation="Sum">
+		<variableExpression><![CDATA[$V{currentPeriodVar}]]></variableExpression>
+	</variable>
+	<variable name="stateActualYTD" class="java.math.BigDecimal" resetType="Group" resetGroup="stateGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{ytdActual}]]></variableExpression>
+	</variable>
+	<variable name="stateBudgetYTD" class="java.math.BigDecimal" resetType="Group" resetGroup="stateGroup" calculation="Sum">
+		<variableExpression><![CDATA[$V{ytdBudget}]]></variableExpression>
+	</variable>
+	<variable name="stateVarYTD" class="java.math.BigDecimal" resetType="Group" resetGroup="stateGroup" calculation="Sum">
+		<variableExpression><![CDATA[$V{ytdVar}]]></variableExpression>
+	</variable>
+	<!-- Customer Group totals -->
+	<variable name="cgActualCP" class="java.math.BigDecimal" resetType="Group" resetGroup="customerGrouping" calculation="Sum">
+		<variableExpression><![CDATA[$F{currentPeriodActual}]]></variableExpression>
+	</variable>
+	<variable name="cgBudgetCP" class="java.math.BigDecimal" resetType="Group" resetGroup="customerGrouping" calculation="Sum">
+		<variableExpression><![CDATA[$V{currentMonthBudget}]]></variableExpression>
+	</variable>
+	<variable name="cgVarCP" class="java.math.BigDecimal" resetType="Group" resetGroup="customerGrouping" calculation="Sum">
+		<variableExpression><![CDATA[$V{currentPeriodVar}]]></variableExpression>
+	</variable>
+	<variable name="cgActualYTD" class="java.math.BigDecimal" resetType="Group" resetGroup="customerGrouping" calculation="Sum">
+		<variableExpression><![CDATA[$F{ytdActual}]]></variableExpression>
+	</variable>
+	<variable name="cgBudgetYTD" class="java.math.BigDecimal" resetType="Group" resetGroup="customerGrouping" calculation="Sum">
+		<variableExpression><![CDATA[$V{ytdBudget}]]></variableExpression>
+	</variable>
+	<variable name="cgVarYTD" class="java.math.BigDecimal" resetType="Group" resetGroup="customerGrouping" calculation="Sum">
+		<variableExpression><![CDATA[$V{ytdVar}]]></variableExpression>
+	</variable>
+	<!-- Sales Person totals -->
+	<variable name="spActualCP" class="java.math.BigDecimal" resetType="Group" resetGroup="salesPersonGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{currentPeriodActual}]]></variableExpression>
+	</variable>
+	<variable name="spBudgetCP" class="java.math.BigDecimal" resetType="Group" resetGroup="salesPersonGroup" calculation="Sum">
+		<variableExpression><![CDATA[$V{currentMonthBudget}]]></variableExpression>
+	</variable>
+	<variable name="spVarCP" class="java.math.BigDecimal" resetType="Group" resetGroup="salesPersonGroup" calculation="Sum">
+		<variableExpression><![CDATA[$V{currentPeriodVar}]]></variableExpression>
+	</variable>
+	<variable name="spActualYTD" class="java.math.BigDecimal" resetType="Group" resetGroup="salesPersonGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{ytdActual}]]></variableExpression>
+	</variable>
+	<variable name="spBudgetYTD" class="java.math.BigDecimal" resetType="Group" resetGroup="salesPersonGroup" calculation="Sum">
+		<variableExpression><![CDATA[$V{ytdBudget}]]></variableExpression>
+	</variable>
+	<variable name="spVarYTD" class="java.math.BigDecimal" resetType="Group" resetGroup="salesPersonGroup" calculation="Sum">
+		<variableExpression><![CDATA[$V{ytdVar}]]></variableExpression>
+	</variable>
+	<!-- Grand totals -->
+	<variable name="grandActualCP" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{currentPeriodActual}]]></variableExpression>
+	</variable>
+	<variable name="grandBudgetCP" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{currentMonthBudget}]]></variableExpression>
+	</variable>
+	<variable name="grandVarCP" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{currentPeriodVar}]]></variableExpression>
+	</variable>
+	<variable name="grandActualYTD" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{ytdActual}]]></variableExpression>
+	</variable>
+	<variable name="grandBudgetYTD" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{ytdBudget}]]></variableExpression>
+	</variable>
+	<variable name="grandVarYTD" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{ytdVar}]]></variableExpression>
+	</variable>
+	<!-- GROUP 1: Sales Person (outermost) -->
+	<group name="salesPersonGroup">
+		<groupExpression><![CDATA[$F{salesPersonName}]]></groupExpression>
+		<groupHeader>
+			<band height="22">
+				<textField>
+					<reportElement uuid="561440ac-6ce5-42ad-8256-b4f434c9081a" x="0" y="6" width="782" height="16" forecolor="#FFFFFF" backcolor="#4472C4" mode="Opaque"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{salesPersonName}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="20">
+				<textField>
+					<reportElement uuid="1ec6e189-f8ea-4b27-8da5-36a1b1a0e748" x="0" y="0" width="238" height="20"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["TOTAL: " + $F{salesPersonName}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement uuid="10fb3217-1db6-4634-8b47-7fe85c9fd088" x="238" y="0" width="88" height="20"/>
+					<box><topPen lineWidth="1.0"/><bottomPen lineWidth="1.5"/></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{spActualCP}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement uuid="93302637-9bf2-45e4-aa9c-e23dce9472db" x="326" y="0" width="88" height="20"/>
+					<box><topPen lineWidth="1.0"/><bottomPen lineWidth="1.5"/></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{spBudgetCP}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement uuid="d85e6a1d-70e4-4774-81ee-a5a56a7d76d4" x="414" y="0" width="88" height="20"/>
+					<box><topPen lineWidth="1.0"/><bottomPen lineWidth="1.5"/></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{spVarCP}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement uuid="d5dda73f-2627-4b7c-adc9-442724c20e8f" x="520" y="0" width="88" height="20"/>
+					<box><topPen lineWidth="1.0"/><bottomPen lineWidth="1.5"/></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{spActualYTD}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement uuid="9f287c86-feeb-41e4-b9fa-b131e4d8f133" x="608" y="0" width="88" height="20"/>
+					<box><topPen lineWidth="1.0"/><bottomPen lineWidth="1.5"/></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{spBudgetYTD}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement uuid="1114f7e2-e50e-4126-b1af-50b0e5b5b490" x="696" y="0" width="86" height="20"/>
+					<box><topPen lineWidth="1.0"/><bottomPen lineWidth="1.5"/></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{spVarYTD}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<!-- GROUP 2: Customer Group (middle) -->
+	<group name="customerGrouping">
+		<groupExpression><![CDATA[$F{salesPersonName} + "|" + $F{customerGroup}]]></groupExpression>
+		<groupHeader>
+			<band height="18">
+				<textField>
+					<reportElement uuid="23379309-bb0c-4a1e-a232-99a8ff0ab58d" x="5" y="4" width="777" height="14" forecolor="#000000" backcolor="#D4E1F5" mode="Opaque"/>
+					<box>
+						<bottomPen lineWidth="0.25"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{customerGroup}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="18">
+				<textField>
+					<reportElement uuid="b86b6e63-9fcc-4e79-8313-ee2a888246f3" x="5" y="0" width="233" height="18"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["TOTAL: " + $F{customerGroup}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement uuid="c23b281c-ea5e-4dfd-a3db-2294d86bd98a" x="238" y="0" width="88" height="18"/>
+					<box><topPen lineWidth="0.5"/><bottomPen lineWidth="1.0"/></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{cgActualCP}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement uuid="2693358f-322e-44d9-804a-bb771ec8bbee" x="326" y="0" width="88" height="18"/>
+					<box><topPen lineWidth="0.5"/><bottomPen lineWidth="1.0"/></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{cgBudgetCP}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement uuid="4cd0e479-80ad-44e7-8db1-54a7287f44b0" x="414" y="0" width="88" height="18"/>
+					<box><topPen lineWidth="0.5"/><bottomPen lineWidth="1.0"/></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{cgVarCP}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement uuid="a9f4dfe3-496b-4f5e-bef4-d48f2885ffd6" x="520" y="0" width="88" height="18"/>
+					<box><topPen lineWidth="0.5"/><bottomPen lineWidth="1.0"/></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{cgActualYTD}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement uuid="8bcd03cb-e4ff-408d-af58-e8b3d660c595" x="608" y="0" width="88" height="18"/>
+					<box><topPen lineWidth="0.5"/><bottomPen lineWidth="1.0"/></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{cgBudgetYTD}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement uuid="df13aaa0-2674-405a-9da1-d0702ed93236" x="696" y="0" width="86" height="18"/>
+					<box><topPen lineWidth="0.5"/><bottomPen lineWidth="1.0"/></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{cgVarYTD}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<!-- GROUP 3: State (innermost) -->
+	<group name="stateGroup">
+		<groupExpression><![CDATA[$F{salesPersonName} + "|" + $F{customerGroup} + "|" + $F{stateName}]]></groupExpression>
+		<groupHeader>
+			<band height="18">
+				<textField>
+					<reportElement uuid="f3e6a2d9-882c-47da-afa6-c7af650424ad" x="10" y="4" width="232" height="14"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{stateName}.equals("") ? "(No State)" : $F{stateName}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="14">
+				<textField>
+					<reportElement uuid="52f1d31a-022f-4168-8408-e2b0cc5d5b5a" x="10" y="0" width="228" height="14"/>
+					<box>
+						<topPen lineWidth="0.25"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Total: " + ($F{stateName}.equals("") ? "(No State)" : $F{stateName})]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement uuid="a3a9b355-4a2e-4246-b401-fca04237771b" x="238" y="0" width="88" height="14"/>
+					<box>
+						<topPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{stateActualCP}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement uuid="658dc045-4b82-4565-ad49-5a5866669007" x="326" y="0" width="88" height="14"/>
+					<box>
+						<topPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{stateBudgetCP}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement uuid="d575100d-f1bb-42c0-8fdc-93acc2c60f61" x="414" y="0" width="88" height="14"/>
+					<box>
+						<topPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{stateVarCP}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement uuid="48aedd17-7a79-482d-ab48-54d09b13bb2c" x="520" y="0" width="88" height="14"/>
+					<box>
+						<topPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{stateActualYTD}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement uuid="3b442eff-e976-40b7-ab47-da8d457ff50d" x="608" y="0" width="88" height="14"/>
+					<box>
+						<topPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{stateBudgetYTD}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement uuid="462063b9-eed6-4e45-b5e3-5d7e48d2fe7a" x="696" y="0" width="86" height="14"/>
+					<box>
+						<topPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{stateVarYTD}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<title>
+		<band height="60">
+			<staticText>
+				<reportElement uuid="1742f5bd-1e05-4d95-9a3c-e388ef41df47" x="0" y="0" width="782" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[BABOR CUSTOMER SALES vs BUDGET]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="96b4a147-c5e8-4638-9152-c2818db72d0a" x="0" y="20" width="782" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Current Period : " + new java.text.SimpleDateFormat("MMMM-yyyy").format($P{dateRange1})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="7ed08326-fd5c-467a-9766-0553265d4ac1" x="0" y="34" width="782" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["YTD Period : 01/01/" + new java.text.SimpleDateFormat("yyyy").format($P{dateRange2}) + " to " + new java.text.SimpleDateFormat("dd/MM/yyyy").format($P{dateRange2})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="c03ec5d3-a239-4056-be8c-b855296cf6a2" x="682" y="0" width="100" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="30">
+			<staticText>
+				<reportElement uuid="be61b4aa-ee21-48d2-a0fc-189613404a05" x="0" y="0" width="238" height="30" backcolor="#E8E8E8"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sales Rep/ Customer Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ad71d715-59ad-4254-8c47-249404115a6b" x="238" y="0" width="264" height="15" backcolor="#E8E8E8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CURRENT PERIOD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2d1ebbb4-3d77-44e3-98e1-c25238a915ec" x="520" y="0" width="262" height="15" backcolor="#E8E8E8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[YEAR TO DATE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e649477d-2df9-4ce9-822e-f46dd4ef76f2" x="238" y="15" width="88" height="15"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ACTUAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f32c1aed-3f4f-460f-9fc0-a0a92a59382a" x="326" y="15" width="88" height="15"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[BUDGET]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bbf13f61-4d30-4243-8295-70c7baa6487c" x="414" y="15" width="88" height="15"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VAR]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="561440ac-6ce5-42ad-8256-b4f434c9081a" x="508" y="0" width="1" height="30" forecolor="#999999"/>
+			</line>
+			<staticText>
+				<reportElement uuid="ef0a85d1-7f20-46e2-b5e6-a02c983ef6b7" x="520" y="15" width="88" height="15"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ACTUAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e81a4492-4177-4538-9051-5ae295c1d507" x="608" y="15" width="88" height="15"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[BUDGET]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b9bcb78c-cdd1-4117-92c6-e5d0520b60c6" x="696" y="15" width="86" height="15"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VAR]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15">
+			<textField>
+				<reportElement uuid="c6984c04-9f4f-48e1-a3cb-41270453c133" x="20" y="0" width="218" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{customerName}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="628376f3-ecc0-4d2b-ab9e-139b82294f92" x="238" y="0" width="88" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{currentPeriodActual}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="f4b0faa4-d2d7-4ee6-9f53-85288978549c" x="326" y="0" width="88" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{currentMonthBudget}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="4c1e74dc-5e22-4ebb-a182-dfdb587f3d0a" style="NegativeRed" x="414" y="0" width="88" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{currentPeriodVar}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="0ff42cc1-c5fc-457c-a6a9-349d27fbe838" x="520" y="0" width="88" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ytdActual}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="0e1b4041-9b2b-4657-ba19-8937b3406e4d" x="608" y="0" width="88" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{ytdBudget}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="c56bd665-542a-4598-bc12-a8db0385fdd2" style="NegativeRedYTD" x="696" y="0" width="86" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{ytdVar}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="20">
+			<textField>
+				<reportElement uuid="93557b3b-1c15-45dd-8a18-369079a23fe7" x="0" y="0" width="200" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement uuid="c263633f-9732-4ff8-b738-83f8aed28fe2" x="40" y="0" width="40" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="20">
+			<staticText>
+				<reportElement uuid="0a93bc3c-6422-4ab2-bbc9-c6e8658e944f" x="0" y="0" width="238" height="20"/>
+				<box>
+					<topPen lineWidth="1.5"/>
+					<bottomPen lineWidth="1.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[GRAND TOTAL:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="0803d5e7-ff03-4467-9c1a-9ee35ba8a10a" x="238" y="0" width="88" height="20"/>
+				<box>
+					<topPen lineWidth="1.5"/>
+					<bottomPen lineWidth="1.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{grandActualCP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="7f4ac3bb-4a64-4b92-9e73-3b26b10a5eda" x="326" y="0" width="88" height="20"/>
+				<box>
+					<topPen lineWidth="1.5"/>
+					<bottomPen lineWidth="1.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{grandBudgetCP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="dfdcd165-9473-4b7e-a39f-5606ab649a9b" x="414" y="0" width="88" height="20"/>
+				<box>
+					<topPen lineWidth="1.5"/>
+					<bottomPen lineWidth="1.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{grandVarCP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="561dfbd8-4ebf-4572-83fd-d944527b9f96" x="520" y="0" width="88" height="20"/>
+				<box>
+					<topPen lineWidth="1.5"/>
+					<bottomPen lineWidth="1.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{grandActualYTD}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="1226a154-b0c6-40c5-b12a-35d68e737157" x="608" y="0" width="88" height="20"/>
+				<box>
+					<topPen lineWidth="1.5"/>
+					<bottomPen lineWidth="1.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{grandBudgetYTD}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="bb7c8d10-f17b-45ea-a9f2-47ade15fb2c4" x="696" y="0" width="86" height="20"/>
+				<box>
+					<topPen lineWidth="1.5"/>
+					<bottomPen lineWidth="1.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{grandVarYTD}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

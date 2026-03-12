@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subWOTracking" pageWidth="450" pageHeight="144" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="450" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="WOItemID" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Integer(51)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ISSUBREPORTONLY" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT woitem.ID, TrackingInfo.ID AS TrackingID, parttracking.abbr AS Title, TrackingInfo.info AS InfoString, TrackingInfo.infodate AS InfoDate,
+    trackinginfosn.serialnum, trackinginfo.infodouble, trackinginfo.infointeger, parttracking.typeid
+
+FROM TrackingInfo
+    INNER JOIN parttracking ON (TrackingInfo.parttrackingid = parttracking.id)
+    LEFT JOIN woitem ON TrackingInfo.recordid = woitem.id
+    LEFT JOIN wo ON woitem.woid = wo.id
+    LEFT JOIN trackinginfosn ON (trackinginfo.id = trackinginfosn.trackinginfoid AND trackinginfo.parttrackingid = 4)
+
+WHERE TrackingInfo.tableID = '-355941248'
+  AND woitem.id = $P{WOItemID}
+
+ORDER BY woitem.id]]>
+	</queryString>
+	<field name="ID" class="java.lang.Integer"/>
+	<field name="TRACKINGID" class="java.lang.Integer"/>
+	<field name="TITLE" class="java.lang.String"/>
+	<field name="INFOSTRING" class="java.lang.String"/>
+	<field name="INFODATE" class="java.sql.Timestamp"/>
+	<field name="SERIALNUM" class="java.lang.String"/>
+	<field name="INFODOUBLE" class="java.lang.Double"/>
+	<field name="INFOINTEGER" class="java.lang.Integer"/>
+	<field name="TYPEID" class="java.lang.Integer"/>
+	<variable name="trackingInfo" class="java.lang.String">
+		<variableExpression><![CDATA[$V{trackingInfo} + $F{TITLE} + ": " +
+(($F{TYPEID}.intValue() == 80) ?
+    ($F{INFOINTEGER}.equals("1") ? "Yes" : "No") :
+    ($F{TYPEID}.intValue() == 50) ?
+        (new DecimalFormat("¤ #,##0.00")).format($F{INFODOUBLE}) :
+        ($F{TYPEID}.intValue() == 60) ?
+            (new DecimalFormat("#,##0.#####")).format($F{INFODOUBLE}) :
+            ($F{TYPEID}.intValue() == 70) ?
+            $F{INFOINTEGER}.toString() :
+                ($F{TYPEID}.intValue() == 20 || $F{TYPEID}.intValue() == 30) ?
+                    (new SimpleDateFormat("MM/dd/yyyy")).format($F{INFODATE}) :
+                    ($F{TYPEID}.intValue() == 40) ?
+                        $F{SERIALNUM} :
+                        $F{INFOSTRING})
+    + "  "]]></variableExpression>
+		<initialValueExpression><![CDATA[""]]></initialValueExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="14" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-1" x="0" y="0" width="450" height="14"/>
+				<box leftPadding="5"/>
+				<textElement>
+					<font fontName="Open Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{trackingInfo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

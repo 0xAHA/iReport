@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ProductCatalogV2" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7b98ffb9-910b-475a-8db9-6f08d8d928ba">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="ireport.callouts" value="##Thu Feb 17 16:25:30 MST 2022"/>
+	<style name="24b" fontName="Open Sans" fontSize="24" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<parameter name="CoverPageImageURL" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="productNum" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="productTree1" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="productTree2" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="module" class="java.lang.Object" isForPrompting="false">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowCoverPage" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cbBarcode" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[product.num,Product Number,product.upc,Product UPC,product.sku,Product SKU]]></parameterDescription>
+		<defaultValueExpression><![CDATA["product.num"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowBarcode" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowOrderSheet" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowProductPrice" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowTableOfContents" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ExcludeCoverFromPageNumbering" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="HideFooterInformation" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="AlternateReportTitle" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="ShowInactiveProducts" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckIncludeServiceItems" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[20,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["20"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckIncludeNonInventoryItems" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[30,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["30"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cbUncategorizedProducts" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[1,Include,2,Exclude,3,Show Only]]></parameterDescription>
+		<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORTDESCRIPTION" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Prints a list of products with pictures and barcodes."]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select name as company,
+    (select datus from contact where accountid = 1 and typeid = 50 and defaultflag = 1 LIMIT 1) as phone,
+    (select datus from contact where accountid = 1 and typeid = 60 and defaultflag = 1 LIMIT 1) as email,
+    floor(
+        (select
+            count(
+                (SELECT count(product.id)
+                FROM product
+                join producttotree on producttotree.productid = product.id
+                left join part on product.partid = part.id
+                WHERE producttreeid = producttree.id
+                    and if($P!{ShowInactiveProducts},1=1,product.activeflag = 1)
+                    and (part.typeid IN (10,$P!{ckIncludeServiceItems},$P!{ckIncludeNonInventoryItems}) OR part.id is null))
+            ) from producttree
+        ) / 33) as tocIncrement
+from company]]>
+	</queryString>
+	<field name="company" class="java.lang.String"/>
+	<field name="phone" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="email" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tocIncrement" class="java.lang.Integer"/>
+	<group name="Cover Page">
+		<groupHeader>
+			<band height="719">
+				<printWhenExpression><![CDATA[$P{ShowCoverPage}]]></printWhenExpression>
+				<image scaleImage="FillFrame" onErrorType="Blank">
+					<reportElement x="-20" y="-20" width="612" height="739" uuid="1a97be98-8d71-4288-9a6e-6a1635b8c6c6">
+						<printWhenExpression><![CDATA[!$P{CoverPageImageURL}.equals("%")]]></printWhenExpression>
+					</reportElement>
+					<imageExpression><![CDATA[$P{CoverPageImageURL}]]></imageExpression>
+				</image>
+				<textField>
+					<reportElement key="staticText" style="24b" mode="Transparent" x="0" y="262" width="572" height="81" forecolor="#000000" backcolor="#FFFFFF" uuid="aac5053f-4e0b-4e1c-92cf-f14fe3f32e5d">
+						<printWhenExpression><![CDATA[$P{CoverPageImageURL}.equals("%")]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="Open Sans" size="24"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{AlternateReportTitle}.equals("%") ? "Product Catalog" : $P{AlternateReportTitle}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-6" x="0" y="231" width="572" height="31" uuid="347c6dd3-b0c1-4b3b-bcd7-8141e72587bb">
+						<printWhenExpression><![CDATA[$P{CoverPageImageURL}.equals("%")]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Open Sans" size="16" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{company}]]></textFieldExpression>
+				</textField>
+				<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle" isUsingCache="true">
+					<reportElement key="image-1" mode="Transparent" x="203" y="104" width="169" height="110" forecolor="#000000" backcolor="#FFFFFF" uuid="7fba75cf-ce9f-41f6-aafc-6eab17e701c7">
+						<printWhenExpression><![CDATA[$P{CoverPageImageURL}.equals("%")]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					</box>
+					<graphicElement fill="Solid">
+						<pen lineWidth="0.0" lineStyle="Solid"/>
+					</graphicElement>
+					<imageExpression><![CDATA[com.evnt.util.ImageUtil.decodeImage(((com.evnt.eve.modules.ReportHelperModule) $P{module}).getImageData("Company", 1, true))]]></imageExpression>
+				</image>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Table of Contents" isStartNewPage="true">
+		<groupHeader>
+			<band height="24">
+				<printWhenExpression><![CDATA[$P{ShowTableOfContents} == true && ($P{cbUncategorizedProducts}.equals("1") || $P{cbUncategorizedProducts}.equals("2"))]]></printWhenExpression>
+				<subreport runToBottom="true">
+					<reportElement x="0" y="0" width="572" height="24" uuid="ccc0ec35-159b-4058-b19c-9117bbc36224"/>
+					<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+					<subreportParameter name="tocIncrement">
+						<subreportParameterExpression><![CDATA[$F{tocIncrement}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA["../Other/subProductCatalogTableOfContents.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Catalog" isStartNewPage="true">
+		<groupHeader>
+			<band height="24">
+				<subreport runToBottom="true">
+					<reportElement x="0" y="0" width="572" height="24" uuid="f85d5091-e976-4fe4-a3c1-daa1083bea4c"/>
+					<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA["../Other/subProductCatalog.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Order Sheet" isStartNewPage="true">
+		<groupHeader>
+			<band height="24">
+				<printWhenExpression><![CDATA[$P{ShowOrderSheet}]]></printWhenExpression>
+				<subreport runToBottom="true">
+					<reportElement x="0" y="0" width="572" height="24" uuid="0bca69b4-d377-4b6c-8f87-c1a7a6069e9c"/>
+					<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA["../Other/subOrderSheet.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+	</group>
+	<pageFooter>
+		<band height="18">
+			<printWhenExpression><![CDATA[$P{CoverPageImageURL}.equals("%")]]></printWhenExpression>
+			<textField>
+				<reportElement x="0" y="0" width="572" height="18" uuid="96963cea-34a6-4c5b-9e02-a963f74b0e76">
+					<printWhenExpression><![CDATA[$P{HideFooterInformation} == false && $P{CoverPageImageURL}.equals("%")]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{company} +
+($F{phone} == null ? "" : "  •  " + $F{phone}) +
+($F{email} == null ? "" : "  •  " + $F{email})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="543" y="0" width="29" height="18" uuid="29c4f355-a3d5-4c65-994e-a3fa6eda3260">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER} - 1 > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Open Sans" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ExcludeCoverFromPageNumbering}
+    ? $V{PAGE_NUMBER} - 1
+    : $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

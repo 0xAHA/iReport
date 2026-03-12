@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReceivingLabel" pageWidth="288" pageHeight="170" whenNoDataType="AllSectionsNoDetail" columnWidth="288" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="e4188326-d4fc-4287-8bd5-8bd8f4c06eb8">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.8150000000000073"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="9" fontName="Open Sans" fontSize="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="10" fontName="Open Sans" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="12" fontName="Open Sans" fontSize="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="14" fontName="Open Sans" fontSize="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="10b" fontName="Open Sans" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="12b" fontName="Open Sans" fontSize="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="14b" fontName="Open Sans" fontSize="14" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="16b" fontName="Open Sans" fontSize="16" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="18b" fontName="Open Sans" fontSize="18" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="24b" fontName="Open Sans" fontSize="24" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="10i" fontName="Open Sans" fontSize="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="12i" fontName="Open Sans" fontSize="12" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="10bu" fontName="Open Sans" fontSize="10" isBold="true" isItalic="false" isUnderline="true" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="header1" fontName="Open Sans" fontSize="24" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="header2" fontName="Open Sans" fontSize="18" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="header3" fontName="Open Sans" fontSize="16" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="addressHeader" fontName="Open Sans" fontSize="14" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="date" hAlign="Right" pattern="EEEEE dd MMMMM yyyy" fontName="Open Sans" fontSize="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="type" fontName="Open Sans" fontSize="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="address" fontName="Open Sans" fontSize="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="column_head" fontName="Open Sans" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="body" isDefault="true" fontName="Open Sans" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="note" fontName="Open Sans" fontSize="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="center" hAlign="Center" vAlign="Middle"/>
+	<subDataset name="SingletonTracking" uuid="62b4949d-ddc3-485e-910f-75f7bf6db0de">
+		<parameter name="receiptitemid" class="java.lang.String"/>
+		<queryString>
+			<![CDATA[Select
+Batch.Info as BATCH
+,DATE(ExpDate.InfoDate) as EXPIRATION
+,PID.Info as PALLETID
+From receipt
+join receiptitem on receiptitem.receiptid = receipt.id
+left join trackinginfo batch on batch.recordid = receiptitem.id and batch.tableid = 1259138490 and batch.parttrackingid = 5
+left join trackinginfo ExpDate on ExpDate.recordid = receiptitem.id and ExpDate.tableid = 1259138490 and ExpDate.parttrackingid = 3
+left join trackinginfo PID on PID.recordid = receiptitem.id and PID.tableid = 1259138490 and PID.parttrackingid = 8 /* might need to check this one, or all of them */]]>
+		</queryString>
+		<field name="BATCH" class="java.lang.String"/>
+		<field name="EXPIRATION" class="java.sql.Timestamp"/>
+		<field name="PALLETID" class="java.lang.String"/>
+		<variable name="DateFormat" class="java.lang.String" resetType="None">
+			<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+		</variable>
+	</subDataset>
+	<subDataset name="SerialTracking" uuid="e0d60aed-7ef9-4b67-ae07-b99bea04f2af">
+		<parameter name="receiptitemid" class="java.lang.String"/>
+		<queryString>
+			<![CDATA[SELECT TrackingInfoSN.SERIALNUM
+FROM TrackingInfo
+  INNER JOIN TrackingInfoSN ON TrackingInfoSN.trackingInfoID = TrackingInfo.id
+  INNER JOIN PartTracking ON TrackingInfoSN.partTrackingID = PartTracking.id  WHERE tableID=1259138490 AND recordID=$P{receiptitemid}
+  ORDER BY trackingInfoID]]>
+		</queryString>
+		<field name="SERIALNUM" class="java.lang.String">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+	</subDataset>
+	<parameter name="module" class="java.lang.Object" isForPrompting="false">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORTDESCRIPTION" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["This label will display a barcode for tracking out of the box tracking values, including lot, serial, Rev, Exp Date and Serials. It will not work for custom tracking. "]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRangeNone" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="IncludeReceivedItems" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Boolean(true)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="receiptID" class="java.lang.String">
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IncludeItemBarcode" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Boolean(true)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DefaultLocationBarcode" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["../Labels/"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT RECEIPT.ID AS RECEIPTID, RECEIPTTYPE.NAME AS RECEIPTTYPE, part.num as partnum,
+    RECEIPTSTATUS.NAME AS RECEIPTSTATUS, RECEIPTLG.NAME AS RECEIPTLOCATIONGROUP,
+    RECEIPTLG.ID AS RECEIPTLOCATIONGROUPID, ORDERTYPE.NAME AS ORDERTYPE, ORDERTYPE.ID AS ORDERTYPEID,
+    RECEIPTITEM.ID AS RECEIPTITEMID, RECEIPTITEMSTATUS.NAME AS RECEIPTITEMSTATUS,
+    RECEIPTITEMSTATUS.ID AS RECEIPTITEMSTATUSID, RECEIPTITEM.QTY AS RECEIPTITEMQTY,
+    UOM.CODE AS RECEIPTITEMUOM, MAINLOCATION.NAME AS RECEIPTITEMLOCNAME,
+    MAINLG.NAME AS RECEIPTITEMLOCGRPNAME, MAINTAG.NUM AS RECEIPTITEMTAGNUM,
+
+COALESCE(
+    CustomFieldByName(poitem.customfields, 'Tower ID'),
+    CustomFieldByName(soitem.customfields, 'Tower ID')
+) AS CF_TOWERID,
+
+COALESCE(
+    CustomFieldByName(poitem.customfields, 'Location'),
+    CustomFieldByName(soitem.customfields, 'Location')
+) AS CF_LOCATION,
+
+COALESCE(
+    CustomFieldByName(poitem.customfields, 'Cntr #'),
+    CustomFieldByName(soitem.customfields, 'Cntr #')
+) AS CF_CNTR,
+
+VENDOR.NAME as VENDORNAME,
+VENDOR.ACCOUNTNUM as VENDORNUM,
+
+    (CASE
+        WHEN receiptitemstatus.id = 10 THEN defaultTag.num
+        WHEN receiptitemstatus.id IN (20, 30, 40) THEN Tag.num
+    END) AS DEFAULTLOCATION,
+    (CASE
+        WHEN receiptitemstatus.id = 10 THEN defaultLg.name
+        WHEN receiptitemstatus.id IN (20, 30, 40) THEN mainLg.name
+    END) AS LOCATIONLGNAME,
+    (CASE
+        WHEN receiptitemstatus.id = 10 THEN defaultLoc.name
+        WHEN receiptitemstatus.id IN (20, 30, 40) THEN mainLocation.name
+    END) AS LOCATIONNAME,
+    (CASE
+        WHEN part.num IS NULL THEN poitem.partnum
+        ELSE part.num
+    END) AS RECEIPTITEMPARTNUM,   (CASE
+        WHEN PART.DESCRIPTION IS NULL THEN POITEM.DESCRIPTION
+        ELSE PART.DESCRIPTION
+    END) AS RECEIPTITEMPARTDESC,
+    (CASE
+	WHEN RECEIPT.ORDERTYPEID = 10 THEN PO.NUM
+	WHEN RECEIPT.ORDERTYPEID = 20 THEN SO.NUM
+	WHEN RECEIPT.ORDERTYPEID = 40 THEN XO.NUM
+    END) AS ORDERNUMBER,
+    (CASE
+	WHEN RECEIPT.ORDERTYPEID = 10 THEN VENDOR.NAME
+	WHEN RECEIPT.ORDERTYPEID = 20 THEN CUSTOMER.NAME
+	WHEN RECEIPT.ORDERTYPEID = 40 THEN XOLG.NAME
+    END) AS ORDERNAME,
+    (CASE
+	WHEN RECEIPT.ORDERTYPEID = 10 THEN POITEM.NOTE
+	WHEN RECEIPT.ORDERTYPEID = 20 THEN SOITEM.NOTE
+	WHEN RECEIPT.ORDERTYPEID = 40 THEN XOITEM.NOTE
+    END) AS RECEIPTITEMNOTE,
+    COMPANY.NAME AS COMPANYNAME,
+    (SELECT s1.sysvalue
+        FROM sysproperties s1
+        WHERE s1.syskey = 'Barcodes have DI'
+        ) AS BARCODESHAVEDI
+
+
+FROM receipt
+    INNER JOIN receipttype ON (receipt.typeid = receipttype.id)
+    INNER JOIN receiptstatus ON (receipt.statusid = receiptstatus.id)
+    INNER JOIN locationgroup receiptlg ON (receipt.locationgroupid = receiptlg.id)
+    LEFT OUTER JOIN ordertype ON (receipt.ordertypeid = ordertype.id)
+    LEFT OUTER JOIN receiptitem ON ((receipt.id = receiptitem.receiptid))
+    LEFT OUTER JOIN tag maintag ON (receiptitem.tagid = maintag.id)
+    LEFT OUTER JOIN tag ON receiptitem.locationid = tag.locationid AND tag.typeid = 10
+    LEFT OUTER JOIN location mainlocation ON (maintag.locationid = mainlocation.id)
+    LEFT OUTER JOIN locationgroup mainlg ON (mainlocation.locationgroupid = mainlg.id)
+    LEFT OUTER JOIN receiptitemstatus ON (receiptitem.statusid = receiptitemstatus.id)
+    LEFT OUTER JOIN part ON (receiptitem.partid = part.id)
+    LEFT OUTER JOIN defaultlocation ON (part.id = defaultlocation.partid AND receipt.locationgroupid = defaultlocation.locationgroupid)
+    LEFT OUTER JOIN location defaultLoc ON (defaultlocation.locationid = defaultLoc.id)
+    LEFT OUTER JOIN locationGroup defaultLg ON defaultLG.id = defaultLoc.locationGroupId
+    LEFT OUTER JOIN tag defaultTag ON defaultLoc.id = defaultTag.locationId AND defaultTag.partId = 0
+    LEFT OUTER JOIN uom ON (receiptitem.uomid = uom.id)
+    LEFT OUTER JOIN po ON ((receipt.poid = po.id) AND (receipt.ordertypeid = 10))
+    LEFT OUTER JOIN so ON ((receipt.soid = so.id) AND (receipt.ordertypeid = 20))
+    LEFT OUTER JOIN xo ON ((receipt.xoid = xo.id) AND (receipt.ordertypeid = 40))
+    LEFT OUTER JOIN vendor ON ((receipt.poid = po.id) AND (receipt.ordertypeid = 10) AND (vendor.id = po.vendorid))
+    LEFT OUTER JOIN customer ON ((receipt.soid = so.id) AND (receipt.ordertypeid = 20) AND (customer.id = so.customerid))
+    LEFT OUTER JOIN LocationGroup xolg ON ((receipt.xoid = xo.id) AND (receipt.ordertypeid = 40) AND (xolg.id = xo.fromlgid))
+    LEFT OUTER JOIN poitem ON ((receiptitem.poitemid = poitem.id) AND (receipt.ordertypeid = 10))
+    LEFT OUTER JOIN soitem ON ((receiptitem.soitemid = soitem.id) AND (receipt.ordertypeid = 20))
+    LEFT OUTER JOIN xoitem ON ((receiptitem.xoitemid = xoitem.id) AND (receipt.ordertypeid = 40))
+    JOIN company ON company.id = 1
+
+WHERE receipt.id = $P!{receiptID}]]>
+	</queryString>
+	<field name="RECEIPTID" class="java.lang.Integer"/>
+	<field name="RECEIPTTYPE" class="java.lang.String"/>
+	<field name="RECEIPTSTATUS" class="java.lang.String"/>
+	<field name="RECEIPTLOCATIONGROUP" class="java.lang.String"/>
+	<field name="RECEIPTLOCATIONGROUPID" class="java.lang.Integer"/>
+	<field name="ORDERTYPE" class="java.lang.String"/>
+	<field name="ORDERTYPEID" class="java.lang.Integer"/>
+	<field name="RECEIPTITEMID" class="java.lang.Integer"/>
+	<field name="RECEIPTITEMSTATUS" class="java.lang.String"/>
+	<field name="RECEIPTITEMSTATUSID" class="java.lang.Integer"/>
+	<field name="RECEIPTITEMQTY" class="java.lang.Double"/>
+	<field name="RECEIPTITEMUOM" class="java.lang.String"/>
+	<field name="RECEIPTITEMLOCNAME" class="java.lang.String"/>
+	<field name="RECEIPTITEMLOCGRPNAME" class="java.lang.String"/>
+	<field name="RECEIPTITEMTAGNUM" class="java.lang.Long"/>
+	<field name="DEFAULTLOCATION" class="java.lang.Long"/>
+	<field name="LOCATIONLGNAME" class="java.lang.String"/>
+	<field name="LOCATIONNAME" class="java.lang.String"/>
+	<field name="RECEIPTITEMPARTNUM" class="java.lang.String"/>
+	<field name="RECEIPTITEMPARTDESC" class="java.lang.String"/>
+	<field name="ORDERNUMBER" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ORDERNAME" class="java.lang.String"/>
+	<field name="RECEIPTITEMNOTE" class="java.lang.String"/>
+	<field name="COMPANYNAME" class="java.lang.String"/>
+	<field name="BARCODESHAVEDI" class="java.lang.String"/>
+	<field name="partnum" class="java.lang.String"/>
+	<field name="VENDORNAME" class="java.lang.String"/>
+	<field name="VENDORNUM" class="java.lang.String"/>
+	<field name="CF_LOCATION" class="java.lang.String"/>
+	<field name="CF_TOWERID" class="java.lang.String"/>
+	<field name="CF_CNTR" class="java.lang.String"/>
+	<variable name="ORDERNUMBER" class="java.lang.String">
+		<variableExpression><![CDATA[$F{BARCODESHAVEDI} == null ?
+    $F{ORDERNUMBER} :
+    $F{BARCODESHAVEDI}.equals("true") ?
+        ($F{ORDERTYPEID}.intValue()==10 ? "P" + $F{ORDERNUMBER} :
+            ($F{ORDERTYPEID}.intValue()==20 ? "S" + $F{ORDERNUMBER} :
+                ($F{ORDERTYPEID}.intValue()==40 ? "T" + $F{ORDERNUMBER} : $F{ORDERNUMBER}))) :
+        $F{ORDERNUMBER}]]></variableExpression>
+	</variable>
+	<variable name="PriceDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_PRICE")]]></variableExpression>
+	</variable>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<variable name="CostDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_COST")]]></variableExpression>
+	</variable>
+	<background>
+		<band/>
+	</background>
+	<detail>
+		<band height="168" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" mode="Transparent" x="37" y="35" width="88" height="22" forecolor="#000000" backcolor="#FFFFFF" uuid="724da9c2-f984-4297-8007-ac2837f571f1">
+					<printWhenExpression><![CDATA[new Boolean(($F{RECEIPTITEMPARTNUM} != null) || ($F{RECEIPTITEMPARTDESC} != null))]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RECEIPTITEMPARTNUM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="125" y="3" width="162" height="53" uuid="11c2a4f5-c89f-42c9-9447-3099defa258f"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RECEIPTITEMPARTDESC}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="56" width="287" height="1" uuid="afa2cdc1-7f00-44db-a39f-9ca33b54dbb9"/>
+			</line>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-6" mode="Transparent" x="0" y="35" width="37" height="22" forecolor="#000000" backcolor="#FFFFFF" uuid="f5c8c7f4-229f-4f7c-8eb3-ec0bfda35c82"/>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Part:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="148" width="96" height="20" uuid="38dac55d-81dd-467e-b9ee-8462b2492890"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CF_TOWERID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="96" y="148" width="96" height="20" uuid="f754858e-ca43-4225-a32b-f881fd2aaac1"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CF_LOCATION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="130" width="96" height="18" uuid="8976e60f-5d71-47c4-8fc8-2c5ada30f831"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Tower ID"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="96" y="130" width="96" height="18" uuid="0828ca9c-c7ab-49b5-b38c-9e882db28310"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Location"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="1" y="119" width="287" height="1" uuid="f5803940-dcce-433f-9c49-e4df95b1a8f6"/>
+			</line>
+			<image>
+				<reportElement x="0" y="3" width="125" height="32" uuid="80ed479c-aa69-413a-aa04-10c21c913f41"/>
+				<imageExpression><![CDATA[com.evnt.util.ImageUtil.decodeImage(((com.evnt.eve.modules.ReportHelperModule) $P{module}).getImageData("Company", 1, true))]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="191" y="130" width="96" height="18" uuid="41c63700-db6c-4c7c-a917-ad5fbf55179b"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Cntr #"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="191" y="148" width="96" height="20" uuid="4c419ed6-6edc-4deb-bfe0-15cc250a728e"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CF_CNTR}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement style="center" x="1" y="57" width="287" height="62" uuid="5a640215-9426-415e-bdd7-9dd1cb3404b9"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128B" drawText="false" checksumRequired="false" barWidth="0">
+					<jr:codeExpression><![CDATA[$$F{partnum}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Prevent"/>
+	</columnFooter>
+	<summary>
+		<band splitType="Prevent"/>
+	</summary>
+</jasperReport>

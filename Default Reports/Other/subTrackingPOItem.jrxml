@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bottomMargin="0" columnWidth="453" leftMargin="0" name="subTrackingPOItem" pageHeight="792" pageWidth="453" rightMargin="0" topMargin="0" whenNoDataType="AllSectionsNoDetail" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style fontName="Open Sans" fontSize="9" isBold="false" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="9" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="10" isBold="false" isDefault="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="10" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="12" isBold="false" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="12" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="14" isBold="false" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="14" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="10" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="10b" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="12" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="12b" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="14" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="14b" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="16" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="16b" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="18" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="18b" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="24" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="24b" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="10" isBold="false" isItalic="true" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="10i" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="12" isBold="false" isItalic="true" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="12i" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="10" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="true" name="10bu" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="24" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="header1" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="18" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="header2" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="16" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="header3" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="14" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="addressHeader" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="12" isBold="false" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="date" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="12" isBold="false" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="type" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="10" isBold="false" isItalic="true" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="address" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="10" isBold="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="column_head" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="10" isBold="false" isDefault="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="body" pdfEncoding="Cp1252"/>
+	<style fontName="Open Sans" fontSize="9" isBold="false" isDefault="true" isItalic="false" isPdfEmbedded="false" isStrikeThrough="false" isUnderline="false" name="note" pdfEncoding="Cp1252"/>
+	<parameter class="java.lang.Object" isForPrompting="false" name="module">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter class="java.lang.String" isForPrompting="false" name="poNum">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter class="java.lang.Integer" isForPrompting="false" name="lineItem">
+		<defaultValueExpression><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter class="java.lang.Integer" isForPrompting="false" name="poitemID">
+		<defaultValueExpression><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter class="java.lang.String" isForPrompting="false" name="path">
+		<defaultValueExpression><![CDATA["../Other/"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT vendor.name AS vendorname, po.num AS poNumber, receiptitem.datereceived AS receiptDate, poitem.description AS partDescription,
+    poitem.partnum AS partNumber, poitem.vendorpartnum AS vendorpartnum, poitem.polineitem AS lineitem, poitem.unitcost
+    AS Cost, po.remitaddress AS vendorAddress, po.remitcity AS vendorCity,
+    po.remitzip AS vendorzip, countryconst.name AS vendorCountry, stateconst.name AS VendorState
+
+FROM poitem
+    INNER JOIN receiptitem ON poitem.id = receiptitem.orderitemid
+    INNER JOIN po ON poitem.poid = po.id
+    INNER JOIN vendor ON po.vendorid = vendor.id
+    LEFT JOIN countryconst ON po.remitcountryid = countryconst.id
+    LEFT JOIN stateconst ON po.remitstateid = stateconst.id
+    INNER JOIN receipt ON receiptitem.receiptid = receipt.id
+
+WHERE receiptitem.statusid = 30
+  AND poitem.polineitem = $P{lineItem}
+  AND UPPER(po.num) LIKE UPPER($P{poNum})
+  AND receiptitem.id = $P{poitemID}
+
+ORDER BY PO.id]]>
+	</queryString>
+	<field class="java.lang.String" name="VENDORNAME"/>
+	<field class="java.lang.String" name="PONUMBER"/>
+	<field class="java.sql.Timestamp" name="RECEIPTDATE"/>
+	<field class="java.lang.String" name="PARTDESCRIPTION"/>
+	<field class="java.lang.String" name="PARTNUMBER"/>
+	<field class="java.lang.String" name="VENDORPARTNUM"/>
+	<field class="java.lang.Integer" name="LINEITEM"/>
+	<field class="java.lang.Double" name="COST"/>
+	<field class="java.lang.String" name="VENDORADDRESS"/>
+	<field class="java.lang.String" name="VENDORCITY"/>
+	<field class="java.lang.String" name="VENDORZIP"/>
+	<field class="java.lang.String" name="VENDORCOUNTRY"/>
+	<field class="java.lang.String" name="VENDORSTATE"/>
+	<variable class="java.lang.String" name="PriceDecimal" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_PRICE")]]></variableExpression>
+	</variable>
+	<variable class="java.lang.String" name="QtyDecimal" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<variable class="java.lang.String" name="CostDecimal" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_COST")]]></variableExpression>
+	</variable>
+	<variable class="java.lang.String" name="DateFormat" resetType="None">
+		<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Prevent"/>
+	</title>
+	<pageHeader>
+		<band splitType="Prevent"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="12" splitType="Prevent">
+			<staticText>
+				<reportElement height="11" key="staticText-1" style="note" width="115" x="0" y="0"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<bottomPen lineColor="#000000" lineWidth="0.0"/>
+					<rightPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="Open Sans" isBold="true" size="8"/>
+				</textElement>
+				<text><![CDATA[Vendor - Purchase]]></text>
+			</staticText>
+			<staticText>
+				<reportElement height="11" key="staticText-2" style="note" width="171" x="160" y="0"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<bottomPen lineColor="#000000" lineWidth="0.0"/>
+					<rightPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="Open Sans" isBold="true" size="8"/>
+				</textElement>
+				<text><![CDATA[Product Number/Description]]></text>
+			</staticText>
+			<staticText>
+				<reportElement height="11" key="staticText-4" style="note" width="58" x="391" y="0"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<bottomPen lineColor="#000000" lineWidth="0.0"/>
+					<rightPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="Open Sans" isBold="true" size="8"/>
+				</textElement>
+				<text><![CDATA[Receipt Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement height="11" key="staticText-5" style="note" width="45" x="115" y="0"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<bottomPen lineColor="#000000" lineWidth="0.0"/>
+					<rightPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="Open Sans" isBold="true" size="8"/>
+				</textElement>
+				<text><![CDATA[Line Item]]></text>
+			</staticText>
+			<staticText>
+				<reportElement height="11" key="staticText-6" width="60" x="331" y="0"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<bottomPen lineColor="#000000" lineWidth="0.0"/>
+					<rightPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Open Sans" isBold="true" size="8"/>
+				</textElement>
+				<text><![CDATA[Cost]]></text>
+			</staticText>
+			<line>
+				<reportElement height="1" width="453" x="0" y="11"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="11" splitType="Prevent">
+			<textField isBlankWhenNull="true" isStretchWithOverflow="true">
+				<reportElement height="11" key="textField" width="115" x="0" y="0"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<bottomPen lineColor="#000000" lineWidth="0.0"/>
+					<rightPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="Open Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new String($F{VENDORNAME} + "\n" +
+$F{VENDORADDRESS} + "\n" +
+$F{VENDORCITY} + " " + "," + " " + $F{VENDORSTATE} + " " + $F{VENDORZIP} + "\n" +
+$F{VENDORCOUNTRY})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" isStretchWithOverflow="true">
+				<reportElement height="11" key="textField" width="171" x="160" y="0"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<bottomPen lineColor="#000000" lineWidth="0.0"/>
+					<rightPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="Open Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new String($F{PARTNUMBER} + " " + "-" + " " + $F{PARTDESCRIPTION})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" isStretchWithOverflow="true" pattern="">
+				<reportElement height="11" key="textField" width="58" x="391" y="0"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<bottomPen lineColor="#000000" lineWidth="0.0"/>
+					<rightPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="Open Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RECEIPTDATE}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{DateFormat}]]></patternExpression>
+			</textField>
+			<textField isBlankWhenNull="true" isStretchWithOverflow="true">
+				<reportElement height="11" key="textField" width="45" x="115" y="0"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<bottomPen lineColor="#000000" lineWidth="0.0"/>
+					<rightPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LINEITEM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" isStretchWithOverflow="true" pattern="">
+				<reportElement height="11" key="textField-1" width="60" x="331" y="0"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<leftPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+					<bottomPen lineColor="#000000" lineWidth="0.0"/>
+					<rightPen lineColor="#000000" lineStyle="Solid" lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Open Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COST}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{CostDecimal}]]></patternExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Prevent"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Prevent"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Prevent"/>
+	</summary>
+</jasperReport>

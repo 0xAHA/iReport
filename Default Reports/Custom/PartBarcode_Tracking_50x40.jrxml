@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PartBarcode with Tracking 50x40mm" pageWidth="141" pageHeight="113" whenNoDataType="AllSectionsNoDetail" columnWidth="131" leftMargin="5" rightMargin="5" topMargin="5" bottomMargin="5" uuid="eed30b19-2960-4623-96fa-feaa956801e0">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="ireport.callouts" value="##Thu Jun 29 13:06:13 AEST 2023"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="default" isDefault="true" fontName="SansSerif" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="18" fontName="SansSerif" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="barcode" hAlign="Center" vAlign="Middle"/>
+	<parameter name="REPORTDESCRIPTION" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Part Barcodes for one off Labels. Prints one label for each qty of items for a specific location."]]></defaultValueExpression>
+	</parameter>
+	<parameter name="module" class="java.lang.Object" isForPrompting="false">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path_1" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["../Custom/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="locationID" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="partNum" class="java.lang.String">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TrackingInfo" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="OnePerUniqueTracking" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Count" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[90]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[CALL CreateList(1000, 'createlist');
+SELECT
+    part.num as partnum,
+    part.description as partdescription,
+    CASE WHEN parttracking.typeid = 40 THEN 1 ELSE tag.qty END as tagqty,
+    tag.locationid,
+    location.name as locationname,
+    parttracking.typeid,
+    trackingtext.info AS TRACKINGTEXT,
+    trackingdate.info AS TRACKINGDATE,
+    trackingdecimal.info AS TRACKINGDECIMAL,
+    trackinginteger.info AS TRACKINGINTEGER,
+    serialnum.serialnum AS SERIALNUM,
+    parttracking.name AS TRACKINGNAME
+
+FROM part
+    JOIN tag ON part.id = tag.partid
+    JOIN location ON tag.locationid = location.id
+    LEFT JOIN parttotracking ON part.id = parttotracking.partid AND parttotracking.primaryflag = 1
+    LEFT JOIN parttracking ON parttotracking.parttrackingid = parttracking.id
+    LEFT OUTER JOIN trackingtext ON tag.id = trackingtext.tagid AND parttracking.id = trackingtext.parttrackingid
+    LEFT OUTER JOIN trackinginteger ON tag.id = trackinginteger.tagid AND parttracking.id = trackinginteger.parttrackingid
+    LEFT OUTER JOIN trackingdecimal ON tag.id = trackingdecimal.tagid AND parttracking.id = trackingdecimal.parttrackingid
+    LEFT OUTER JOIN trackingdate ON tag.id = trackingdate.tagid AND parttracking.id = trackingdate.parttrackingid
+    LEFT OUTER JOIN serial ON tag.id = serial.tagid
+    LEFT OUTER JOIN serialnum ON serial.id = serialnum.serialid AND parttracking.id = serialnum.parttrackingid
+left join tmp_createlist as copy on copy.cnt <= CASE WHEN parttracking.typeid = 40 OR $P{OnePerUniqueTracking} THEN 1
+					  ELSE tag.qty END
+
+WHERE part.id > 0
+    AND part.activeflag = 1
+    AND part.typeid = 10
+    AND UPPER(part.num) LIKE UPPER($P{partNum})
+    AND location.id LIKE $P{locationID}
+
+ORDER BY part.num, serial.id, COALESCE(trackingtext.info, trackingdate.info, trackingdecimal.info, trackinginteger.info, serialnum.serialnum)
+LIMIT $P!{Count}]]>
+	</queryString>
+	<field name="partnum" class="java.lang.String"/>
+	<field name="partdescription" class="java.lang.String"/>
+	<field name="tagqty" class="java.math.BigDecimal"/>
+	<field name="locationid" class="java.lang.Integer"/>
+	<field name="locationname" class="java.lang.String"/>
+	<field name="TYPEID" class="java.lang.Integer"/>
+	<field name="TRACKINGTEXT" class="java.lang.String"/>
+	<field name="TRACKINGDATE" class="java.sql.Timestamp"/>
+	<field name="TRACKINGDECIMAL" class="java.math.BigDecimal"/>
+	<field name="TRACKINGINTEGER" class="java.lang.Integer"/>
+	<field name="SERIALNUM" class="java.lang.String"/>
+	<field name="TRACKINGNAME" class="java.lang.String"/>
+	<variable name="DateFormat" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+	</variable>
+	<variable name="PriceDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_PRICE")]]></variableExpression>
+	</variable>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<variable name="CostDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_COST")]]></variableExpression>
+	</variable>
+	<group name="LG">
+		<groupExpression><![CDATA[$F{partnum}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band height="100">
+			<textField>
+				<reportElement x="0" y="15" width="131" height="18" uuid="60c033b2-02fc-4e40-9f18-4da120f973dc">
+					<printWhenExpression><![CDATA[($F{TYPEID} == 10 && $F{TRACKINGTEXT} != null && !$F{TRACKINGTEXT}.isEmpty()) || ($F{TYPEID} == 20 && $F{TRACKINGDATE} != null) || ($F{TYPEID} == 30 && $F{TRACKINGDATE} != null) || ($F{TYPEID} == 40 && $F{SERIALNUM} != null && !$F{SERIALNUM}.isEmpty()) || ($F{TYPEID} == 50 && $F{TRACKINGINTEGER} != null) || ($F{TYPEID} == 60 && $F{TRACKINGDECIMAL} != null)]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Open Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{partdescription}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement style="barcode" positionType="Float" x="0" y="77" width="131" height="23" uuid="5857fa15-05ff-4d9a-98f5-d539df66abbd">
+					<printWhenExpression><![CDATA[($F{TYPEID} == 10 && $F{TRACKINGTEXT} != null && !$F{TRACKINGTEXT}.isEmpty()) || ($F{TYPEID} == 20 && $F{TRACKINGDATE} != null) || ($F{TYPEID} == 30 && $F{TRACKINGDATE} != null) || ($F{TYPEID} == 40 && $F{SERIALNUM} != null && !$F{SERIALNUM}.isEmpty()) || ($F{TYPEID} == 50 && $F{TRACKINGINTEGER} != null) || ($F{TYPEID} == 60 && $F{TRACKINGDECIMAL} != null)]]></printWhenExpression>
+				</reportElement>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128B" drawText="false" checksumRequired="false" barWidth="0">
+					<jr:codeExpression><![CDATA[$F{TYPEID} == 10 ? ($F{TRACKINGTEXT} != null && !$F{TRACKINGTEXT}.isEmpty() ? $F{TRACKINGTEXT} : "")
+: $F{TYPEID} == 20 ? ($F{TRACKINGDATE} != null ? new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{TRACKINGDATE}) : "")
+: $F{TYPEID} == 30 ? ($F{TRACKINGDATE} != null ? new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{TRACKINGDATE}) : "")
+: $F{TYPEID} == 40 ? ($F{SERIALNUM} != null && !$F{SERIALNUM}.isEmpty() ? $F{SERIALNUM} : "")
+: $F{TYPEID} == 50 ? ($F{TRACKINGINTEGER} != null ? String.valueOf($F{TRACKINGINTEGER}) : "")
+: $F{TYPEID} == 60 ? ($F{TRACKINGDECIMAL} != null ? String.valueOf($F{TRACKINGDECIMAL}) : "")
+: ""]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="58" width="131" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="41aec046-1c0f-4b28-865b-35d267fb591f">
+					<printWhenExpression><![CDATA[($F{TYPEID} == 10 && $F{TRACKINGTEXT} != null && !$F{TRACKINGTEXT}.isEmpty()) || ($F{TYPEID} == 20 && $F{TRACKINGDATE} != null) || ($F{TYPEID} == 30 && $F{TRACKINGDATE} != null) || ($F{TYPEID} == 40 && $F{SERIALNUM} != null && !$F{SERIALNUM}.isEmpty()) || ($F{TYPEID} == 50 && $F{TRACKINGINTEGER} != null) || ($F{TYPEID} == 60 && $F{TRACKINGDECIMAL} != null)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Open Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TYPEID} == 10 ? ($F{TRACKINGTEXT} != null && !$F{TRACKINGTEXT}.isEmpty() ? $F{TRACKINGTEXT} : "")
+: $F{TYPEID} == 20 ? ($F{TRACKINGDATE} != null ? new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{TRACKINGDATE}) : "")
+: $F{TYPEID} == 30 ? ($F{TRACKINGDATE} != null ? new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{TRACKINGDATE}) : "")
+: $F{TYPEID} == 40 ? ($F{SERIALNUM} != null && !$F{SERIALNUM}.isEmpty() ? $F{SERIALNUM} : "")
+: $F{TYPEID} == 50 ? ($F{TRACKINGINTEGER} != null ? String.valueOf($F{TRACKINGINTEGER}) : "")
+: $F{TYPEID} == 60 ? ($F{TRACKINGDECIMAL} != null ? String.valueOf($F{TRACKINGDECIMAL}) : "")
+: ($F{TRACKINGTEXT} != null && !$F{TRACKINGTEXT}.isEmpty() ? $F{TRACKINGTEXT} : "")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="131" height="14" uuid="4e3bef08-e682-4c93-a989-963ce7b7fbc3">
+					<printWhenExpression><![CDATA[($F{TYPEID} == 10 && $F{TRACKINGTEXT} != null && !$F{TRACKINGTEXT}.isEmpty()) || ($F{TYPEID} == 20 && $F{TRACKINGDATE} != null) || ($F{TYPEID} == 30 && $F{TRACKINGDATE} != null) || ($F{TYPEID} == 40 && $F{SERIALNUM} != null && !$F{SERIALNUM}.isEmpty()) || ($F{TYPEID} == 50 && $F{TRACKINGINTEGER} != null) || ($F{TYPEID} == 60 && $F{TRACKINGDECIMAL} != null)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{partnum}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement style="barcode" positionType="Float" x="0" y="33" width="131" height="23" uuid="8c6a4cb2-4c95-47a6-91e3-a2941a103b2c">
+					<printWhenExpression><![CDATA[($F{TYPEID} == 10 && $F{TRACKINGTEXT} != null && !$F{TRACKINGTEXT}.isEmpty()) || ($F{TYPEID} == 20 && $F{TRACKINGDATE} != null) || ($F{TYPEID} == 30 && $F{TRACKINGDATE} != null) || ($F{TYPEID} == 40 && $F{SERIALNUM} != null && !$F{SERIALNUM}.isEmpty()) || ($F{TYPEID} == 50 && $F{TRACKINGINTEGER} != null) || ($F{TYPEID} == 60 && $F{TRACKINGDECIMAL} != null)]]></printWhenExpression>
+				</reportElement>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128B" drawText="false" checksumRequired="false" barWidth="0">
+					<jr:codeExpression><![CDATA[$F{partnum}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement style="barcode" positionType="Float" x="0" y="58" width="131" height="30" uuid="e6d52a1b-a894-4297-9932-880984ff1fbf">
+					<printWhenExpression><![CDATA[$F{TYPEID} == null || ($F{TYPEID} == 10 && ($F{TRACKINGTEXT} == null || $F{TRACKINGTEXT}.isEmpty())) || ($F{TYPEID} == 20 && $F{TRACKINGDATE} == null) || ($F{TYPEID} == 30 && $F{TRACKINGDATE} == null) || ($F{TYPEID} == 40 && ($F{SERIALNUM} == null || $F{SERIALNUM}.isEmpty())) || ($F{TYPEID} == 50 && $F{TRACKINGINTEGER} == null) || ($F{TYPEID} == 60 && $F{TRACKINGDECIMAL} == null)]]></printWhenExpression>
+				</reportElement>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128B" drawText="false" checksumRequired="false" barWidth="0">
+					<jr:codeExpression><![CDATA[$F{partnum}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<textField>
+				<reportElement x="0" y="28" width="131" height="28" uuid="5adf67c5-f774-4909-bd42-644bc28c0b14">
+					<printWhenExpression><![CDATA[$F{TYPEID} == null || ($F{TYPEID} == 10 && ($F{TRACKINGTEXT} == null || $F{TRACKINGTEXT}.isEmpty())) || ($F{TYPEID} == 20 && $F{TRACKINGDATE} == null) || ($F{TYPEID} == 30 && $F{TRACKINGDATE} == null) || ($F{TYPEID} == 40 && ($F{SERIALNUM} == null || $F{SERIALNUM}.isEmpty())) || ($F{TYPEID} == 50 && $F{TRACKINGINTEGER} == null) || ($F{TYPEID} == 60 && $F{TRACKINGDECIMAL} == null)]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{partdescription}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="8" width="131" height="20" uuid="2735ff5c-d97b-408e-832a-5af1f4f798d4">
+					<printWhenExpression><![CDATA[$F{TYPEID} == null || ($F{TYPEID} == 10 && ($F{TRACKINGTEXT} == null || $F{TRACKINGTEXT}.isEmpty())) || ($F{TYPEID} == 20 && $F{TRACKINGDATE} == null) || ($F{TYPEID} == 30 && $F{TRACKINGDATE} == null) || ($F{TYPEID} == 40 && ($F{SERIALNUM} == null || $F{SERIALNUM}.isEmpty())) || ($F{TYPEID} == 50 && $F{TRACKINGINTEGER} == null) || ($F{TYPEID} == 60 && $F{TRACKINGDECIMAL} == null)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{partnum}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

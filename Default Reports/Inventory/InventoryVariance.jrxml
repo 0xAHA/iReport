@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="InventoryVariance" pageWidth="792" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="732" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="06f99131-fc53-4ea1-82b3-123d5bfbe958">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<subDataset name="BegEndQty" uuid="bb511a33-8126-4526-a2a7-fac0646b47c7">
+		<parameter name="partID" class="java.lang.Integer" isForPrompting="false">
+			<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
+		</parameter>
+		<parameter name="dateRange1" class="java.util.Date">
+			<parameterDescription><![CDATA[This Month]]></parameterDescription>
+			<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+		</parameter>
+		<parameter name="dateRange2" class="java.util.Date" isForPrompting="false">
+			<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+		</parameter>
+		<parameter name="locationGroupID" class="java.lang.String">
+			<defaultValueExpression><![CDATA["-1"]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT inventorylog.partid, maxId.logId, COALESCE(inventorylog.qtyonHand,0) AS startQty, 0 AS endQty
+
+FROM Inventorylog
+        INNER JOIN (SELECT max(inventorylog.id) AS logId, inventorylog.partid AS partid
+                        FROM inventorylog
+                          WHERE InventoryLog.EventDate <= $P{dateRange1}
+			AND inventorylog.locationgroupid IN ($P!{locationGroupID})
+			AND inventorylog.partid = $P{partID}
+                          GROUP BY 2) maxID ON inventorylog.id = maxId.logId
+WHERE inventorylog.partid = $P{partID}
+
+
+
+
+UNION ALL
+
+SELECT inventorylog.partid, maxId.logId, 0, COALESCE(inventorylog.qtyonHand,0)
+
+FROM Inventorylog
+        INNER JOIN (SELECT max(inventorylog.id) AS logId, inventorylog.partid AS partid
+                        FROM inventorylog
+                          WHERE InventoryLog.EventDate <= $P{dateRange2}
+				AND inventorylog.locationgroupid IN ($P!{locationGroupID})
+				AND inventorylog.partid = $P{partID}
+                          GROUP BY 2) maxID ON inventorylog.id = maxId.logId
+WHERE inventorylog.partid = $P{partID}]]>
+		</queryString>
+		<field name="PARTID" class="java.lang.Integer"/>
+		<field name="LOGID" class="java.lang.Integer"/>
+		<field name="STARTQTY" class="java.lang.Double"/>
+		<field name="ENDQTY" class="java.lang.Double"/>
+		<variable name="StartQty" class="java.lang.Double" calculation="Sum">
+			<variableExpression><![CDATA[$F{STARTQTY}]]></variableExpression>
+		</variable>
+		<variable name="EndQty" class="java.lang.Double" calculation="Sum">
+			<variableExpression><![CDATA[$F{ENDQTY}]]></variableExpression>
+		</variable>
+		<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+			<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+		</variable>
+		<group name="PARTID">
+			<groupExpression><![CDATA[$F{PARTID}]]></groupExpression>
+		</group>
+	</subDataset>
+	<parameter name="partNum" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:/Program Files/Fishbowl/Server/reports/WorkOrder/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="module" class="java.lang.Object" isForPrompting="false">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRange1" class="java.util.Date">
+		<parameterDescription><![CDATA[This Month]]></parameterDescription>
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRange2" class="java.util.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORTDESCRIPTION" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Shows the shipping, receiving, and inventory adjustment history for a part or all parts."]]></defaultValueExpression>
+	</parameter>
+	<parameter name="locationGroupID" class="java.lang.String">
+		<defaultValueExpression><![CDATA["-1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckDisableTracking" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[74,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["74"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckEnableTracking" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[73,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["73"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckVoidReceipt" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[15,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["15"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckAdjustUOM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[69,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["900"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckAdjustScrap" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[67,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["67"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckAdjustDecrease" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[65,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["65"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckAdjustIncrease" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[64,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["64"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckAdjustTracking" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[72,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["72"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckAdjust" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[60,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["60"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckConsume" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[50,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["50"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckShipping" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[20,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["20"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckReceiving" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[10,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["10"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckYield" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[40,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["40"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckTransfer" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[30,901]]></parameterDescription>
+		<defaultValueExpression><![CDATA["30"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckVoidedShipments" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[90,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["90"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT DISTINCT INVENTORYLOG.EVENTDATE, INVENTORYLOG.CHANGEQTY, INVENTORYLOG.QTYONHAND, INVENTORYLOG.INFO,
+    PART.NUM AS PART, INVENTORYLOG.ID AS INVENTORYLOGID, INVENTORYLOGTYPE.DESCRIPTION AS EVENT,
+    UOM.CODE AS UOMCODE, PART.ID AS PARTID, COMPANY.NAME AS COMPANY, INVENTORYLOG.LOCATIONGROUPID AS LGID
+
+FROM inventorylog
+    INNER JOIN inventorylogtype ON inventorylog.typeid = inventorylogtype.id
+    INNER JOIN part ON inventorylog.partid = part.id
+    INNER JOIN uom ON uom.id = part.uomid
+    INNER JOIN company ON company.id = 1
+
+WHERE UPPER(part.num) LIKE UPPER($P{partNum})
+  AND Inventorylog.typeid IN ($P!{ckTransfer}, $P!{ckYield},$P!{ckReceiving},$P!{ckAdjustTracking},$P!{ckAdjustUOM},$P!{ckShipping},$P!{ckConsume},$P!{ckAdjust},$P!{ckAdjustIncrease},$P!{ckAdjustDecrease},$P!{ckAdjustScrap},$P!{ckVoidReceipt},$P!{ckEnableTracking},$P!{ckDisableTracking},$P!{ckVoidedShipments})
+  AND inventorylog.locationgroupid IN ($P!{locationGroupID})
+  AND InventoryLog.EventDate between $P{dateRange1} AND DATE_SUB($P{dateRange2}, INTERVAL 1 SECOND)
+
+ORDER BY part.num, inventorylog.id]]>
+	</queryString>
+	<field name="EVENTDATE" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="CHANGEQTY" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="QTYONHAND" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="INFO" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="PART" class="java.lang.String"/>
+	<field name="INVENTORYLOGID" class="java.lang.Long"/>
+	<field name="EVENT" class="java.lang.String"/>
+	<field name="UOMCODE" class="java.lang.String"/>
+	<field name="PARTID" class="java.lang.Integer"/>
+	<field name="COMPANY" class="java.lang.String"/>
+	<field name="LGID" class="java.lang.Integer"/>
+	<variable name="PriceDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_PRICE")]]></variableExpression>
+	</variable>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<variable name="CostDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_COST")]]></variableExpression>
+	</variable>
+	<variable name="DateFormat" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+	</variable>
+	<group name="Part">
+		<groupExpression><![CDATA[$F{PARTID}]]></groupExpression>
+		<groupHeader>
+			<band height="20" splitType="Stretch">
+				<textField isBlankWhenNull="true">
+					<reportElement key="textField" x="0" y="4" width="371" height="16" uuid="35876b93-93cb-423c-abac-eecc99a8aa38"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Open Sans" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PART}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement key="line-3" x="0" y="19" width="732" height="1" forecolor="#000000" uuid="ff0192bf-c057-4196-93e1-19a9c584bc1c"/>
+				</line>
+				<componentElement>
+					<reportElement x="371" y="4" width="361" height="16" uuid="471e5d6f-f435-4de5-a3e7-543650e0b496"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="BegEndQty" uuid="3af044a3-660e-4d4b-bf6b-ed7fd6f20697">
+							<datasetParameter name="partID">
+								<datasetParameterExpression><![CDATA[$F{PARTID}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="dateRange1">
+								<datasetParameterExpression><![CDATA[$P{dateRange1}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="dateRange2">
+								<datasetParameterExpression><![CDATA[$P{dateRange2}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="locationGroupID">
+								<datasetParameterExpression><![CDATA[$P{locationGroupID}]]></datasetParameterExpression>
+							</datasetParameter>
+						</datasetRun>
+						<jr:column width="90" uuid="206503d1-5e2c-49aa-8683-2db672c37f76">
+							<jr:tableFooter height="16" rowSpan="1">
+								<textField isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="90" height="16" uuid="297b340c-8629-4e87-a0ac-ca0436cd203c"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Open Sans" isBold="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA["Beginning Qty:"]]></textFieldExpression>
+								</textField>
+							</jr:tableFooter>
+							<jr:detailCell height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="90" uuid="28c187ad-bd64-46d5-9224-fc3001e5c5f3">
+							<jr:tableFooter height="16" rowSpan="1">
+								<textField pattern="" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="90" height="16" uuid="ece0380b-4de6-4c43-97b0-31164e911aa4"/>
+									<box leftPadding="5"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Open Sans"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{StartQty}]]></textFieldExpression>
+									<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+								</textField>
+							</jr:tableFooter>
+							<jr:detailCell height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="90" uuid="2e148fb5-099b-4d8f-a8f2-86090e9ef16e">
+							<jr:tableFooter height="16" rowSpan="1">
+								<textField isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="90" height="16" uuid="93fd2b40-50a9-4732-a5dc-8d0fe5545d2c"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Open Sans" isBold="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA["Ending Qty:"]]></textFieldExpression>
+								</textField>
+							</jr:tableFooter>
+							<jr:detailCell height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="90" uuid="65cf7ab6-2b9b-43d3-879e-cab650049cc2">
+							<jr:tableFooter height="16" rowSpan="1">
+								<textField isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="90" height="16" uuid="a7b67faf-0249-4014-9394-6be8d214d3f9"/>
+									<box leftPadding="5"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Open Sans"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{EndQty}]]></textFieldExpression>
+									<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+								</textField>
+							</jr:tableFooter>
+							<jr:detailCell height="0" rowSpan="1"/>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="64" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText-15" mode="Transparent" x="0" y="18" width="732" height="22" forecolor="#000000" backcolor="#FFFFFF" uuid="ed519de6-ca18-4352-a457-a6697b2d7a32"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="16" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Inventory Variance]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-17" mode="Transparent" x="0" y="40" width="732" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="6ba0cac2-be5c-4d09-ac5d-ca4736703e43"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{dateRange1}.getYear() <= -900 && $P{dateRange2}.getYear() >= 1100
+  ? "Date Range: All"
+  : "Date Range: " + (new SimpleDateFormat($V{DateFormat})).format($P{dateRange1}) + " - " +
+(new SimpleDateFormat($V{DateFormat})).format($P{dateRange2}.getTime()-86400000)]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-18" x="0" y="0" width="732" height="18" uuid="9f3c4df6-d444-41e7-94ba-15f0024e28ff"/>
+				<box rightPadding="2"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMPANY}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-19" x="0" y="54" width="732" height="10" uuid="b1327ba2-aa06-46f3-87c2-c704970a0e1d"/>
+				<box rightPadding="2"/>
+				<textElement>
+					<font fontName="Open Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" "]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText-2" mode="Transparent" x="0" y="0" width="275" height="16" forecolor="#000000" backcolor="#999999" uuid="fb09bef9-884a-437a-a4c5-7a376a52a1cc"/>
+				<box>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Action
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-3" mode="Transparent" x="275" y="0" width="59" height="16" forecolor="#000000" backcolor="#999999" uuid="13027f9e-5677-482e-abe5-c968e962efd1"/>
+				<box>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-14" mode="Transparent" x="334" y="0" width="221" height="16" forecolor="#000000" backcolor="#999999" uuid="9be43a0d-49d9-449e-aaad-97be18cc7744"/>
+				<box rightPadding="20">
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Qty]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-21" x="555" y="0" width="177" height="16" uuid="3b429517-b767-462b-a803-3a51c91d07f0"/>
+				<box>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" "]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="16" width="732" height="1" uuid="5c131adf-f6b0-4333-a9bf-43c35249ed0d"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" mode="Transparent" x="0" y="0" width="275" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="5050620a-034d-47e5-ac06-a13a3ade530a"/>
+				<box leftPadding="0" rightPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EVENT} + " " + $F{INFO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-1" mode="Transparent" x="275" y="0" width="59" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="ba63a4f9-2ba2-4bab-82ef-312b77da355d"/>
+				<box leftPadding="0" rightPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EVENTDATE}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{DateFormat}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-22" x="555" y="0" width="177" height="14" uuid="2d6cd604-9038-40ac-a602-b11f854e1609"/>
+				<textElement>
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" "]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement key="line-8" x="0" y="14" width="732" height="1" forecolor="#CCCCCC" uuid="ec8bff36-894a-4205-9eb1-e639bb382565"/>
+			</line>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-25" mode="Transparent" x="334" y="0" width="196" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="a58c7dfb-8b37-4041-9655-be761a8e1e17"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CHANGEQTY}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-26" mode="Transparent" x="530" y="0" width="25" height="14" uuid="ddd61f78-8163-4362-9818-d1609276cf3d"/>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UOMCODE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="14" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-3" mode="Transparent" x="0" y="-1" width="565" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="aa383e4f-4f02-4e52-9570-ff2a998c532a"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.LONG)).format(new Date())]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-4" mode="Transparent" x="565" y="-1" width="119" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="60eb15fa-f01e-4c6f-8fc6-60efd3873d3d"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-5" mode="Transparent" x="684" y="-1" width="48" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="1dd08100-3174-4a59-aca7-9f6330578761"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

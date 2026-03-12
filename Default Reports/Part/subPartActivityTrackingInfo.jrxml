@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subPartActivityTrackingInfo" pageWidth="265" pageHeight="30" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="265" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="InventoryLogID" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ISSUBREPORTONLY" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT tiinventorylog.id, tiinventorylog.inventorylogid, tiinventorylog.parttrackingid, tiinventorylog.info, tiinventorylog.infodate,
+    tiinventorylog.infodouble, tiinventorylog.infointeger, tiinventorylogsn.serialnum, tiinventorylog.qty, parttracking.abbr, parttracking.typeid,
+    ptracking.abbr AS snabbr
+FROM TIInventoryLog
+    JOIN parttracking ON tiinventorylog.parttrackingid = parttracking.id
+    LEFT JOIN tiinventorylogsn ON tiinventorylog.id = tiinventorylogsn.tiinventorylogid
+    LEFT JOIN parttracking ptracking ON tiinventorylogsn.parttrackingid = ptracking.id
+WHERE TIInventoryLog.InventoryLogID LIKE $P{InventoryLogID}]]>
+	</queryString>
+	<field name="ID" class="java.lang.Integer"/>
+	<field name="INVENTORYLOGID" class="java.lang.Integer"/>
+	<field name="PARTTRACKINGID" class="java.lang.Integer"/>
+	<field name="INFO" class="java.lang.String"/>
+	<field name="INFODATE" class="java.sql.Timestamp"/>
+	<field name="INFODOUBLE" class="java.lang.Double"/>
+	<field name="INFOINTEGER" class="java.lang.Integer"/>
+	<field name="SERIALNUM" class="java.lang.String"/>
+	<field name="QTY" class="java.lang.Double"/>
+	<field name="ABBR" class="java.lang.String"/>
+	<field name="TYPEID" class="java.lang.Integer"/>
+	<field name="SNABBR" class="java.lang.String"/>
+	<variable name="TrackingInfo" class="java.lang.String">
+		<variableExpression><![CDATA[$V{TrackingInfo} + "\n" +
+($F{TYPEID}.intValue() == 40 ?
+    $F{SNABBR} :
+    $F{ABBR})
+ + ": " +
+(($F{TYPEID}.intValue() == 80) ?
+    ($F{INFOINTEGER}.equals("1") ? "Yes" : "No") :
+    ($F{TYPEID}.intValue() == 50) ?
+        (new DecimalFormat("¤ #,##0.00")).format($F{INFODOUBLE}) :
+        ($F{TYPEID}.intValue() == 60) ?
+            (new DecimalFormat("#,##0.#####")).format($F{INFODOUBLE}) :
+            ($F{TYPEID}.intValue() == 70) ?
+            $F{INFOINTEGER}.toString() :
+                ($F{TYPEID}.intValue() == 20 || $F{TYPEID}.intValue() == 30) ?
+                    (new SimpleDateFormat("MM/dd/yyyy")).format($F{INFODATE}) :
+                    ($F{TYPEID}.intValue() == 40) ?
+                        $F{SERIALNUM} :
+                        $F{INFO})
+    + "  "]]></variableExpression>
+		<initialValueExpression><![CDATA[""]]></initialValueExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="14" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField" positionType="Float" x="0" y="0" width="265" height="14" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TrackingInfo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

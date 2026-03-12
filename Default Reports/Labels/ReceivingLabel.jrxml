@@ -1,0 +1,820 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReceivingLabel" pageWidth="288" pageHeight="432" whenNoDataType="AllSectionsNoDetail" columnWidth="288" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="e4188326-d4fc-4287-8bd5-8bd8f4c06eb8">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.9965000000000062"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="9" fontName="Open Sans" fontSize="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="10" fontName="Open Sans" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="12" fontName="Open Sans" fontSize="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="14" fontName="Open Sans" fontSize="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="10b" fontName="Open Sans" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="12b" fontName="Open Sans" fontSize="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="14b" fontName="Open Sans" fontSize="14" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="16b" fontName="Open Sans" fontSize="16" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="18b" fontName="Open Sans" fontSize="18" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="24b" fontName="Open Sans" fontSize="24" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="10i" fontName="Open Sans" fontSize="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="12i" fontName="Open Sans" fontSize="12" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="10bu" fontName="Open Sans" fontSize="10" isBold="true" isItalic="false" isUnderline="true" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="header1" fontName="Open Sans" fontSize="24" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="header2" fontName="Open Sans" fontSize="18" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="header3" fontName="Open Sans" fontSize="16" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="addressHeader" fontName="Open Sans" fontSize="14" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="date" hAlign="Right" pattern="EEEEE dd MMMMM yyyy" fontName="Open Sans" fontSize="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="type" fontName="Open Sans" fontSize="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="address" fontName="Open Sans" fontSize="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="column_head" fontName="Open Sans" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="body" isDefault="true" fontName="Open Sans" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="note" fontName="Open Sans" fontSize="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<subDataset name="SingletonTracking" uuid="62b4949d-ddc3-485e-910f-75f7bf6db0de">
+		<parameter name="receiptitemid" class="java.lang.String"/>
+		<queryString>
+			<![CDATA[SELECT  PARTTRACKING.ABBR, TRACKINGINFO.INFO, TRACKINGINFO.INFODATE, RECORDID
+FROM TrackingInfo
+  INNER JOIN PartTracking ON TrackingInfo.partTrackingID = PartTracking.id
+  WHERE (tableID=1259138490 )
+  AND (recordID=$P{receiptitemid})
+  AND (TrackingInfo.info != ''
+  OR TrackingInfo.InfoDate is not null)
+LIMIT 3]]>
+		</queryString>
+		<field name="ABBR" class="java.lang.String">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="INFO" class="java.lang.String">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="INFODATE" class="java.sql.Timestamp">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="RECORDID" class="java.lang.Integer">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<variable name="DateFormat" class="java.lang.String" resetType="None">
+			<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+		</variable>
+	</subDataset>
+	<subDataset name="SerialTracking" uuid="e0d60aed-7ef9-4b67-ae07-b99bea04f2af">
+		<parameter name="receiptitemid" class="java.lang.String"/>
+		<queryString>
+			<![CDATA[SELECT TrackingInfoSN.SERIALNUM
+FROM TrackingInfo
+  INNER JOIN TrackingInfoSN ON TrackingInfoSN.trackingInfoID = TrackingInfo.id
+  INNER JOIN PartTracking ON TrackingInfoSN.partTrackingID = PartTracking.id  WHERE tableID=1259138490 AND recordID=$P{receiptitemid}
+  ORDER BY trackingInfoID]]>
+		</queryString>
+		<field name="SERIALNUM" class="java.lang.String">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+	</subDataset>
+	<parameter name="module" class="java.lang.Object" isForPrompting="false">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORTDESCRIPTION" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["This label will display a barcode for tracking out of the box tracking values, including lot, serial, Rev, Exp Date and Serials. It will not work for custom tracking. "]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRangeNone" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="IncludeReceivedItems" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Boolean(true)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="receiptID" class="java.lang.String">
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IncludeItemBarcode" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Boolean(true)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DefaultLocationBarcode" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["../Labels/"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT RECEIPT.ID AS RECEIPTID, RECEIPTTYPE.NAME AS RECEIPTTYPE,
+    RECEIPTSTATUS.NAME AS RECEIPTSTATUS, RECEIPTLG.NAME AS RECEIPTLOCATIONGROUP,
+    RECEIPTLG.ID AS RECEIPTLOCATIONGROUPID, ORDERTYPE.NAME AS ORDERTYPE, ORDERTYPE.ID AS ORDERTYPEID,
+    RECEIPTITEM.ID AS RECEIPTITEMID, RECEIPTITEMSTATUS.NAME AS RECEIPTITEMSTATUS,
+    RECEIPTITEMSTATUS.ID AS RECEIPTITEMSTATUSID, RECEIPTITEM.QTY AS RECEIPTITEMQTY,
+    UOM.CODE AS RECEIPTITEMUOM, MAINLOCATION.NAME AS RECEIPTITEMLOCNAME,
+    MAINLG.NAME AS RECEIPTITEMLOCGRPNAME, MAINTAG.NUM AS RECEIPTITEMTAGNUM,
+    (CASE
+        WHEN receiptitemstatus.id = 10 THEN defaultTag.num
+        WHEN receiptitemstatus.id IN (20, 30, 40) THEN Tag.num
+    END) AS DEFAULTLOCATION,
+    (CASE
+        WHEN receiptitemstatus.id = 10 THEN defaultLg.name
+        WHEN receiptitemstatus.id IN (20, 30, 40) THEN mainLg.name
+    END) AS LOCATIONLGNAME,
+    (CASE
+        WHEN receiptitemstatus.id = 10 THEN defaultLoc.name
+        WHEN receiptitemstatus.id IN (20, 30, 40) THEN mainLocation.name
+    END) AS LOCATIONNAME,
+    (CASE
+        WHEN part.num IS NULL THEN poitem.partnum
+        ELSE part.num
+    END) AS RECEIPTITEMPARTNUM,
+   (CASE
+        WHEN PART.DESCRIPTION IS NULL THEN POITEM.DESCRIPTION
+        ELSE PART.DESCRIPTION
+    END) AS RECEIPTITEMPARTDESC,
+    (CASE
+	WHEN RECEIPT.ORDERTYPEID = 10 THEN PO.NUM
+	WHEN RECEIPT.ORDERTYPEID = 20 THEN SO.NUM
+	WHEN RECEIPT.ORDERTYPEID = 40 THEN XO.NUM
+    END) AS ORDERNUMBER,
+    (CASE
+	WHEN RECEIPT.ORDERTYPEID = 10 THEN VENDOR.NAME
+	WHEN RECEIPT.ORDERTYPEID = 20 THEN CUSTOMER.NAME
+	WHEN RECEIPT.ORDERTYPEID = 40 THEN XOLG.NAME
+    END) AS ORDERNAME,
+    (CASE
+	WHEN RECEIPT.ORDERTYPEID = 10 THEN POITEM.NOTE
+	WHEN RECEIPT.ORDERTYPEID = 20 THEN SOITEM.NOTE
+	WHEN RECEIPT.ORDERTYPEID = 40 THEN XOITEM.NOTE
+    END) AS RECEIPTITEMNOTE,
+    COMPANY.NAME AS COMPANYNAME,
+    (SELECT s1.sysvalue
+        FROM sysproperties s1
+        WHERE s1.syskey = 'Barcodes have DI'
+        ) AS BARCODESHAVEDI
+
+
+FROM receipt
+    INNER JOIN receipttype ON (receipt.typeid = receipttype.id)
+    INNER JOIN receiptstatus ON (receipt.statusid = receiptstatus.id)
+    INNER JOIN locationgroup receiptlg ON (receipt.locationgroupid = receiptlg.id)
+    LEFT OUTER JOIN ordertype ON (receipt.ordertypeid = ordertype.id)
+    LEFT OUTER JOIN receiptitem ON ((receipt.id = receiptitem.receiptid))
+    LEFT OUTER JOIN tag maintag ON (receiptitem.tagid = maintag.id)
+    LEFT OUTER JOIN tag ON receiptitem.locationid = tag.locationid AND tag.typeid = 10
+    LEFT OUTER JOIN location mainlocation ON (maintag.locationid = mainlocation.id)
+    LEFT OUTER JOIN locationgroup mainlg ON (mainlocation.locationgroupid = mainlg.id)
+    LEFT OUTER JOIN receiptitemstatus ON (receiptitem.statusid = receiptitemstatus.id)
+    LEFT OUTER JOIN part ON (receiptitem.partid = part.id)
+    LEFT OUTER JOIN defaultlocation ON (part.id = defaultlocation.partid AND receipt.locationgroupid = defaultlocation.locationgroupid)
+    LEFT OUTER JOIN location defaultLoc ON (defaultlocation.locationid = defaultLoc.id)
+    LEFT OUTER JOIN locationGroup defaultLg ON defaultLG.id = defaultLoc.locationGroupId
+    LEFT OUTER JOIN tag defaultTag ON defaultLoc.id = defaultTag.locationId AND defaultTag.partId = 0
+    LEFT OUTER JOIN uom ON (receiptitem.uomid = uom.id)
+    LEFT OUTER JOIN po ON ((receipt.poid = po.id) AND (receipt.ordertypeid = 10))
+    LEFT OUTER JOIN so ON ((receipt.soid = so.id) AND (receipt.ordertypeid = 20))
+    LEFT OUTER JOIN xo ON ((receipt.xoid = xo.id) AND (receipt.ordertypeid = 40))
+    LEFT OUTER JOIN vendor ON ((receipt.poid = po.id) AND (receipt.ordertypeid = 10) AND (vendor.id = po.vendorid))
+    LEFT OUTER JOIN customer ON ((receipt.soid = so.id) AND (receipt.ordertypeid = 20) AND (customer.id = so.customerid))
+    LEFT OUTER JOIN LocationGroup xolg ON ((receipt.xoid = xo.id) AND (receipt.ordertypeid = 40) AND (xolg.id = xo.fromlgid))
+    LEFT OUTER JOIN poitem ON ((receiptitem.poitemid = poitem.id) AND (receipt.ordertypeid = 10))
+    LEFT OUTER JOIN soitem ON ((receiptitem.soitemid = soitem.id) AND (receipt.ordertypeid = 20))
+    LEFT OUTER JOIN xoitem ON ((receiptitem.xoitemid = xoitem.id) AND (receipt.ordertypeid = 40))
+    JOIN company ON company.id = 1
+
+WHERE receipt.id = $P!{receiptID}
+  AND receiptitem.typeid IN (1,10)
+  AND receiptitem.statusid IN (30,40)]]>
+	</queryString>
+	<field name="RECEIPTID" class="java.lang.Integer"/>
+	<field name="RECEIPTTYPE" class="java.lang.String"/>
+	<field name="RECEIPTSTATUS" class="java.lang.String"/>
+	<field name="RECEIPTLOCATIONGROUP" class="java.lang.String"/>
+	<field name="RECEIPTLOCATIONGROUPID" class="java.lang.Integer"/>
+	<field name="ORDERTYPE" class="java.lang.String"/>
+	<field name="ORDERTYPEID" class="java.lang.Integer"/>
+	<field name="RECEIPTITEMID" class="java.lang.Integer"/>
+	<field name="RECEIPTITEMSTATUS" class="java.lang.String"/>
+	<field name="RECEIPTITEMSTATUSID" class="java.lang.Integer"/>
+	<field name="RECEIPTITEMQTY" class="java.lang.Double"/>
+	<field name="RECEIPTITEMUOM" class="java.lang.String"/>
+	<field name="RECEIPTITEMLOCNAME" class="java.lang.String"/>
+	<field name="RECEIPTITEMLOCGRPNAME" class="java.lang.String"/>
+	<field name="RECEIPTITEMTAGNUM" class="java.lang.Long"/>
+	<field name="DEFAULTLOCATION" class="java.lang.Long"/>
+	<field name="LOCATIONLGNAME" class="java.lang.String"/>
+	<field name="LOCATIONNAME" class="java.lang.String"/>
+	<field name="RECEIPTITEMPARTNUM" class="java.lang.String"/>
+	<field name="RECEIPTITEMPARTDESC" class="java.lang.String"/>
+	<field name="ORDERNUMBER" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ORDERNAME" class="java.lang.String"/>
+	<field name="RECEIPTITEMNOTE" class="java.lang.String"/>
+	<field name="COMPANYNAME" class="java.lang.String"/>
+	<field name="BARCODESHAVEDI" class="java.lang.String"/>
+	<variable name="ORDERNUMBER" class="java.lang.String">
+		<variableExpression><![CDATA[$F{BARCODESHAVEDI} == null ?
+    $F{ORDERNUMBER} :
+    $F{BARCODESHAVEDI}.equals("true") ?
+        ($F{ORDERTYPEID}.intValue()==10 ? "P" + $F{ORDERNUMBER} :
+            ($F{ORDERTYPEID}.intValue()==20 ? "S" + $F{ORDERNUMBER} :
+                ($F{ORDERTYPEID}.intValue()==40 ? "T" + $F{ORDERNUMBER} : $F{ORDERNUMBER}))) :
+        $F{ORDERNUMBER}]]></variableExpression>
+	</variable>
+	<variable name="PriceDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_PRICE")]]></variableExpression>
+	</variable>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<variable name="CostDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_COST")]]></variableExpression>
+	</variable>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="84" splitType="Prevent">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-3" stretchType="RelativeToBandHeight" mode="Transparent" x="5" y="5" width="97" height="25" forecolor="#000000" backcolor="#FFFFFF" uuid="14ee9bad-276e-440a-becb-16dc3556ff66">
+					<printWhenExpression><![CDATA[new Boolean($P{module} != null)]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="7"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[((com.evnt.eve.modules.ReportHelperModule) $P{module}).getCompanyReportAddress($F{RECEIPTLOCATIONGROUPID})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-3" style="12b" positionType="Float" mode="Transparent" x="154" y="54" width="32" height="14" uuid="21c163e4-b372-4800-97b3-ee8b8a42deb9"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Type:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-16" style="12" positionType="Float" mode="Transparent" x="35" y="40" width="119" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="fbdba40d-5938-4353-87c0-d79f593f76ba"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORDERTYPE} + ":" + $F{ORDERNUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-6" style="12b" positionType="Float" mode="Transparent" x="7" y="68" width="28" height="16" uuid="b56c7342-e58f-4ce1-a34e-0f7d21a6fc29"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[LG:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-15" style="12" positionType="Float" mode="Transparent" x="35" y="54" width="119" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="950d14d8-5a21-4740-9d46-7d7ee1a0d3d1"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORDERNAME}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-5" style="12b" positionType="Float" mode="Transparent" x="7" y="54" width="28" height="14" uuid="29cb9022-d201-4d30-9545-a99fe6351d8c"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Name:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" style="12" positionType="Float" mode="Transparent" x="186" y="54" width="93" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="f10ce642-465a-4548-b429-02611204e564"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RECEIPTTYPE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-2" style="12b" positionType="Float" mode="Transparent" x="154" y="40" width="32" height="14" uuid="cbcf92ba-33b8-4e37-898f-fe3b77163187"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Status:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" style="12" positionType="Float" mode="Transparent" x="35" y="68" width="119" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="e975f12d-18ef-49ba-93e6-189dc8c71bcf"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RECEIPTLOCATIONGROUP}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" style="12" positionType="Float" mode="Transparent" x="186" y="40" width="89" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="eb42019f-dd1e-4dc2-8e38-f7cb3d8d51eb"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RECEIPTSTATUS}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-4" style="12b" positionType="Float" mode="Transparent" x="7" y="40" width="28" height="14" uuid="b9eff931-bcbf-4a46-bb10-10a49536f6d2"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Order:]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement x="158" y="5" width="119" height="25" uuid="02dc9e7c-21e8-4cc8-a483-fb5368cf64ef"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128B" drawText="true" checksumRequired="false">
+					<jr:codeExpression><![CDATA[$F{ORDERNUMBER}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="84" splitType="Prevent">
+			<printWhenExpression><![CDATA[new Boolean($V{PAGE_NUMBER}.intValue() > 1)]]></printWhenExpression>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-3" stretchType="RelativeToBandHeight" mode="Transparent" x="5" y="5" width="97" height="25" forecolor="#000000" backcolor="#FFFFFF" uuid="14ee9bad-276e-440a-becb-16dc3556ff66">
+					<printWhenExpression><![CDATA[new Boolean($P{module} != null)]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="7"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[((com.evnt.eve.modules.ReportHelperModule) $P{module}).getCompanyReportAddress($F{RECEIPTLOCATIONGROUPID})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" style="12" positionType="Float" mode="Transparent" x="186" y="54" width="93" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="f10ce642-465a-4548-b429-02611204e564"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RECEIPTTYPE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" style="12" positionType="Float" mode="Transparent" x="186" y="40" width="93" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="eb42019f-dd1e-4dc2-8e38-f7cb3d8d51eb"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RECEIPTSTATUS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" style="12" positionType="Float" mode="Transparent" x="35" y="68" width="119" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="e975f12d-18ef-49ba-93e6-189dc8c71bcf"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RECEIPTLOCATIONGROUP}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-2" style="12b" positionType="Float" mode="Transparent" x="154" y="40" width="32" height="14" uuid="cbcf92ba-33b8-4e37-898f-fe3b77163187"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Status:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-3" style="12b" positionType="Float" mode="Transparent" x="154" y="54" width="32" height="14" uuid="21c163e4-b372-4800-97b3-ee8b8a42deb9"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Type:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" style="12b" positionType="Float" mode="Transparent" x="7" y="40" width="28" height="14" uuid="b9eff931-bcbf-4a46-bb10-10a49536f6d2"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Order:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-5" style="12b" positionType="Float" mode="Transparent" x="7" y="54" width="28" height="14" uuid="29cb9022-d201-4d30-9545-a99fe6351d8c"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Name:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-6" style="12b" positionType="Float" mode="Transparent" x="7" y="68" width="28" height="16" uuid="b56c7342-e58f-4ce1-a34e-0f7d21a6fc29"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[LG:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-15" style="12" positionType="Float" mode="Transparent" x="35" y="54" width="119" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="950d14d8-5a21-4740-9d46-7d7ee1a0d3d1"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORDERNAME}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-16" style="12" positionType="Float" mode="Transparent" x="35" y="40" width="119" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="fbdba40d-5938-4353-87c0-d79f593f76ba"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORDERTYPE} + ":" + $F{ORDERNUMBER}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="158" y="5" width="119" height="25" uuid="02dc9e7c-21e8-4cc8-a483-fb5368cf64ef"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128B" drawText="true" checksumRequired="false">
+					<jr:codeExpression><![CDATA[$F{ORDERNUMBER}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="17" splitType="Prevent">
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-5" style="12b" mode="Transparent" x="130" y="0" width="71" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="706986c1-eb89-474a-85b7-e1b30367449f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="7" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Qty Ordered"]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-12" style="12b" mode="Transparent" x="201" y="0" width="77" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="5e896134-f7b4-4457-b1af-ff59ea7a1841"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="7" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Qty Received"]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-6" style="12b" mode="Transparent" x="7" y="0" width="31" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="f5c8c7f4-229f-4f7c-8eb3-ec0bfda35c82"/>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="7" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Part"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="1" y="16" width="282" height="1" uuid="afa2cdc1-7f00-44db-a39f-9ca33b54dbb9"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="108" splitType="Stretch">
+			<printWhenExpression><![CDATA[new Boolean(($P{IncludeReceivedItems}.booleanValue() && ($F{RECEIPTITEMSTATUSID}.intValue() > 20)) || $F{RECEIPTITEMSTATUSID}.intValue() <= 20)]]></printWhenExpression>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" style="body" mode="Transparent" x="5" y="0" width="125" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="724da9c2-f984-4297-8007-ac2837f571f1">
+					<printWhenExpression><![CDATA[new Boolean(($F{RECEIPTITEMPARTNUM} != null) || ($F{RECEIPTITEMPARTDESC} != null))]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RECEIPTITEMPARTNUM}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="1" y="24" width="282" height="1" uuid="afa2cdc1-7f00-44db-a39f-9ca33b54dbb9"/>
+			</line>
+			<componentElement>
+				<reportElement x="31" y="38" width="104" height="24" uuid="4165943d-f8b3-4f72-83c0-caa4a94daeec">
+					<printWhenExpression><![CDATA[$P{IncludeItemBarcode} == true]]></printWhenExpression>
+				</reportElement>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128B" drawText="true" checksumRequired="false" barHeight="50">
+					<jr:codeExpression><![CDATA[$F{RECEIPTITEMPARTNUM}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" style="body" mode="Transparent" x="130" y="0" width="46" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="1ba4ee65-f2b4-4e25-afaa-7405a0a1fd67"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RECEIPTITEMQTY}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" style="body" mode="Transparent" x="176" y="0" width="25" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="255fa43b-0ac5-47b8-affb-4e2b90aed8c1"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RECEIPTITEMUOM}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-13" style="body" mode="Transparent" x="201" y="0" width="47" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="6793e7fb-dff0-4b64-8a94-0029da0af803">
+					<printWhenExpression><![CDATA[new Boolean ($F{RECEIPTITEMSTATUSID}.intValue() > 20)]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RECEIPTITEMQTY}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-14" style="body" mode="Transparent" x="248" y="0" width="25" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="c3e26e17-6c0b-4b26-93c3-456cf589ffc0">
+					<printWhenExpression><![CDATA[new Boolean ($F{RECEIPTITEMSTATUSID}.intValue() > 20)]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RECEIPTITEMUOM}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-10" positionType="Float" mode="Transparent" x="5" y="62" width="277" height="10" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="7a55f067-5cc4-48cb-80cd-4fa9a243132f"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="7"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RECEIPTITEMNOTE}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="168" y="38" width="104" height="24" uuid="39d58b03-6ad9-41a2-9126-ea44401de22b">
+					<printWhenExpression><![CDATA[$P{DefaultLocationBarcode}]]></printWhenExpression>
+				</reportElement>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128B" drawText="true" checksumRequired="false" barHeight="50">
+					<jr:codeExpression><![CDATA[$F{DEFAULTLOCATION}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<staticText>
+				<reportElement x="144" y="38" width="24" height="14" uuid="6d004706-3e2a-47e6-85b4-ceb1c2e2e685">
+					<printWhenExpression><![CDATA[$P{DefaultLocationBarcode}]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="Open Sans" size="9"/>
+				</textElement>
+				<text><![CDATA[Loc:]]></text>
+			</staticText>
+			<subreport runToBottom="false">
+				<reportElement positionType="Float" x="4" y="101" width="271" height="5" uuid="3be48c39-5494-4b3e-ba70-57743a9a9496"/>
+				<subreportParameter name="receiptitemid">
+					<subreportParameterExpression><![CDATA[$F{RECEIPTITEMID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{path} + "ReceivingLabel_serials.jasper"]]></subreportExpression>
+			</subreport>
+			<componentElement>
+				<reportElement key="table" x="7" y="74" width="80" height="20" uuid="94529d12-40d7-439f-a1e9-1bfbc773e1df"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="SingletonTracking" uuid="446eb8f6-dd32-43e3-84f0-3c4024302b31">
+						<datasetParameter name="receiptitemid">
+							<datasetParameterExpression><![CDATA[$F{RECEIPTITEMID}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="42" uuid="228390c6-bbb3-4239-a6c7-d1fba5c95e53">
+						<jr:detailCell height="26" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="42" height="26" uuid="69270fd1-13c6-405e-911a-7b3aee0b3346"/>
+								<textElement>
+									<font fontName="Open Sans" size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{ABBR}+":"]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="cf93d4b9-2a26-4639-837e-c0e0554bea78">
+						<jr:detailCell height="26" rowSpan="1">
+							<componentElement>
+								<reportElement x="0" y="0" width="90" height="26" uuid="d9043167-b174-4a3a-9124-b033350f8831"/>
+								<jr:barbecue type="Code128B" drawText="true" checksumRequired="false">
+									<jr:codeExpression><![CDATA[( ( $F{INFO}.isEmpty()) ? new SimpleDateFormat($V{DateFormat}).format($F{INFODATE}) : $F{INFO} )]]></jr:codeExpression>
+								</jr:barbecue>
+							</componentElement>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="100" uuid="5af4a06e-2002-4f5d-9efb-aa45b81b557e">
+						<jr:detailCell height="26" rowSpan="1"/>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<staticText>
+				<reportElement x="5" y="38" width="26" height="14" uuid="6d004706-3e2a-47e6-85b4-ceb1c2e2e685"/>
+				<textElement>
+					<font fontName="Open Sans" size="9"/>
+				</textElement>
+				<text><![CDATA[Part:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="5" y="12" width="267" height="12" uuid="11c2a4f5-c89f-42c9-9447-3099defa258f"/>
+				<textElement>
+					<font fontName="Open Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RECEIPTITEMPARTDESC}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="144" y="26" width="57" height="10" isRemoveLineWhenBlank="true" uuid="b3e99dbc-9721-4a25-a0ac-d0d667d776b1">
+					<printWhenExpression><![CDATA[$P{DefaultLocationBarcode}]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="Open Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LOCATIONLGNAME}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="201" y="26" width="81" height="10" isRemoveLineWhenBlank="true" uuid="ef20eed3-b057-4c13-bc3c-2fdb67bc0ef2">
+					<printWhenExpression><![CDATA[$P{DefaultLocationBarcode}]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Open Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LOCATIONNAME}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="144" y="36" width="138" height="1" uuid="25253741-96b8-4b1c-8ce4-bae45168ac73">
+					<printWhenExpression><![CDATA[$P{DefaultLocationBarcode} && $F{LOCATIONLGNAME} != null]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.25" lineColor="#000000"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Prevent"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="16" splitType="Prevent">
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" mode="Transparent" x="5" y="4" width="274" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="d7e018e4-620c-4ea3-bf28-24dba3f68bce"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="7"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.LONG)).format(new Date())]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="1" width="282" height="1" uuid="1174376b-2185-4fc0-94ee-9d1e1bdeb1d2"/>
+			</line>
+			<break>
+				<reportElement x="0" y="0" width="100" height="1" uuid="182a1503-e104-4f81-967f-5eca556219f4"/>
+			</break>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Prevent"/>
+	</summary>
+</jasperReport>

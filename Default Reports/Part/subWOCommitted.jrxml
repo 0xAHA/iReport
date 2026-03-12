@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subWOCommitted" pageWidth="170" pageHeight="360" whenNoDataType="AllSectionsNoDetail" columnWidth="170" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="8e3d7995-0d0d-4844-a512-53dc41adb6ba">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="5.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="ISSUBREPORTONLY" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="partNum" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["B201"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowTracking" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT ((COALESCE(SUM(pickitem.qty), 0) * COALESCE(uomconversion.multiply,1)) / COALESCE(uomconversion.factor,1)) AS WOCOMMITTED,
+    wo.num AS WONUMBER, part.num AS PARTNUMBER, uom.CODE,  tinfo.tinfo tracking
+
+FROM wo
+    INNER JOIN woitem ON wo.id = woitem.woid
+    LEFT JOIN moitem ON moitem.id = woitem.moitemid
+    INNER JOIN part ON woitem.partid = part.id
+    INNER JOIN uom ON part.uomid = uom.id
+    LEFT JOIN pickitem ON (pickitem.orderid = wo.id AND pickitem.ordertypeid = 30 AND woitem.id = pickitem.woitemid AND pickitem.statusid IN (30,40))
+    LEFT JOIN uomconversion ON (part.uomid = uomconversion.touomid AND pickitem.uomid = uomconversion.fromuomid)
+    LEFT JOIN (SELECT wo.num wonum, GROUP_CONCAT(COALESCE(trackinginfo.info,''),COALESCE(CONCAT(DATE_FORMAT(trackinginfo.infodate,'%Y'),'-',DATE_FORMAT(trackinginfo.infodate,'%m'),'-',DATE_FORMAT(trackinginfo.infodate,'%e')),''), COALESCE(trackinginfosn.serialnum,'')) tinfo
+	FROM WO
+	INNER JOIN woitem ON wo.id = woitem.woid
+	INNER JOIN part ON woitem.partid = part.id
+	LEFT JOIN pickitem ON (pickitem.orderid = wo.id AND pickitem.ordertypeid = 30 AND woitem.id = pickitem.woitemid AND pickitem.statusid IN (30,40))
+	LEFT JOIN trackinginfo ON trackinginfo.tableid = -1515431424 AND trackinginfo.recordid = pickitem.id
+   	LEFT JOIN trackinginfosn ON trackinginfosn.trackinginfoid = trackinginfo.id
+	WHERE wo.statusid IN (10,20,30)
+	AND woitem.typeid IN (20,30)
+	AND UPPER(part.num) LIKE UPPER($P{partNum})
+	GROUP BY wo.num
+	) tinfo ON tinfo.wonum = wo.num
+
+WHERE wo.statusID IN (10,20,30)
+  AND woitem.typeID IN (20,30)
+  AND UPPER(part.num) LIKE UPPER($P{partNum})
+  and pickitem.statusid IN (30,40)
+
+GROUP BY uom.code, wo.num, part.num, uomconversion.multiply, uomconversion.factor
+
+ORDER BY wo.num]]>
+	</queryString>
+	<field name="WOCOMMITTED" class="java.lang.Double"/>
+	<field name="WONUMBER" class="java.lang.String"/>
+	<field name="PARTNUMBER" class="java.lang.String"/>
+	<field name="CODE" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tracking" class="java.lang.String"/>
+	<variable name="qtyCommitted" class="java.lang.Double" resetType="Group" resetGroup="wo" calculation="Sum">
+		<variableExpression><![CDATA[$F{WOCOMMITTED}]]></variableExpression>
+	</variable>
+	<variable name="TotalCommitted" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$V{qtyCommitted}]]></variableExpression>
+	</variable>
+	<variable name="PriceDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_PRICE")]]></variableExpression>
+	</variable>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<variable name="CostDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_COST")]]></variableExpression>
+	</variable>
+	<group name="wo">
+		<groupExpression><![CDATA[$F{WONUMBER}]]></groupExpression>
+		<groupHeader>
+			<band splitType="Stretch">
+				<printWhenExpression><![CDATA[new Boolean($F{WOCOMMITTED}.doubleValue() > 0)]]></printWhenExpression>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="28" splitType="Stretch">
+				<printWhenExpression><![CDATA[new Boolean($V{qtyCommitted}.doubleValue() > 0)]]></printWhenExpression>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" hyperlinkType="Reference">
+					<reportElement key="textField" mode="Transparent" x="0" y="0" width="95" height="14" forecolor="#000099" backcolor="#FFFFFF" uuid="4d010b66-d499-4bc2-b16c-48163243bd14"/>
+					<box leftPadding="2">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{WONUMBER}]]></textFieldExpression>
+					<anchorNameExpression><![CDATA["WONum"]]></anchorNameExpression>
+					<hyperlinkReferenceExpression><![CDATA[$F{WONUMBER}]]></hyperlinkReferenceExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement key="textField" mode="Transparent" x="146" y="0" width="24" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="de7bf681-ad1c-4b9a-92d7-7be15c7d9e07"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CODE}]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement key="textField" mode="Transparent" x="95" y="0" width="51" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="f6a0fabf-7fe7-41e3-bc16-fa6635945dd1"/>
+					<box leftPadding="0" rightPadding="2">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qtyCommitted}]]></textFieldExpression>
+					<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField" mode="Transparent" x="0" y="14" width="168" height="14" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="954f5467-f5f3-4ea5-9658-4ea451a9fa3a">
+						<printWhenExpression><![CDATA[$P{ShowTracking}]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="2">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{tracking}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="30" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText-1" mode="Transparent" x="0" y="16" width="95" height="14" forecolor="#000000" backcolor="#999999" uuid="7e53092e-93e6-466b-aec0-5df4fc76977d"/>
+				<box leftPadding="2" rightPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[WO #]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-2" mode="Transparent" x="119" y="16" width="51" height="14" forecolor="#000000" backcolor="#999999" uuid="3e816a41-6088-45fa-b201-59301842c205"/>
+				<box rightPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Qty]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-3" mode="Transparent" x="0" y="0" width="170" height="16" forecolor="#000000" backcolor="#999999" uuid="02aaf58d-10ef-412a-8ecd-ca372fe9376d"/>
+				<box leftPadding="2" rightPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Work Orders:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-1" mode="Transparent" x="95" y="16" width="24" height="14" forecolor="#000000" backcolor="#999999" uuid="df9cb6e0-2c06-4a75-9b42-6c12eb07e740"/>
+				<box rightPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="29" width="170" height="1" uuid="7d25c09c-5713-4d37-ab64-1393e8213807"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="14">
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" mode="Transparent" x="146" y="0" width="24" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="5e43b98a-7058-47c7-a27e-455194c7d1d8"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CODE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" mode="Transparent" x="95" y="0" width="51" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="bc488159-9a7e-4b31-a65d-72f72a454090"/>
+				<box leftPadding="0" rightPadding="2">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TotalCommitted}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="95" height="14" uuid="feb2c68c-b5ae-4cbe-b091-5cc2222621cd"/>
+				<box leftPadding="2">
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total:]]></text>
+			</staticText>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

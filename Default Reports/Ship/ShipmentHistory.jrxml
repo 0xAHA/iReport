@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ShipmentHistory" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="552" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="9e0a3f90-d3f9-4c3b-a257-058d131f49c9">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.8150000000000004"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="9" fontName="Open Sans" fontSize="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="10" isDefault="true" fontName="Open Sans" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="12" fontName="Open Sans" fontSize="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="14" fontName="Open Sans" fontSize="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="10b" fontName="Open Sans" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="12b" fontName="Open Sans" fontSize="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="14b" fontName="Open Sans" fontSize="14" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="16b" fontName="Open Sans" fontSize="16" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="18b" fontName="Open Sans" fontSize="18" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="24b" fontName="Open Sans" fontSize="24" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="10i" fontName="Open Sans" fontSize="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="12i" fontName="Open Sans" fontSize="12" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="10bu" fontName="Open Sans" fontSize="10" isBold="true" isItalic="false" isUnderline="true" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="header1" fontName="Open Sans" fontSize="24" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="header2" fontName="Open Sans" fontSize="18" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="header3" fontName="Open Sans" fontSize="16" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="addressHeader" fontName="Open Sans" fontSize="14" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="date" fontName="Open Sans" fontSize="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="type" fontName="Open Sans" fontSize="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="address" fontName="Open Sans" fontSize="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="column_head" fontName="Open Sans" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="body" isDefault="true" fontName="Open Sans" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="note" isDefault="true" fontName="Open Sans" fontSize="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["../Ship/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="module" class="java.lang.Object" isForPrompting="false">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORTDESCRIPTION" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Prints a list of all shipments made in the specified time period."]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRange1IssueDate" class="java.util.Date" isForPrompting="false">
+		<parameterDescription><![CDATA[Today]]></parameterDescription>
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRange2IssueDate" class="java.util.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRange1DateShipped" class="java.util.Date" isForPrompting="false">
+		<parameterDescription><![CDATA[Today]]></parameterDescription>
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRange2DateShipped" class="java.util.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="carrier" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IncludeSalesOrders" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Boolean(true)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IncludePurchaseOrders" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Boolean(false)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IncludeTransferOrders" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Boolean(false)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="sort" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[ordertype.name,Order Type,3,Order Num,4,Ship To,5,Order Date,ship.dateshipped,Date Shipped,carrier.name,Carrier]]></parameterDescription>
+		<defaultValueExpression><![CDATA["ship.dateshipped"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ReportTitle" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="ShowShipNumber" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT ordertype.name AS ordertype, company.name AS company,
+    COALESCE(so.num, po.num, xo.num) AS ordernum,
+    ship.shiptoname AS shipto,
+    COALESCE(po.dateissued, so.dateissued, xo.dateissued) AS orderdate,
+    ship.dateshipped, carrier.name AS carrier, ship.id AS shipid, ship.num AS shipnum
+
+
+FROM ship
+    LEFT JOIN po ON (po.id = ship.poid AND ship.ordertypeid=10)
+    LEFT JOIN so ON (so.id = ship.soid AND ship.ordertypeid=20)
+    LEFT JOIN xo ON (xo.id = ship.xoid AND ship.ordertypeid=40)
+    LEFT JOIN carrier ON carrier.id = ship.carrierid
+    LEFT JOIN ordertype ON ordertype.id = ship.ordertypeid
+    JOIN company ON company.id = 1
+
+WHERE ship.statusid = 30
+  AND UPPER(carrier.name) LIKE UPPER($P{carrier})
+  AND COALESCE(po.dateissued, so.dateissued, xo.dateissued) BETWEEN $P{dateRange1IssueDate} AND DATE_SUB($P{dateRange2IssueDate}, INTERVAL 1 SECOND)
+  AND ship.dateShipped BETWEEN $P{dateRange1DateShipped} AND DATE_SUB($P{dateRange2DateShipped}, INTERVAL 1 SECOND)
+
+ORDER BY $P!{sort}]]>
+	</queryString>
+	<field name="ORDERTYPE" class="java.lang.String"/>
+	<field name="COMPANY" class="java.lang.String"/>
+	<field name="ORDERNUM" class="java.lang.String"/>
+	<field name="SHIPTO" class="java.lang.String"/>
+	<field name="ORDERDATE" class="java.sql.Timestamp"/>
+	<field name="DATESHIPPED" class="java.sql.Timestamp"/>
+	<field name="CARRIER" class="java.lang.String"/>
+	<field name="SHIPID" class="java.lang.Integer"/>
+	<field name="shipnum" class="java.lang.String"/>
+	<variable name="dateShipped" class="java.lang.Integer">
+		<variableExpression><![CDATA[new Integer(((Integer.parseInt(new SimpleDateFormat("yyyy").format($F{DATESHIPPED}))) * new Integer(365).intValue()) + (Integer.parseInt(new SimpleDateFormat("D").format($F{DATESHIPPED}))))]]></variableExpression>
+	</variable>
+	<variable name="days" class="java.lang.Integer">
+		<variableExpression><![CDATA[new Integer(($V{dateShipped}.intValue() - ((Integer.parseInt(new SimpleDateFormat("yyyy").format($F{ORDERDATE}))) * new Integer(365).intValue())) - (Integer.parseInt(new SimpleDateFormat("D").format($F{ORDERDATE}))))]]></variableExpression>
+	</variable>
+	<variable name="DateFormat" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Prevent"/>
+	</title>
+	<pageHeader>
+		<band height="64" splitType="Prevent">
+			<textField>
+				<reportElement key="staticText" style="24b" mode="Transparent" x="0" y="18" width="552" height="22" forecolor="#000000" backcolor="#FFFFFF" uuid="744619b8-d893-4686-b339-77f62d45eb60"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Open Sans" size="16"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ReportTitle}.equals("%") ? "Shipment History" : $P{ReportTitle}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-3" x="0" y="40" width="552" height="24" uuid="bbbe3dbd-73e8-4c20-85de-36e00b2d784e"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{dateRange1IssueDate}.getYear() <= -900 && $P{dateRange2IssueDate}.getYear() >= 1100
+  ? "Issued: All"
+  : "Issued: " + (new SimpleDateFormat($V{DateFormat})).format($P{dateRange1IssueDate}) + " - " +
+(new SimpleDateFormat($V{DateFormat})).format($P{dateRange2IssueDate}.getTime() - 86400000)) + "\n" +
+($P{dateRange1DateShipped}.getYear() <= -900 && $P{dateRange2DateShipped}.getYear() >= 1100
+  ? "Shipped: All"
+  :"Shipped: " + (new SimpleDateFormat($V{DateFormat})).format($P{dateRange1DateShipped}) + " - " +
+(new SimpleDateFormat($V{DateFormat})).format($P{dateRange2DateShipped}.getTime() - 86400000))]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{DateFormat}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-5" x="0" y="0" width="552" height="18" uuid="6d29cee8-edc8-42b1-a1ec-606d869740e4"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMPANY}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="30" splitType="Prevent">
+			<staticText>
+				<reportElement key="element-90" mode="Transparent" x="0" y="0" width="109" height="30" forecolor="#000000" backcolor="#FFFFFF" uuid="7450a0c2-0445-45dc-89a6-f971b6110529">
+					<printWhenExpression><![CDATA[!$P{ShowShipNumber}]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Order Number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="element-91" mode="Transparent" x="109" y="0" width="156" height="30" forecolor="#000000" backcolor="#FFFFFF" uuid="5d8ecc76-7994-49c8-a765-2b12fef5002e"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Ship To]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="element-92" mode="Transparent" x="265" y="0" width="65" height="30" forecolor="#000000" backcolor="#FFFFFF" uuid="accda982-baae-45ab-9b3f-b44a85b93cc8"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Issued]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="element-93" mode="Transparent" x="330" y="0" width="65" height="30" forecolor="#000000" backcolor="#FFFFFF" uuid="dd9189f6-aba5-4484-a3c4-d40d2c55888c"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Shipped]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="element-94" mode="Transparent" x="455" y="0" width="97" height="30" forecolor="#000000" backcolor="#FFFFFF" uuid="fe4fe3c0-2ba2-492d-93b3-cbdeb7735c75"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Carrier]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="element-102" mode="Transparent" x="395" y="0" width="60" height="30" forecolor="#000000" backcolor="#FFFFFF" uuid="3d029796-4383-493e-8771-7c564b511cfc"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Days to
+Fulfill]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="element-90" mode="Transparent" x="0" y="0" width="109" height="30" forecolor="#000000" backcolor="#FFFFFF" uuid="a8cfcb4b-ea6f-44b5-8043-7336453da3e5">
+					<printWhenExpression><![CDATA[$P{ShowShipNumber}]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Shipment Number]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Prevent">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="element-96" stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="0" width="18" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="70743a24-8192-4af3-b50f-e00e7cf83972">
+					<printWhenExpression><![CDATA[new Boolean(($F{ORDERTYPE}.equals("SO") && $P{IncludeSalesOrders}.booleanValue() && !$P{ShowShipNumber})
+	|| ($F{ORDERTYPE}.equals("PO") && $P{IncludePurchaseOrders}.booleanValue() && !$P{ShowShipNumber})
+	|| ($F{ORDERTYPE}.equals("TO") && $P{IncludeTransferOrders}.booleanValue() && !$P{ShowShipNumber}))]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORDERTYPE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+				<reportElement key="element-97" stretchType="RelativeToBandHeight" mode="Transparent" x="18" y="0" width="91" height="14" isRemoveLineWhenBlank="true" forecolor="#000099" backcolor="#FFFFFF" uuid="455fcb9d-d8af-4f39-ba5d-b5d8842073eb">
+					<printWhenExpression><![CDATA[new Boolean(($F{ORDERTYPE}.equals("SO") && $P{IncludeSalesOrders}.booleanValue() && !$P{ShowShipNumber})
+	|| ($F{ORDERTYPE}.equals("PO") && $P{IncludePurchaseOrders}.booleanValue() && !$P{ShowShipNumber})
+	|| ($F{ORDERTYPE}.equals("TO") && $P{IncludeTransferOrders}.booleanValue() && !$P{ShowShipNumber}))]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.25" lineColor="#CCCCCC"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORDERNUM}]]></textFieldExpression>
+				<anchorNameExpression><![CDATA[$F{ORDERTYPE}.equals("SO") ?
+    "SONum" :
+    $F{ORDERTYPE}.equals("PO") ?
+        "PONum" :
+        "TONum"]]></anchorNameExpression>
+				<hyperlinkReferenceExpression><![CDATA[$F{ORDERNUM}]]></hyperlinkReferenceExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="element-98" stretchType="RelativeToBandHeight" mode="Transparent" x="109" y="0" width="156" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="bb015f21-bafd-49ab-966f-1a15830c5654">
+					<printWhenExpression><![CDATA[new Boolean(($F{ORDERTYPE}.equals("SO") && $P{IncludeSalesOrders}.booleanValue())
+	|| ($F{ORDERTYPE}.equals("PO") && $P{IncludePurchaseOrders}.booleanValue())
+	|| ($F{ORDERTYPE}.equals("TO") && $P{IncludeTransferOrders}.booleanValue()))]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.25" lineColor="#CCCCCC"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="10"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPTO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="element-99" stretchType="RelativeToBandHeight" mode="Transparent" x="265" y="0" width="65" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="8549b0f5-a2e1-4d59-87d4-536a76b3d9aa">
+					<printWhenExpression><![CDATA[new Boolean(($F{ORDERTYPE}.equals("SO") && $P{IncludeSalesOrders}.booleanValue())
+	|| ($F{ORDERTYPE}.equals("PO") && $P{IncludePurchaseOrders}.booleanValue())
+	|| ($F{ORDERTYPE}.equals("TO") && $P{IncludeTransferOrders}.booleanValue()))]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.25" lineColor="#CCCCCC"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="10"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORDERDATE}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{DateFormat}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="element-100" stretchType="RelativeToBandHeight" mode="Transparent" x="330" y="0" width="65" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="bec37571-14af-47f4-8c93-cd66376bc119">
+					<printWhenExpression><![CDATA[new Boolean(($F{ORDERTYPE}.equals("SO") && $P{IncludeSalesOrders}.booleanValue())
+	|| ($F{ORDERTYPE}.equals("PO") && $P{IncludePurchaseOrders}.booleanValue())
+	|| ($F{ORDERTYPE}.equals("TO") && $P{IncludeTransferOrders}.booleanValue()))]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.25" lineColor="#CCCCCC"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="10"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DATESHIPPED}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{DateFormat}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="element-101" stretchType="RelativeToBandHeight" mode="Transparent" x="455" y="0" width="97" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="1188f34f-870c-4612-b62e-4886692c1253">
+					<printWhenExpression><![CDATA[new Boolean(($F{ORDERTYPE}.equals("SO") && $P{IncludeSalesOrders}.booleanValue())
+	|| ($F{ORDERTYPE}.equals("PO") && $P{IncludePurchaseOrders}.booleanValue())
+	|| ($F{ORDERTYPE}.equals("TO") && $P{IncludeTransferOrders}.booleanValue()))]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="10"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CARRIER}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="element-103" stretchType="RelativeToBandHeight" mode="Transparent" x="395" y="0" width="60" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="386b811d-58e6-4b64-b3d4-46ddc5752de4">
+					<printWhenExpression><![CDATA[new Boolean(($F{ORDERTYPE}.equals("SO") && $P{IncludeSalesOrders}.booleanValue())
+	|| ($F{ORDERTYPE}.equals("PO") && $P{IncludePurchaseOrders}.booleanValue())
+	|| ($F{ORDERTYPE}.equals("TO") && $P{IncludeTransferOrders}.booleanValue()))]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.25" lineColor="#CCCCCC"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="10"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{days}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+				<reportElement key="element-97" stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="0" width="109" height="14" isRemoveLineWhenBlank="true" forecolor="#000099" backcolor="#FFFFFF" uuid="79746bc5-5b05-4c96-b4fc-de496eac9454">
+					<printWhenExpression><![CDATA[new Boolean(($F{ORDERTYPE}.equals("SO") && $P{IncludeSalesOrders}.booleanValue() && $P{ShowShipNumber})
+	|| ($F{ORDERTYPE}.equals("PO") && $P{IncludePurchaseOrders}.booleanValue() && $P{ShowShipNumber})
+	|| ($F{ORDERTYPE}.equals("TO") && $P{IncludeTransferOrders}.booleanValue() && $P{ShowShipNumber}))]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.25" lineColor="#CCCCCC"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{shipnum}]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["ShipNum"]]></anchorNameExpression>
+				<hyperlinkReferenceExpression><![CDATA[$F{shipnum}]]></hyperlinkReferenceExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Prevent"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="16" splitType="Prevent">
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" mode="Transparent" x="321" y="1" width="208" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="51c52ba3-fd10-4fb3-8264-49e33248a39c">
+					<printWhenExpression><![CDATA[!$P{IS_IGNORE_PAGINATION}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0" rightPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" mode="Transparent" x="529" y="1" width="23" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="99c899a9-7c44-46ff-a8f1-e9f6783fa50d">
+					<printWhenExpression><![CDATA[!$P{IS_IGNORE_PAGINATION}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" mode="Transparent" x="0" y="1" width="321" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="3c39e24a-c0cd-433a-9331-448fb604a0be"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.LONG)).format(new Date())]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Prevent"/>
+	</summary>
+</jasperReport>

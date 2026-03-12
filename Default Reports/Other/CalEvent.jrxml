@@ -1,0 +1,688 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CalEvent" pageWidth="792" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="04ceeb06-e772-43a4-a3f3-056641b585a2">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<subDataset name="CalendarEvents" uuid="4c007a9e-8549-42bc-813f-9fb17e8e4380">
+		<parameter name="dateRange1" class="java.util.Date" isForPrompting="false">
+			<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+		</parameter>
+		<parameter name="dateRange2" class="java.util.Date" isForPrompting="false">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="cbOrderBy" class="java.lang.String" isForPrompting="false">
+			<parameterDescription><![CDATA[1,Event Name,2,Start Date,3,End Date,4,Note,5,Location,8,Category]]></parameterDescription>
+			<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="colName" class="java.lang.Boolean" isForPrompting="false">
+			<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+		</parameter>
+		<parameter name="colStartDate" class="java.lang.Boolean" isForPrompting="false">
+			<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+		</parameter>
+		<parameter name="colEndDate" class="java.lang.Boolean" isForPrompting="false">
+			<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+		</parameter>
+		<parameter name="colLocation" class="java.lang.Boolean" isForPrompting="false">
+			<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+		</parameter>
+		<parameter name="colNote" class="java.lang.Boolean" isForPrompting="false">
+			<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+		</parameter>
+		<parameter name="ShowTime" class="java.lang.Boolean" isForPrompting="false">
+			<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+		</parameter>
+		<parameter name="ckWOEntered" class="java.lang.String" isForPrompting="false">
+			<parameterDescription><![CDATA[10,100]]></parameterDescription>
+			<defaultValueExpression><![CDATA["10"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="ckWOStarted" class="java.lang.String" isForPrompting="false">
+			<parameterDescription><![CDATA[30,100]]></parameterDescription>
+			<defaultValueExpression><![CDATA["30"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="ckWOFulfilled" class="java.lang.String" isForPrompting="false">
+			<parameterDescription><![CDATA[40,100]]></parameterDescription>
+			<defaultValueExpression><![CDATA["40"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="ckSOIssued" class="java.lang.String" isForPrompting="false">
+			<parameterDescription><![CDATA[20,100]]></parameterDescription>
+			<defaultValueExpression><![CDATA["20"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="ckSOInProgress" class="java.lang.String" isForPrompting="false">
+			<parameterDescription><![CDATA[25,100]]></parameterDescription>
+			<defaultValueExpression><![CDATA["25"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="ckSOFulfilled" class="java.lang.String" isForPrompting="false">
+			<parameterDescription><![CDATA[60,100]]></parameterDescription>
+			<defaultValueExpression><![CDATA["60"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="ckSOClosedShort" class="java.lang.String" isForPrompting="false">
+			<parameterDescription><![CDATA[70,100]]></parameterDescription>
+			<defaultValueExpression><![CDATA["70"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="ckPOIssued" class="java.lang.String" isForPrompting="false">
+			<parameterDescription><![CDATA[20,100]]></parameterDescription>
+			<defaultValueExpression><![CDATA["20"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="ckPOInProgress" class="java.lang.String" isForPrompting="false">
+			<parameterDescription><![CDATA[40,100]]></parameterDescription>
+			<defaultValueExpression><![CDATA["40"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="ckPOFulfilled" class="java.lang.String" isForPrompting="false">
+			<parameterDescription><![CDATA[60,100]]></parameterDescription>
+			<defaultValueExpression><![CDATA["60"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="ckPOClosedShort" class="java.lang.String" isForPrompting="false">
+			<parameterDescription><![CDATA[70,100]]></parameterDescription>
+			<defaultValueExpression><![CDATA["70"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="ShowCategoryColor" class="java.lang.Boolean" isForPrompting="false">
+			<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+		</parameter>
+		<parameter name="colCategory" class="java.lang.Boolean" isForPrompting="false">
+			<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+		</parameter>
+		<parameter name="CalendarCategory" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="colStatus" class="java.lang.Boolean" isForPrompting="false">
+			<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+		</parameter>
+		<parameter name="poNum" class="java.lang.String" isForPrompting="false"/>
+		<parameter name="moNum" class="java.lang.String" isForPrompting="false"/>
+		<parameter name="soNum" class="java.lang.String" isForPrompting="false"/>
+		<parameter name="IncludeSalesOrders" class="java.lang.Boolean" isForPrompting="false">
+			<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+		</parameter>
+		<parameter name="IncludePurchaseOrders" class="java.lang.Boolean" isForPrompting="false">
+			<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+		</parameter>
+		<parameter name="IncludeWorkOrders" class="java.lang.Boolean" isForPrompting="false">
+			<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+		</parameter>
+		<parameter name="IncludeCalendarEvents" class="java.lang.Boolean" isForPrompting="false">
+			<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT	calevent.name, calevent.datestart, calevent.dateend, calevent.note, calevent.location, calevent.allday, '' AS wostatus,
+	calcategory.name AS calcat,
+    	IF(calcategory.color IS NOT NULL, CONCAT("<style backcolor='#",calcategory.color,"'>"), '') AS catcolor
+
+FROM 	calevent
+	LEFT JOIN calcategory ON calevent.calcategoryid = calcategory.id
+
+WHERE 	(calevent.datestart BETWEEN $P{dateRange1} AND DATE_SUB($P{dateRange2}, INTERVAL 1 SECOND)
+	OR calevent.dateend BETWEEN $P{dateRange1} AND DATE_SUB($P{dateRange2}, INTERVAL 1 SECOND)
+	OR (calevent.datestart < $P{dateRange1})
+	AND calevent.dateend > DATE_SUB($P{dateRange2}, INTERVAL 1 SECOND))
+	AND COALESCE(calcategory.name,'') LIKE $P{CalendarCategory}
+	AND IF($P!{IncludeCalendarEvents} = true,1=1,1=2)
+
+UNION ALL
+
+SELECT 	CONCAT('WO ', wo.num) AS name, COALESCE(wo.datestarted, wo.DATESCHEDULEDTOSTART) AS datestart, COALESCE(wo.datefinished,
+	wo.datescheduled) AS dateend, wo.note AS note, CONCAT(LOCATIONGROUP.name, ' - ', location.name) AS location, 0,
+	wostatus.name AS wostatus, calcategory.name AS calcat,
+	IF(calcategory.color IS NOT NULL, CONCAT("<style backcolor='#",calcategory.color,"'>"), '') AS catcolor
+
+FROM 	wo
+	JOIN wostatus ON wo.statusid = wostatus.id
+	JOIN locationgroup ON wo.locationgroupid = locationgroup.id
+	JOIN location ON locationgroup.id = location.locationgroupid AND location.id = wo.locationid
+	LEFT JOIN calcategory ON wo.calcategoryid = calcategory.id
+	LEFT JOIN moitem ON wo.moitemid = moitem.id
+	LEFT JOIN mo ON moitem.moid = mo.id
+
+WHERE 	(COALESCE(wo.datestarted, wo.DATESCHEDULEDTOSTART) BETWEEN $P{dateRange1} AND DATE_SUB($P{dateRange2}, INTERVAL 1 SECOND)
+	OR COALESCE(wo.datefINished, wo.datescheduled) BETWEEN $P{dateRange1} AND DATE_SUB($P{dateRange2}, INTERVAL 1 SECOND)
+	OR (COALESCE(wo.datestarted, wo.DATESCHEDULEDTOSTART) < $P{dateRange1}
+	AND COALESCE(wo.datefinished, wo.datescheduled) > DATE_SUB($P{dateRange2}, INTERVAL 1 SECOND)))
+	AND wo.statusid IN ($P!{ckWOEntered},$P!{ckWOStarted},$P!{ckWOFulfilled})
+  	AND COALESCE(calcategory.name,'') LIKE $P{CalendarCategory}
+	AND mo.num LIKE '$P!{moNum}'
+	AND IF($P!{IncludeWorkOrders} = true,1=1,1=2)
+
+UNION ALL
+
+SELECT 	CONCAT('SO ', so.num) AS name, so.dateissued AS datestart, so.datefirstship AS dateend, so.note AS note,
+	LOCATIONGROUP.name AS location, 0, sostatus.name AS wostatus, calcategory.name AS calcat,
+    	IF(calcategory.color IS NOT NULL, CONCAT("<style backcolor='#",calcategory.color,"'>"), '') AS catcolor
+
+FROM 	so
+	JOIN sostatus ON so.statusid = sostatus.id
+	JOIN locationgroup ON so.locationgroupid = locationgroup.id
+	LEFT JOIN calcategory ON so.calcategoryid = calcategory.id
+
+WHERE 	so.datefirstship BETWEEN $P{dateRange1} AND DATE_SUB($P{dateRange2}, INTERVAL 1 SECOND)
+	AND so.statusid IN ($P!{ckSOClosedShort},$P!{ckSOFulfilled},$P!{ckSOInProgress},$P!{ckSOIssued})
+  	AND COALESCE(calcategory.name,'') LIKE $P{CalendarCategory}
+	AND so.num LIKE '$P!{soNum}'
+	AND IF($P!{IncludeSalesOrders} = true,1=1,1=2)
+
+UNION ALL
+
+SELECT 	CONCAT('PO ', po.num) AS name, po.dateissued AS datestart, po.datefirstship AS dateend, po.note AS note,
+	LOCATIONGROUP.name AS location, 0, postatus.name AS wostatus, '' AS calcat, '' AS catcolor
+
+FROM 	po
+	JOIN postatus ON po.statusid = postatus.id
+	JOIN locationgroup ON po.locationgroupid = locationgroup.id
+
+WHERE 	po.datefirstship BETWEEN $P{dateRange1} AND DATE_SUB($P{dateRange2}, INTERVAL 1 SECOND)
+	AND po.statusid IN ($P!{ckPOClosedShort},$P!{ckPOFulfilled},$P!{ckPOInProgress},$P!{ckPOIssued})
+	AND $P{CalendarCategory} = '%'
+	AND po.num LIKE '$P!{poNum}'
+	AND IF($P!{IncludePurchaseOrders} = true,1=1,1=2)
+
+ORDER BY 	$P!{cbOrderBy}]]>
+		</queryString>
+		<field name="NAME" class="java.lang.String"/>
+		<field name="DATESTART" class="java.sql.Timestamp"/>
+		<field name="DATEEND" class="java.sql.Timestamp"/>
+		<field name="NOTE" class="java.lang.String"/>
+		<field name="LOCATION" class="java.lang.String"/>
+		<field name="ALLDAY" class="java.lang.Integer"/>
+		<field name="WOSTATUS" class="java.lang.String"/>
+		<field name="calcat" class="java.lang.String"/>
+		<field name="catcolor" class="java.lang.String"/>
+		<variable name="DateFormat" class="java.lang.String" resetType="None">
+			<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+		</variable>
+	</subDataset>
+	<parameter name="dateRange1" class="java.util.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRange2" class="java.util.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cbOrderBy" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[1,Event Name,2,Start Date,3,End Date,4,Note,5,Location,8,Category]]></parameterDescription>
+		<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="colName" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="colStartDate" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="colEndDate" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="colLocation" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="colNote" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowTime" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckWOEntered" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[10,100]]></parameterDescription>
+		<defaultValueExpression><![CDATA["10"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckWOStarted" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[30,100]]></parameterDescription>
+		<defaultValueExpression><![CDATA["30"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckWOFulfilled" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[40,100]]></parameterDescription>
+		<defaultValueExpression><![CDATA["40"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckSOIssued" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[20,100]]></parameterDescription>
+		<defaultValueExpression><![CDATA["20"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckSOInProgress" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[25,100]]></parameterDescription>
+		<defaultValueExpression><![CDATA["25"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckSOFulfilled" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[60,100]]></parameterDescription>
+		<defaultValueExpression><![CDATA["60"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckSOClosedShort" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[70,100]]></parameterDescription>
+		<defaultValueExpression><![CDATA["70"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckPOIssued" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[20,100]]></parameterDescription>
+		<defaultValueExpression><![CDATA["20"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckPOPartial" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[40,100]]></parameterDescription>
+		<defaultValueExpression><![CDATA["40"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckPOFulfilled" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[60,100]]></parameterDescription>
+		<defaultValueExpression><![CDATA["60"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckPOClosedShort" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[70,100]]></parameterDescription>
+		<defaultValueExpression><![CDATA["70"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowCategoryColor" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="colCategory" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CalendarCategory" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="colStatus" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ReportTitle" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="poNum" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="moNum" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="soNum" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="IncludeSalesOrders" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IncludePurchaseOrders" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IncludeWorkOrders" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IncludeCalendarEvents" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[Select company.name
+
+from company
+
+where company.id = 1]]>
+	</queryString>
+	<field name="NAME" class="java.lang.String"/>
+	<variable name="DateFormat" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="60" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="752" height="21" uuid="0f201952-032d-446c-8ac6-9341138f7d64"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NAME}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="21" width="752" height="24" uuid="30e6429d-9e17-427a-8c00-29ac2496645c"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="Open Sans" size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ReportTitle}.equals("%") ? "Calendar Event Report" : $P{ReportTitle}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-13" mode="Transparent" x="0" y="45" width="752" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="48f5ab4f-1e20-47d3-8e43-f933f1b28b75"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[((new SimpleDateFormat("yyyy")).format($P{dateRange1}.getTime() + 1000).equals("1000") &&
+(new SimpleDateFormat("yyyy")).format($P{dateRange2}).equals("3000"))
+? "All Dates"
+: ("Date Range: " + new SimpleDateFormat($V{DateFormat}).format($P{dateRange1}) + " - " +
+  new SimpleDateFormat($V{DateFormat}).format($P{dateRange2}.getTime() - 86400000))]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<componentElement>
+				<reportElement key="table" x="0" y="0" width="752" height="30" uuid="825ae950-c3b1-4688-b97c-b0dc96d44bf8"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="AllSectionsNoDetail">
+					<datasetRun subDataset="CalendarEvents" uuid="fa7cade8-dadf-494c-a362-7f33cbfb0514">
+						<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+						<datasetParameter name="dateRange1">
+							<datasetParameterExpression><![CDATA[$P{dateRange1}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="dateRange2">
+							<datasetParameterExpression><![CDATA[$P{dateRange2}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="cbOrderBy">
+							<datasetParameterExpression><![CDATA[$P{cbOrderBy}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="colName">
+							<datasetParameterExpression><![CDATA[$P{colName}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="colStartDate">
+							<datasetParameterExpression><![CDATA[$P{colStartDate}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="colEndDate">
+							<datasetParameterExpression><![CDATA[$P{colEndDate}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="colLocation">
+							<datasetParameterExpression><![CDATA[$P{colLocation}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="colNote">
+							<datasetParameterExpression><![CDATA[$P{colNote}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="ShowTime">
+							<datasetParameterExpression><![CDATA[$P{ShowTime}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="ckWOEntered">
+							<datasetParameterExpression><![CDATA[$P{ckWOEntered}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="ckWOStarted">
+							<datasetParameterExpression><![CDATA[$P{ckWOStarted}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="ckWOFulfilled">
+							<datasetParameterExpression><![CDATA[$P{ckWOFulfilled}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="ckSOIssued">
+							<datasetParameterExpression><![CDATA[$P{ckSOIssued}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="ckSOInProgress">
+							<datasetParameterExpression><![CDATA[$P{ckSOInProgress}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="ckSOFulfilled">
+							<datasetParameterExpression><![CDATA[$P{ckSOFulfilled}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="ckSOClosedShort">
+							<datasetParameterExpression><![CDATA[$P{ckSOClosedShort}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="ckPOIssued">
+							<datasetParameterExpression><![CDATA[$P{ckPOIssued}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="ckPOInProgress">
+							<datasetParameterExpression><![CDATA[$P{ckPOPartial}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="ckPOFulfilled">
+							<datasetParameterExpression><![CDATA[$P{ckPOFulfilled}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="ckPOClosedShort">
+							<datasetParameterExpression><![CDATA[$P{ckPOClosedShort}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="90" uuid="ca9eb743-ce43-4170-be06-8c3fd9a8a4d1">
+						<printWhenExpression><![CDATA[$P{colName}]]></printWhenExpression>
+						<jr:columnHeader height="16" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="1.0"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="16" uuid="be01f44b-2c2d-4486-bf8c-06e2af6defdb"/>
+								<box leftPadding="0" rightPadding="3"/>
+								<textElement verticalAlignment="Bottom">
+									<font fontName="Open Sans" size="11" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Event Name]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="14" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5" lineColor="#CCCCCC"/>
+							</box>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="90" height="14" uuid="3506a6b4-7a26-4691-aa50-fd42aaac5e5d"/>
+								<box leftPadding="0" rightPadding="3"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Open Sans" size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{NAME}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="115" uuid="b6b5590c-0711-460e-8c41-75bca98b190b">
+						<printWhenExpression><![CDATA[$P{colLocation}]]></printWhenExpression>
+						<jr:columnHeader height="16" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="1.0"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="115" height="16" uuid="e30042ac-d196-4b3d-8477-40c17f3bee55"/>
+								<box leftPadding="0" rightPadding="3"/>
+								<textElement verticalAlignment="Bottom">
+									<font fontName="Open Sans" size="11" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Location]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="14" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5" lineColor="#CCCCCC"/>
+							</box>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="115" height="14" uuid="dbf89b58-c14c-475b-adce-e64c381d22b1"/>
+								<box leftPadding="0" rightPadding="3"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Open Sans" size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{LOCATION}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="7302f5de-c8f9-4b0f-b315-3821a507498a">
+						<printWhenExpression><![CDATA[$P{colCategory}]]></printWhenExpression>
+						<jr:columnHeader height="16" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="1.0"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="16" uuid="41a388db-9415-4e60-8876-d367a29fda34"/>
+								<box leftPadding="0" rightPadding="3"/>
+								<textElement verticalAlignment="Bottom">
+									<font fontName="Open Sans" size="11" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Category]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="14" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5" lineColor="#CCCCCC"/>
+							</box>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="90" height="14" uuid="9d7d1e12-2f97-4b98-aeb3-78f6b9b22d50"/>
+								<box leftPadding="0" rightPadding="3"/>
+								<textElement verticalAlignment="Middle" markup="styled">
+									<font fontName="Open Sans" size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{ShowCategoryColor} ? (($F{calcat}.equals("") ? "" : ($F{catcolor} + "     " + "</style>")) + " " + $F{calcat}) : $F{calcat}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="101" uuid="b4ba0687-dc82-4513-a5ee-3c90e0e3510e">
+						<printWhenExpression><![CDATA[$P{colStartDate}]]></printWhenExpression>
+						<jr:columnHeader height="16" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="1.0"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="101" height="16" uuid="5982ed90-a480-4e92-8331-79c803ccce55"/>
+								<box leftPadding="0" rightPadding="3">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font fontName="Open Sans" size="11" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Start Date]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="14" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5" lineColor="#CCCCCC"/>
+							</box>
+							<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="101" height="14" uuid="0647a987-a3c3-48dc-85ef-f5f79fbcf847"/>
+								<box leftPadding="0" rightPadding="3">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Open Sans" size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{DATESTART}]]></textFieldExpression>
+								<patternExpression><![CDATA[($P{ShowTime} && $F{ALLDAY} == 0)? $V{DateFormat} + " h:mm a" : $V{DateFormat}]]></patternExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="101" uuid="f6c448b5-88a7-44b7-82ba-fa10cef664e7">
+						<printWhenExpression><![CDATA[$P{colEndDate}]]></printWhenExpression>
+						<jr:columnHeader height="16" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="1.0"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="101" height="16" uuid="be93f4fd-0a65-4279-923a-84bee3f0a48e"/>
+								<box leftPadding="0" rightPadding="3">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font fontName="Open Sans" size="11" isBold="true"/>
+								</textElement>
+								<text><![CDATA[End Date]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="14" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5" lineColor="#CCCCCC"/>
+							</box>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="101" height="14" uuid="4bb9c594-0954-48d1-9ab2-60eed20015c6"/>
+								<box leftPadding="0" rightPadding="3">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Open Sans" size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{DATEEND}]]></textFieldExpression>
+								<patternExpression><![CDATA[($P{ShowTime} && $F{ALLDAY} == 0)? $V{DateFormat} + " h:mm a" : $V{DateFormat}]]></patternExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="60" uuid="0aad63d0-7a12-4e61-ae77-b83a786caea7">
+						<printWhenExpression><![CDATA[$P{colStatus}]]></printWhenExpression>
+						<jr:columnHeader height="16" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="1.0"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="60" height="16" uuid="67b3ec82-f78a-42b2-90c1-fa81d216f5d1"/>
+								<box leftPadding="3" rightPadding="0"/>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font fontName="Open Sans" size="11" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Status]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="14" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5" lineColor="#CCCCCC"/>
+							</box>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="60" height="14" uuid="59a20f60-1c19-4a6c-945c-42db80468f39"/>
+								<box leftPadding="3" rightPadding="0"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Open Sans" size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{WOSTATUS}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="195" uuid="bac32dc5-b06c-4a26-9c56-290cc1006cc1">
+						<printWhenExpression><![CDATA[$P{colNote}]]></printWhenExpression>
+						<jr:columnHeader height="16" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="1.0"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="195" height="16" uuid="13a086c5-06f4-41e1-83a7-5b725288d9ca"/>
+								<box leftPadding="5">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font fontName="Open Sans" size="11" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Note]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="14" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5" lineColor="#CCCCCC"/>
+							</box>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="195" height="14" uuid="db2a95a2-9eb7-48d1-9805-943c11837d37"/>
+								<box leftPadding="5"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Open Sans" size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{NOTE}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="15" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" mode="Transparent" x="532" y="0" width="183" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="11227e96-81da-4ccd-98de-68d9a483f2ee"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" mode="Transparent" x="715" y="0" width="37" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="c5ec9b3e-b661-48d4-976f-48ac0d7acd7b"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" mode="Transparent" x="0" y="0" width="532" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="f9653b13-1f1b-4301-b805-7954bc0c2a1c"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.LONG)).format(new Date())]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

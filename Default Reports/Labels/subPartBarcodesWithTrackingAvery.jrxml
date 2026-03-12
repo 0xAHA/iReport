@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subPartBarcodesWithTrackingAvery" pageWidth="194" pageHeight="72" whenNoDataType="AllSectionsNoDetail" columnWidth="194" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="eed30b19-2960-4623-96fa-feaa956801e0">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="3.305785123966942"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="ireport.callouts" value="##Wed Oct 18 14:45:40 MDT 2017"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="default" isDefault="true" fontName="SansSerif" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="18" fontName="SansSerif" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="barcode" hAlign="Center" vAlign="Middle"/>
+	<parameter name="Skip" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
+	</parameter>
+	<parameter name="partNum" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Count" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[90]]></defaultValueExpression>
+	</parameter>
+	<parameter name="locationID" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["-1"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[CALL CREATELIST($P!{Count}, 'CL');
+
+SELECT part.num, part.description, parttracking.typeid, trackingtext.info AS trackingtext, trackingdate.info AS trackingdate,
+    trackingdecimal.info AS trackingdecimal, trackinginteger.info AS trackinginteger, serialnum.serialnum, parttracking.abbr AS trackingname
+
+FROM TMP_CL, part
+    JOIN tag ON tag.partid = part.id
+    JOIN location ON tag.locationid = location.id
+    LEFT JOIN parttotracking ON part.id = parttotracking.partid AND parttotracking.primaryflag = 1
+    LEFT JOIN parttracking ON parttotracking.parttrackingid = parttracking.id
+    LEFT OUTER JOIN trackingtext ON tag.id = trackingtext.tagid AND parttracking.id = trackingtext.parttrackingid
+    LEFT OUTER JOIN trackinginteger ON tag.id = trackinginteger.tagid AND parttracking.id = trackinginteger.parttrackingid
+    LEFT OUTER JOIN trackingdecimal ON tag.id = trackingdecimal.tagid AND parttracking.id = trackingdecimal.parttrackingid
+    LEFT OUTER JOIN trackingdate ON tag.id = trackingdate.tagid AND parttracking.id = trackingdate.parttrackingid
+    LEFT OUTER JOIN serial ON tag.id = serial.tagid
+    LEFT OUTER JOIN serialnum ON serial.id = serialnum.serialid AND parttracking.id = serialnum.parttrackingid
+
+WHERE part.id > 0
+    AND part.activeflag = 1
+    AND UPPER(part.num) LIKE UPPER($P{partNum})
+    AND location.id LIKE $P{locationID}
+
+ORDER BY part.num, COALESCE(trackingtext.info, trackingdate.info, trackingdecimal.info, trackinginteger.info, serialnum.serialnum)]]>
+	</queryString>
+	<field name="NUM" class="java.lang.String"/>
+	<field name="DESCRIPTION" class="java.lang.String"/>
+	<field name="TYPEID" class="java.lang.Integer"/>
+	<field name="TRACKINGTEXT" class="java.lang.String"/>
+	<field name="TRACKINGDATE" class="java.sql.Timestamp"/>
+	<field name="TRACKINGDECIMAL" class="java.lang.Double"/>
+	<field name="TRACKINGINTEGER" class="java.lang.Integer"/>
+	<field name="SERIALNUM" class="java.lang.String"/>
+	<field name="TRACKINGNAME" class="java.lang.String"/>
+	<variable name="DateFormat" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+	</variable>
+	<variable name="PriceDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_PRICE")]]></variableExpression>
+	</variable>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<variable name="CostDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_COST")]]></variableExpression>
+	</variable>
+	<group name="LG">
+		<groupExpression><![CDATA[$F{NUM}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band height="72">
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-1" style="default" x="0" y="1" width="194" height="12" uuid="144488df-6a5b-4593-9b3d-f242cb185a4e"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NUM}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement style="barcode" x="0" y="13" width="194" height="22" uuid="fa6a8f2a-314c-4da0-b858-fe6bde13b2d3"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128B" drawText="false" checksumRequired="false" barWidth="0">
+					<jr:codeExpression><![CDATA[$F{NUM}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-1" style="default" x="0" y="35" width="194" height="12" uuid="7e328d63-9740-4e36-9ab9-7d066180e39d">
+					<printWhenExpression><![CDATA[$F{TYPEID} != null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TYPEID} == 10 ? $F{TRACKINGNAME} + ": " + $F{TRACKINGTEXT}
+        :  $F{TYPEID} == 20 || $F{TYPEID} == 30 ? $F{TRACKINGNAME} + ": " + new SimpleDateFormat($V{DateFormat}).format($F{TRACKINGDATE})
+        :  $F{TYPEID} == 40 ? $F{TRACKINGNAME} + ": " + $F{SERIALNUM}
+        :  $F{TYPEID} == 50 ? $F{TRACKINGNAME} + ": " +  new DecimalFormat($V{PriceDecimal}).format($F{TRACKINGDECIMAL})
+        :  $F{TYPEID} == 60 ? $F{TRACKINGNAME} + ": " + new DecimalFormat($V{QtyDecimal}).format($F{TRACKINGDECIMAL})
+        :  $F{TYPEID} == 70 ? $F{TRACKINGNAME} + ": " + $F{TRACKINGINTEGER}
+        :  $F{TRACKINGNAME} + ": " + ($F{TRACKINGINTEGER} == 1 ? "True" : "False")]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement style="barcode" x="0" y="48" width="194" height="24" uuid="1d96d795-6e38-4f56-8761-cfaac15afe56">
+					<printWhenExpression><![CDATA[$F{TYPEID} != null]]></printWhenExpression>
+				</reportElement>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128B" drawText="false" checksumRequired="false" barWidth="0" barHeight="0">
+					<jr:codeExpression><![CDATA[$F{TYPEID} == 10 ? $F{TRACKINGTEXT}
+:  $F{TYPEID} == 20 ? $F{TRACKINGDATE}
+:  $F{TYPEID} == 30 ? $F{TRACKINGDATE}
+:  $F{TYPEID} == 40 ? $F{SERIALNUM}
+:  $F{TYPEID} == 50 ? $F{TRACKINGDECIMAL}
+:  $F{TYPEID} == 60 ? $F{TRACKINGDECIMAL}
+:  $F{TYPEID} == 70 ? $F{TRACKINGINTEGER}
+:  $F{TRACKINGINTEGER}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

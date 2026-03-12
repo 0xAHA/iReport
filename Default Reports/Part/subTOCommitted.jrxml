@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subTOCommitted" pageWidth="170" pageHeight="360" whenNoDataType="AllSectionsNoDetail" columnWidth="170" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="4baa06cd-1d7c-4e7b-999d-b3890cb9afdc">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="5.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="ISSUBREPORTONLY" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="partNum" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowTracking" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT distinct (((COALESCE(SUM(committedPickItem.qty), 0) * COALESCE(pickitemuomconversion.multiply,1)) / COALESCE(pickitemuomconversion.factor,1)) +
+         (COALESCE(SUM(shipQty.qtyShipped),0) * COALESCE(shipitemuomconversion.multiply,1)) / COALESCE(shipitemuomconversion.factor,1) +
+         (COALESCE(SUM(receiptQty.qty),0) * COALESCE(receiptItemUOMConversion.multiply,1)) / COALESCE(receiptItemUOMConversion.factor,1)) AS TOCOMMITTED,
+    xo.num as TONUMBER, uom.CODE, part.num AS PART, xoitem.ID, tinfo.tinfo tracking
+
+FROM xo
+    INNER JOIN xoitem ON xo.id = xoitem.xoid
+    INNER JOIN part ON xoitem.partid = part.id
+    INNER JOIN uom ON part.uomid = uom.id
+    LEFT JOIN pickitem on xo.id = pickitem.orderid and pickitem.ordertypeid = 40 and xoitem.id = pickitem.xoitemid
+--  Items in picking that are committed are only from committed status. Finished items will be counted by the shipitems part
+    LEFT JOIN pickitem as committedPickItem ON xo.id = committedPickItem.orderid AND committedPickItem.ordertypeid = 40 AND xoitem.id = committedPickItem.xoitemid AND committedPickItem.statusid IN (30)
+    LEFT JOIN uomconversion AS pickItemUOMConversion ON part.uomid = pickItemUOMConversion.touomid AND committedPickItem.uomid = pickItemUOMConversion.fromuomid
+--  Items in shiping that count as committed are not shipped. Shipped items will be counted by the receiptItems part
+    LEFT OUTER JOIN (SELECT shipitem.qtyshipped AS qtyshipped, shipitem.xoitemid, shipitem.orderid, shipitem.uomid
+               FROM shipitem
+                     INNER JOIN ship ON shipitem.shipid = ship.id
+               WHERE shipitem.ordertypeid = 40
+               AND ship.statusid != 30) AS shipqty ON xo.id = shipqty.orderid AND xoitem.id = shipqty.xoitemid
+    LEFT OUTER JOIN uomconversion AS shipItemUOMConversion ON part.uomid = shipItemUOMConversion.touomid AND shipqty.uomid = shipItemUOMConversion.fromuomid
+--  Items in Receiving that are not fulfilled, and are not counted by pick count as committed
+    LEFT OUTER JOIN (SELECT receiptItem.qty, receiptItem.xoitemid, receipt.xoid, receiptItem.uomid
+                     FROM receiptItem
+                        INNER JOIN receipt ON receiptItem.receiptID = receipt.id AND receipt.ordertypeid = 40
+                     WHERE receiptItem.statusid < 30
+                     AND receiptItem.shipitemID IS NOT NULL) AS receiptQty ON xo.id = receiptQty.xoid AND xoitem.id = receiptQty.xoitemID
+    LEFT OUTER JOIN uomconversion AS receiptItemUOMConversion ON part.uomid = receiptItemUOMConversion.touomid AND receiptQty.uomid = receiptItemUOMConversion.fromuomid
+    LEFT JOIN (SELECT xo.num xonum, GROUP_CONCAT(COALESCE(trackinginfo.info,''),COALESCE(CONCAT(DATE_FORMAT(trackinginfo.infodate,'%Y'),'-',DATE_FORMAT(trackinginfo.infodate,'%m'),'-',DATE_FORMAT(trackinginfo.infodate,'%e')),''), COALESCE(trackinginfosn.serialnum,'')) tinfo
+	FROM XO
+	INNER JOIN xoitem ON xo.id = xoitem.xoid
+	INNER JOIN part ON xoitem.partid = part.id
+	LEFT JOIN pickitem on xo.id = pickitem.orderid and pickitem.ordertypeid = 40 and xoitem.id = pickitem.xoitemid
+	LEFT JOIN trackinginfo ON trackinginfo.tableid = -1515431424 AND trackinginfo.recordid = pickitem.id
+   	LEFT JOIN trackinginfosn ON trackinginfosn.trackinginfoid = trackinginfo.id
+	WHERE xo.statusid IN (20,30,40,50,60)
+	AND xoitem.typeid = 10
+	AND UPPER(part.num) LIKE UPPER($P{partNum})
+	GROUP BY xo.num
+	) tinfo ON tinfo.xonum = xo.num
+
+WHERE xo.statusid IN (20,30,40,50,60)
+  AND (pickitem.statusid > 20)
+  AND UPPER(part.num) LIKE UPPER($P{partNum})
+
+GROUP BY xo.num, uom.code, part.num, pickitemuomconversion.multiply, pickitemuomconversion.factor, shipitemuomconversion.multiply,
+ shipitemuomconversion.factor, receiptItemUOMConversion.multiply, receiptItemUOMConversion.factor, pickitem.id, xoitem.id
+
+ORDER BY xo.num]]>
+	</queryString>
+	<field name="TOCOMMITTED" class="java.lang.Double"/>
+	<field name="TONUMBER" class="java.lang.String"/>
+	<field name="CODE" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="PART" class="java.lang.String"/>
+	<field name="ID" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tracking" class="java.lang.String"/>
+	<variable name="TOCOMMITTED" class="java.lang.Double" resetType="Group" resetGroup="to" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOCOMMITTED}]]></variableExpression>
+	</variable>
+	<variable name="TotalCommitted" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOCOMMITTED}]]></variableExpression>
+	</variable>
+	<variable name="PriceDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_PRICE")]]></variableExpression>
+	</variable>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<variable name="CostDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_COST")]]></variableExpression>
+	</variable>
+	<group name="to">
+		<groupExpression><![CDATA[$F{TONUMBER}]]></groupExpression>
+		<groupHeader>
+			<band height="2" splitType="Stretch"/>
+		</groupHeader>
+		<groupFooter>
+			<band height="28" splitType="Stretch">
+				<printWhenExpression><![CDATA[new Boolean($V{TOCOMMITTED}.doubleValue() > 0)]]></printWhenExpression>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField" mode="Transparent" x="95" y="0" width="51" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="a2b49862-9a98-4dd9-a060-a5ac913d31ef"/>
+					<box rightPadding="2">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOCOMMITTED}]]></textFieldExpression>
+					<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" hyperlinkType="Reference">
+					<reportElement key="textField" mode="Transparent" x="0" y="0" width="95" height="14" forecolor="#000099" backcolor="#FFFFFF" uuid="2f7f4c00-e8ca-4892-81f6-31652907eb99"/>
+					<box leftPadding="2">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TONUMBER}]]></textFieldExpression>
+					<anchorNameExpression><![CDATA["TONum"]]></anchorNameExpression>
+					<hyperlinkReferenceExpression><![CDATA[$F{TONUMBER}]]></hyperlinkReferenceExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement key="textField" mode="Transparent" x="146" y="0" width="24" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="22bc864d-0d0c-4217-a1ef-50196d9d455f"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CODE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField" mode="Transparent" x="0" y="14" width="168" height="14" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="61824806-395c-49f6-af41-64925d799178">
+						<printWhenExpression><![CDATA[$P{ShowTracking}]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="2">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{tracking}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="30" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText-1" mode="Transparent" x="0" y="16" width="119" height="14" forecolor="#000000" backcolor="#999999" uuid="5a63d1dd-6ab2-4f66-9d55-3a8c30cb42b1"/>
+				<box leftPadding="2" rightPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[TO #]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-2" mode="Transparent" x="119" y="16" width="51" height="14" forecolor="#000000" backcolor="#999999" uuid="98d75d37-5564-47bc-9513-a7aff1544b6d"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Qty]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-3" mode="Transparent" x="0" y="0" width="170" height="16" forecolor="#000000" backcolor="#999999" uuid="0d94a069-ccb2-4e6e-a1ba-47ebb572d44f"/>
+				<box leftPadding="2" rightPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Transfer Orders:]]></text>
+			</staticText>
+			<line direction="BottomUp">
+				<reportElement key="line-1" x="0" y="29" width="170" height="1" uuid="72ad7bf6-5532-42bf-8c9c-1e273ec25fe3"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="14">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" mode="Transparent" x="95" y="0" width="51" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="c478f7ef-c5e5-463c-9d6a-af0d39e55707"/>
+				<box rightPadding="2">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TotalCommitted}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" mode="Transparent" x="146" y="0" width="24" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="d18ddf1f-e246-4317-96af-5cdbc4f95542"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CODE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="95" height="14" uuid="aa1d3c88-d983-43bf-a853-30a54854d5a4"/>
+				<box leftPadding="2">
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total:]]></text>
+			</staticText>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

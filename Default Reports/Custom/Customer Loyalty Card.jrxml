@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Customer Loyalty Card" pageWidth="243" pageHeight="153" columnWidth="215" leftMargin="14" rightMargin="14" topMargin="14" bottomMargin="14" uuid="f4c369f8-cdb7-42f7-b5d1-b3e694ad0fec">
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="customerID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="module" class="java.lang.Object" isForPrompting="false">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+customer.name AS CUSTOMERNAME,
+customer.number AS CUSTOMERNUMBER,
+customer.dateCreated AS CUSTOMERSINCE,
+DATE_ADD(CustomFieldByName(CUSTOMER.customfields, 'Last Renewal'), INTERVAL 1 YEAR) AS EXPIRYDATE,
+COALESCE(contact.contactName, address.name) AS CUSTOMERCONTACT,
+company.name AS COMPANY
+FROM
+CUSTOMER
+LEFT JOIN account ON customer.accountid = account.id
+LEFT JOIN address ON account.id = address.accountid AND address.typeid = 50
+LEFT JOIN contact ON address.id = contact.addressid AND contact.defaultFlag = 1
+LEFT JOIN company ON company.id = 1
+WHERE customer.id = $P{customerID}]]>
+	</queryString>
+	<field name="CUSTOMERNAME" class="java.lang.String"/>
+	<field name="CUSTOMERCONTACT" class="java.lang.String"/>
+	<field name="CUSTOMERNUMBER" class="java.lang.String"/>
+	<field name="CUSTOMERSINCE" class="java.sql.Timestamp"/>
+	<field name="EXPIRYDATE" class="java.sql.Timestamp"/>
+	<field name="COMPANY" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<textField>
+				<reportElement x="13" y="72" width="117" height="17" uuid="1280a55f-c0da-4080-9612-9070afb52d95"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="11" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CUSTOMERNAME}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="13" y="108" width="117" height="17" uuid="b54a5e24-001b-4d71-a154-291e10b10ed4"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CUSTOMERCONTACT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="72" width="85" height="17" uuid="cf23dbef-079d-4d53-9715-39d35e5a2010"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CUSTOMERSINCE}]]></textFieldExpression>
+				<patternExpression><![CDATA["dd/MM/yyyy"]]></patternExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="130" y="108" width="85" height="17" uuid="8801970b-66d3-4fc4-a916-217689524c05"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EXPIRYDATE}]]></textFieldExpression>
+				<patternExpression><![CDATA["dd/MM/yyyy"]]></patternExpression>
+			</textField>
+			<textField>
+				<reportElement x="117" y="55" width="98" height="17" uuid="5f436e0a-b09f-40fe-87f9-dce9b74afe64"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Customer Since:"]]></textFieldExpression>
+				<patternExpression><![CDATA["dd/MM/yyyy"]]></patternExpression>
+			</textField>
+			<textField>
+				<reportElement x="117" y="91" width="98" height="17" uuid="66c08618-8bfc-4f3f-bf80-151b999c00c0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Expiry Date:"]]></textFieldExpression>
+				<patternExpression><![CDATA["dd/MM/yyyy"]]></patternExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="131" y="11" width="85" height="42" uuid="08cf9c0a-9516-4fcd-98dd-b33d86d98de5"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="2of7" drawText="true" checksumRequired="false" barHeight="25">
+					<jr:codeExpression><![CDATA[$F{CUSTOMERNUMBER}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<image scaleImage="RetainShape" hAlign="Left" vAlign="Top">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="98" height="53" uuid="bd4d70fb-d2ef-47cc-96bb-f25338ec6937"/>
+				<imageExpression><![CDATA[com.evnt.util.ImageUtil.decodeImage(((com.evnt.eve.modules.ReportHelperModule) $P{module}).getImageData("Company", 1, true))]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="0" y="91" width="117" height="17" uuid="b752d6b7-9a65-4843-a923-b4e510670b2e"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Contact Name:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="55" width="117" height="17" uuid="4ca308af-7259-414c-9b37-647caf914e70"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Company:"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="POPartBarcodesWithTrackingOneOff" pageWidth="288" pageHeight="432" whenNoDataType="AllSectionsNoDetail" columnWidth="288" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="eed30b19-2960-4623-96fa-feaa956801e0">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="20"/>
+	<property name="ireport.callouts" value="##Wed Jul 19 14:35:43 MDT 2017"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="default" isDefault="true" fontName="SansSerif" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="18" fontName="SansSerif" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<parameter name="REPORTDESCRIPTION" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Part Barcodes for one off Labels. Prints one label for each part and distinct tracking value received in a specified Purchase Order."]]></defaultValueExpression>
+	</parameter>
+	<parameter name="partNum" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="poNum" class="java.lang.String">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT distinct part.num, part.description, CAST(receiptitem.qty as unsigned) as qtymanufactured,
+CASE WHEN parttracking.typeid = 10 THEN trackinginfo.info
+	WHEN parttracking.typeid IN (20,30) THEN trackinginfo.infodate
+	WHEN parttracking.typeid IN (50,60) THEN trackinginfo.infodouble
+	WHEN parttracking.typeid IN (70,80) THEN trackinginfo.infointeger
+	ELSE serials.serialnum END AS trackingvalue, parttracking.typeid, parttracking.name AS trackingtype
+
+From po
+    JOIN poitem ON poitem.poid = po.id
+    JOIN receiptitem ON receiptitem.poitemid = poitem.id
+    JOIN part ON part.id = poitem.partid
+    LEFT JOIN inventorylog ON inventorylog.tableid = 1259138490 AND inventorylog.typeid = 10
+			AND inventorylog.partid = part.id AND inventorylog.recordid = receiptitem.id
+    LEFT JOIN parttotracking on part.id = parttotracking.partid and parttotracking.primaryflag = 1
+    LEFT JOIN parttracking ON parttotracking.parttrackingid = parttracking.id
+    LEFT JOIN trackinginfo ON trackinginfo.parttrackingid = parttotracking.parttrackingid
+			AND trackinginfo.recordid = receiptitem.id AND trackinginfo.tableid = 1259138490
+    LEFT JOIN trackinginfosn serials ON serials.trackinginfoid = trackinginfo.id
+
+WHERE part.id > 0
+    AND part.activeflag = 1
+    AND part.typeid = 10
+    AND UPPER(part.num) LIKE UPPER($P{partNum})
+    AND po.num LIKE $P{poNum}
+
+
+
+
+order by 1, 3]]>
+	</queryString>
+	<field name="num" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="description" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="qtymanufactured" class="java.math.BigInteger"/>
+	<field name="trackingvalue" class="java.lang.String"/>
+	<field name="typeid" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="trackingtype" class="java.lang.String"/>
+	<variable name="DateFormat" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+	</variable>
+	<variable name="PriceDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_PRICE")]]></variableExpression>
+	</variable>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<variable name="CostDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_COST")]]></variableExpression>
+	</variable>
+	<group name="LG">
+		<groupExpression><![CDATA[$F{num}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band height="432">
+			<subreport>
+				<reportElement x="0" y="0" width="288" height="432" uuid="7f2987f1-835a-4cfc-96c3-d0dcdd944417"/>
+				<subreportParameter name="partDescription">
+					<subreportParameterExpression><![CDATA[$F{description}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="trackValue">
+					<subreportParameterExpression><![CDATA[$F{trackingvalue}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="tracktype">
+					<subreportParameterExpression><![CDATA[$F{trackingtype}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="tagQty">
+					<subreportParameterExpression><![CDATA[$F{typeid} == 40 ? 1 :
+($F{qtymanufactured}.intValue())]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="REPORTDESCRIPTION"/>
+				<subreportParameter name="partNum">
+					<subreportParameterExpression><![CDATA[$F{num}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["sub4x6SinglePartBarcodesWithTracking.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

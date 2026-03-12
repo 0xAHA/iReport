@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="LotHistoryMOB" pageWidth="732" pageHeight="572" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="732" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="f349ddf1-4879-46c5-bcaa-9aaa4b87b234">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="partNum" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="Lot" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT  part.num AS PARTNUM, part.description AS DESCRIPTION, il.changeqty AS CHANGEQTY, til.info AS LOT, il.info AS EVENT, ilt.description AS TYPE, il.eventdate EVENTDATE, il.id AS ILID, il.qtyonhand QTYONHAND, customer.name AS CUSTOMERNAME, phone.datus AS PHONE, email.datus AS EMAIL
+
+FROM    inventorylog il
+        JOIN tiinventorylog til ON il.id = til.inventorylogid AND til.parttrackingid = 1
+        JOIN part ON il.partid = part.id
+        JOIN inventorylogtype ilt ON il.typeid = ilt.id
+        LEFT JOIN so ON SUBSTRING(il.info FROM 5 FOR 20) = so.num AND il.typeid = 20
+        LEFT JOIN customer ON so.customerid = customer.id
+        LEFT JOIN contact phone ON customer.accountid = phone.accountid AND phone.typeid = 50 AND phone.defaultflag = 1
+        LEFT JOIN contact email ON customer.accountid = email.accountid AND email.typeid = 60 AND email.defaultflag = 1
+
+WHERE   part.num = $P{partNum}
+	AND il.typeid != 40
+ 	AND til.info = $P{Lot}
+
+ORDER BY	il.eventdate]]>
+	</queryString>
+	<field name="PARTNUM" class="java.lang.String"/>
+	<field name="DESCRIPTION" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="CHANGEQTY" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="LOT" class="java.lang.String"/>
+	<field name="EVENT" class="java.lang.String"/>
+	<field name="TYPE" class="java.lang.String"/>
+	<field name="EVENTDATE" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ILID" class="java.lang.Long"/>
+	<field name="QTYONHAND" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="CUSTOMERNAME" class="java.lang.String"/>
+	<field name="PHONE" class="java.lang.String"/>
+	<field name="EMAIL" class="java.lang.String"/>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<variable name="SUM_CHANGEQTY" class="java.lang.Double" incrementType="Group" incrementGroup="Log" calculation="Sum">
+		<variableExpression><![CDATA[$F{CHANGEQTY}]]></variableExpression>
+	</variable>
+	<group name="Log">
+		<groupExpression><![CDATA[$F{ILID}]]></groupExpression>
+		<groupFooter>
+			<band height="13">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="245" y="0" width="50" height="13" uuid="dbdc3460-d819-428b-95be-163d27ad12f5"/>
+					<box leftPadding="3" rightPadding="3"/>
+					<textElement>
+						<font fontName="Open Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TYPE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="55" y="0" width="80" height="13" uuid="2380ac50-ae98-49e4-bdce-934e908ea536"/>
+					<box leftPadding="3" rightPadding="3"/>
+					<textElement>
+						<font fontName="Open Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PARTNUM}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="492" y="0" width="44" height="13" uuid="16b3a0e1-7451-443b-a6b3-c5ed904e358a"/>
+					<box leftPadding="3" rightPadding="3"/>
+					<textElement>
+						<font fontName="Open Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{LOT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="295" y="0" width="65" height="13" uuid="bb79571f-29bb-46e7-ae6f-2d32bfc1d83f"/>
+					<box leftPadding="3" rightPadding="3"/>
+					<textElement>
+						<font fontName="Open Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{EVENT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="135" y="0" width="110" height="13" uuid="52421c96-6a37-4d87-bb07-2725b01638f2"/>
+					<box leftPadding="3" rightPadding="3"/>
+					<textElement>
+						<font fontName="Open Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESCRIPTION}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="427" y="0" width="65" height="13" uuid="e45f92f8-b50f-430b-9ebb-b133911b2ed0"/>
+					<box leftPadding="3" rightPadding="3"/>
+					<textElement textAlignment="Center">
+						<font fontName="Open Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CHANGEQTY}]]></textFieldExpression>
+					<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="536" y="0" width="63" height="13" uuid="fd15438d-6609-4269-8ba1-b12fe497919f"/>
+					<box leftPadding="3" rightPadding="3"/>
+					<textElement>
+						<font fontName="Open Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CUSTOMERNAME}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="360" y="0" width="67" height="13" uuid="dd055e60-541d-4b69-82dd-148e7f6bb989"/>
+					<box leftPadding="3" rightPadding="3"/>
+					<textElement>
+						<font fontName="Open Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{EVENTDATE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="599" y="0" width="60" height="13" uuid="ee8ec273-4cc1-484e-b857-eaac2f8216ef"/>
+					<box leftPadding="3" rightPadding="3"/>
+					<textElement>
+						<font fontName="Open Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PHONE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="659" y="0" width="72" height="13" uuid="dfc278ac-be5c-4f82-b845-8538e6cf1239"/>
+					<box leftPadding="3" rightPadding="3"/>
+					<textElement>
+						<font fontName="Open Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{EMAIL}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="1" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="17" splitType="Stretch">
+			<staticText>
+				<reportElement x="55" y="0" width="80" height="16" uuid="77a06df4-870e-41f1-a4ef-347a8ae44b30"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Part Number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="135" y="0" width="110" height="16" uuid="ead77a3e-9a31-42d6-ad59-1415b6158f55"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Description]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="245" y="0" width="50" height="16" uuid="e9b7fc81-b9f8-4366-b88c-78b688d69bce"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="295" y="0" width="65" height="16" uuid="985a30ca-3860-4061-b221-5fdc80a3e0ba"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Event]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="492" y="0" width="44" height="16" uuid="c404b8ac-e96a-40ae-a986-ad1773c9bbd1"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Lot]]></text>
+			</staticText>
+			<line>
+				<reportElement x="55" y="16" width="676" height="1" forecolor="#999999" uuid="4f3c9d94-c8f6-41de-a9db-9bcde1c27b42"/>
+				<graphicElement>
+					<pen lineWidth="0.75" lineColor="#000000"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="427" y="0" width="65" height="16" uuid="3a7600a9-18e3-429c-8be7-1bc3762c1228"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Change Qty]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="536" y="0" width="63" height="16" uuid="c1a2b483-0d24-4449-b8a2-02529e2e4fe3"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Customer]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="360" y="0" width="67" height="16" uuid="187d0e15-a386-4348-947f-f094021d45bb"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Event Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="599" y="0" width="60" height="16" uuid="bdddadb9-58ee-4fd4-b0fd-9735dd30445c"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Phone]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="659" y="0" width="72" height="16" uuid="9a7e31e1-bf6a-4af3-bff0-cce5ddcbd5e9"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Email]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="55" height="16" uuid="d9bfa35b-71c6-4cab-a75b-80ff1336e69e"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<summary>
+		<band height="18"/>
+	</summary>
+</jasperReport>

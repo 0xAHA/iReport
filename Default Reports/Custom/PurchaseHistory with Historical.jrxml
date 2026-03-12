@@ -1,0 +1,988 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CustomerPurchaseHistory" pageWidth="792" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="732" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="c09bea7c-557d-4ffe-b21e-04063d866e90">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="productNum" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<property name="Sort" value="8"/>
+		<property name="Tab" value="Filters and Settings"/>
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="customerID" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<property name="Sort" value="8"/>
+		<property name="Tab" value="Filters and Settings"/>
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cbGroupBy" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Other Settings"/>
+		<property name="Tab" value="Filters and Settings"/>
+		<property name="Tooltip" value="Choose whether to group the report by Product, Customer, or Ship To State"/>
+		<parameterDescription><![CDATA["IF(soItem.productNum = '', soItem.description, soItem.productNum)",Product,"customer.name",Customer,"shipstate.name",Ship To State]]></parameterDescription>
+		<defaultValueExpression><![CDATA["scustomer.name"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowDetails" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Group" value="Other Settings"/>
+		<property name="Tab" value="Filters and Settings"/>
+		<property name="Tooltip" value="Choose to show specific product or sales order details by checking this box."/>
+		<defaultValueExpression><![CDATA[new Boolean(true)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORTDESCRIPTION" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Prints the purchase history for a customer or product in a given date range"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:/Program Files/Fishbowl/Server/reports/WorkOrder/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="module" class="java.lang.Object" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<property name="Sort" value="8"/>
+		<property name="Tab" value="Filters and Settings"/>
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="productTree1" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<property name="Sort" value="8"/>
+		<property name="Tab" value="Filters and Settings"/>
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="productTree2" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<property name="Sort" value="8"/>
+		<property name="Tab" value="Filters and Settings"/>
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cbApplyDateFilter" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Select a date field and enter a date range"/>
+		<property name="Tab" value="Filters and Settings"/>
+		<parameterDescription><![CDATA[so.datecreated,SO Creation Date,so.dateissued,SO Date Issued,so.datefirstship,SO Date Scheduled,so.datelastmodified,SO Date Last Modified,so.datecompleted,SO Date Completed,so.dateexpired,SO Date Expires,soitem.datescheduledfulfillment,Item Date Scheduled,postso.postdate,Item Date Completed]]></parameterDescription>
+		<defaultValueExpression><![CDATA["so.datelastmodified"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="qbClassIDProductClass" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<property name="Sort" value="8"/>
+		<property name="Tab" value="Filters and Settings"/>
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="qbClassIDSOClass" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<property name="Sort" value="8"/>
+		<property name="Tab" value="Filters and Settings"/>
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRange2" class="java.sql.Date" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<property name="Sort" value="8"/>
+		<property name="Tab" value="Filters and Settings"/>
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRange1" class="java.sql.Date" isForPrompting="false">
+		<property name="Group" value="Select a date field and enter a date range"/>
+		<property name="Tab" value="Filters and Settings"/>
+		<parameterDescription><![CDATA[This Month]]></parameterDescription>
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="locationGroupID" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<property name="Sort" value="8"/>
+		<property name="Tab" value="Filters and Settings"/>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="salesPerson" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<property name="Sort" value="8"/>
+		<property name="Tab" value="Filters and Settings"/>
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="OrderByCustomer" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Group" value="Other Settings"/>
+		<property name="Tab" value="Filters and Settings"/>
+		<property name="Tooltip" value="Choose to order the report by customer by checking this box."/>
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="customerGroupID" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<property name="Sort" value="8"/>
+		<property name="Tab" value="Filters and Settings"/>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckAssociatedPriceItems" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Item Type"/>
+		<property name="Group" value="Select each item type to include in the report"/>
+		<parameterDescription><![CDATA[50,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["50"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckMiscSaleItems" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Item Type"/>
+		<property name="Group" value="Select each item type to include in the report"/>
+		<parameterDescription><![CDATA[11,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["11"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckShippingItems" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Item Type"/>
+		<property name="Group" value="Select each item type to include in the report"/>
+		<parameterDescription><![CDATA[60,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckSaleItems" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Item Type"/>
+		<property name="Group" value="Select each item type to include in the report"/>
+		<parameterDescription><![CDATA[10,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["10"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckDropShipItems" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Item Type"/>
+		<property name="Group" value="Select each item type to include in the report"/>
+		<parameterDescription><![CDATA[12,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["12"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckCreditReturnItems" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Item Type"/>
+		<property name="Group" value="Select each item type to include in the report"/>
+		<parameterDescription><![CDATA[20,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["20"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckDiscountItems" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Item Type"/>
+		<property name="Group" value="Select each item type to include in the report"/>
+		<parameterDescription><![CDATA["30,31","0"]]></parameterDescription>
+		<defaultValueExpression><![CDATA["30,31"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckTaxItems" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Item Type"/>
+		<property name="Group" value="Select each item type to include in the report"/>
+		<parameterDescription><![CDATA[70,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["70"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckKitHeaders" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Item Type"/>
+		<property name="Group" value="Select each item type to include in the report"/>
+		<parameterDescription><![CDATA[80,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["80"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckMiscCreditItems" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Item Type"/>
+		<property name="Group" value="Select each item type to include in the report"/>
+		<parameterDescription><![CDATA[21,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["21"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckClosedShort" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="SO Status"/>
+		<property name="Group" value="Select each status to include in the report"/>
+		<parameterDescription><![CDATA[70,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["70"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckIssued" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="SO Status"/>
+		<property name="Group" value="Select each status to include in the report"/>
+		<parameterDescription><![CDATA[20,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["20"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckEstimate" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="SO Status"/>
+		<property name="Group" value="Select each status to include in the report"/>
+		<parameterDescription><![CDATA[10,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["10"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckInProgress" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="SO Status"/>
+		<property name="Group" value="Select each status to include in the report"/>
+		<parameterDescription><![CDATA[25,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["25"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckFulfilled" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="SO Status"/>
+		<property name="Group" value="Select each status to include in the report"/>
+		<parameterDescription><![CDATA[60,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["60"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckVoided" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="SO Status"/>
+		<property name="Group" value="Select each status to include in the report"/>
+		<parameterDescription><![CDATA[80,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["80"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckCancelled" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="SO Status"/>
+		<property name="Group" value="Select each status to include in the report"/>
+		<parameterDescription><![CDATA[85,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckExpired" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="SO Status"/>
+		<property name="Group" value="Select each status to include in the report"/>
+		<parameterDescription><![CDATA[90,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="soNum" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<property name="Sort" value="8"/>
+		<property name="Tab" value="Filters and Settings"/>
+	</parameter>
+	<parameter name="cbShipToState/Province" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<property name="Sort" value="8"/>
+		<property name="Tab" value="Filters and Settings"/>
+		<parameterDescription><![CDATA[%,All,-1,None,Alabama,Alabama,Alberta,Alberta,Alaska,Alaska,Arizona,Arizona,Arkansas,Arkansas,Australian Capital Territory,Australian Capital Territory,British Columbia,British Columbia,California,California,Colorado,Colorado,Connecticut,Connecticut,Delaware,Delaware,District of Columbia,District of Columbia,Florida,Florida,Georgia,Georgia,Hawaii,Hawaii,Idaho,Idaho,Illinois,Illinois,Indiana,Indiana,Iowa,Iowa,Kansas,Kansas,Kentucky,Kentucky,Louisiana,Louisiana,Maine,Maine,Manitoba,Manitoba,Maryland,Maryland,Massachusetts,Massachusetts,Michigan,Michigan,Minnesota,Minnesota,Mississippi,Mississippi,Missouri,Missouri,Montana,Montana,Nebraska,Nebraska,Nevada,Nevada,Newfoundland,Newfoundland,New Brunswick,New Brunswick,New Hampshire,New Hampshire,New Jersey,New Jersey,New Mexico,New Mexico,New South Wales,New South Wales,New York,New York,North Carolina,North Carolina,North Dakota,North Dakota,Northern Territory,Northern Territory,Northwest Territories,Northwest Territories,Nova Scotia,Nova Scotia,Nunavut,Nunavut,Ohio,Ohio,Oklahoma,Oklahoma,Ontario,Ontario,Oregon,Oregon,Pennsylvania,Pennsylvania,Prince Edward Island,Prince Edward Island,Quebec,Quebec,Queensland,Queensland,Rhode Island,Rhode Island,Saskatchewan,Saskatchewan,South Australia,South Australia,South Carolina,South Carolina,South Dakota,South Dakota,Tasmania,Tasmania,Tennessee,Tennessee,Texas,Texas,Utah,Utah,Vermont,Vermont,Victoria,Victoria,Virginia,Virginia,Washington,Washington,West Virginia,West Virginia,Western Australia,Western Australia,Wisconsin,Wisconsin,Wyoming,Wyoming,Yukon,Yukon]]></parameterDescription>
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ReportTitle" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Type an alternate title for this report"/>
+	</parameter>
+	<parameter name="CombinePartialQuantities" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Group" value="Other Settings"/>
+		<property name="Tab" value="Filters and Settings"/>
+		<property name="Tooltip" value="Combine back into one item after item was split into multiple pick or ship items."/>
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckHistoricalSO" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="SO Status"/>
+		<property name="Group" value="Select each status to include in the report"/>
+		<parameterDescription><![CDATA[95,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["95"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckHistoricalItems" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="SO Status"/>
+		<property name="Group" value="Select each status to include in the report"/>
+		<parameterDescription><![CDATA[95,0]]></parameterDescription>
+		<defaultValueExpression><![CDATA["95"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    (SELECT NAME FROM COMPANY) AS COMPANY,
+    $P!{cbGroupBy} AS GROUPBY,
+    CUSTOMER.NAME AS CUSTOMER,
+    IF(SOITEM.PRODUCTNUM = '', SOITEM.DESCRIPTION, SOITEM.PRODUCTNUM) AS PRODUCTNUM,
+    IF(SOITEM.PRODUCTNUM = '', '', SOITEM.DESCRIPTION) AS DESCRIPTION,
+    SO.NUM AS SO,
+    SOSTATUS.NAME AS STATUSNAME,
+    SOITEM.ID AS ITEMID,
+    COALESCE(UOM.CODE, SOITEMUOM.CODE) AS UOM,
+    IF(SO.STATUSID = 95, SOITEM.QTYTOFULFILL, SOITEM.QTYFULFILLED) * COALESCE(TOPRODUCT.MULTIPLY / TOPRODUCT.FACTOR, 1) AS QTYFULFILLED,
+    ROUND(
+        (
+            IF(SO.STATUSID = 95, SOITEM.QTYTOFULFILL, SOITEM.QTYFULFILLED) * SOITEM.UNITPRICE +
+            (IF(SOITEM.QTYTOFULFILL = 0, 0, SOITEM.ADJUSTAMOUNT / SOITEM.QTYTOFULFILL) * IF(SO.STATUSID = 95, SOITEM.QTYTOFULFILL, SOITEM.QTYFULFILLED))
+        ) * 10
+    ,1) / 10 AS TOTALPRICE,
+    IF($P!{CombinePartialQuantities}, SOITEM.DATELASTFULFILLMENT, COALESCE(POSTSO.POSTDATE, SOITEM.DATELASTFULFILLMENT)) AS DATELASTFULFILLED,
+    CURRENCY.SYMBOL,
+    SO.CUSTOMERPO
+
+FROM so
+    INNER JOIN locationgroup ON locationgroup.id = so.locationgroupid
+    INNER JOIN customer ON customer.id = so.customerid
+    INNER JOIN soitem ON soitem.soid = so.id
+    INNER JOIN sostatus ON sostatus.id = so.statusid
+    INNER JOIN soitemstatus ON soitem.statusid = soitemstatus.id
+    LEFT JOIN (
+        SELECT accountId,
+            substring_index(GROUP_CONCAT(groupId ORDER BY id), ',', 1) AS groupId
+        FROM accountGroupRelation
+        WHERE groupId IN ($P!{customerGroupID})
+        GROUP BY accountId
+    ) AS accountGroupRelation ON accountGroupRelation.accountId = customer.accountId
+    LEFT JOIN accountgroup ON accountgrouprelation.groupid = accountgroup.id
+    LEFT JOIN product ON soitem.productid = product.id
+    LEFT JOIN uom ON product.uomid = uom.id
+    LEFT JOIN uom AS soItemUom ON soItemUom.id = soItem.uomId
+    LEFT JOIN uomconversion AS toProduct ON product.uomid = toProduct.touomid AND soitem.uomid = toProduct.fromuomid
+    LEFT JOIN producttree ON productTree.id = (
+        SELECT productTree.id
+        FROM productTree
+        INNER JOIN productToTree ON productToTree.productTreeid = productTree.id
+        WHERE productToTree.productid = product.id
+        AND (
+            COALESCE(producttree.id,0) IN ($P!{productTree1})
+            OR COALESCE(producttree.id,0) LIKE '$P!{productTree2}'
+        )
+        LIMIT 1
+    )
+    LEFT JOIN currency ON currency.homeCurrency = 1
+    LEFT JOIN postsoitem ON soitem.id = postsoitem.soitemid
+    LEFT JOIN postso ON postsoitem.postsoid = postso.id
+    LEFT JOIN stateconst AS shipstate ON so.shiptostateid = shipstate.id
+
+WHERE soitem.typeid IN (
+        $P!{ckAssociatedPriceItems}, $P!{ckCreditReturnItems}, $P!{ckDiscountItems},
+        $P!{ckDropShipItems}, $P!{ckKitHeaders}, $P!{ckMiscCreditItems}, $P!{ckMiscSaleItems},
+        $P!{ckSaleItems}, $P!{ckShippingItems}, $P!{ckTaxItems}, $P!{ckHistoricalItems}
+    )
+    AND so.locationgroupid IN ($P!{locationGroupID})
+    AND so.customerid LIKE '$P!{customerID}'
+    AND soitem.qbclassid LIKE '$P!{qbClassIDProductClass}'
+    AND so.qbclassid LIKE '$P!{qbClassIDSOClass}'
+    AND so.salesman LIKE $P{salesPerson}
+    AND so.statusid IN (60, $P!{ckHistoricalSO})
+    AND $P!{cbApplyDateFilter} BETWEEN $P{dateRange1} AND DATE_SUB($P{dateRange2}, INTERVAL 1 SECOND)
+    AND product.num LIKE $P{productNum}
+    AND (
+        COALESCE(producttree.id,0) IN ($P!{productTree1})
+        OR COALESCE(producttree.id,0) LIKE '$P!{productTree2}'
+    )
+    AND COALESCE(accountgroup.id,0) IN ($P!{customerGroupID})
+    AND so.num LIKE $P{soNum}
+    AND COALESCE(SHIPSTATE.NAME,'-1') LIKE '$P!{cbShipToState/Province}'
+
+GROUP BY IF(soItem.typeId IN (30), concat(soItem.soId, soItem.id), coalesce(concat(postSoItem.postSoId, postSoItem.id), concat(soItem.soId, soItem.id)))
+
+ORDER BY $P!{cbGroupBy}, IF(soitem.productnum = '', soitem.description, soitem.productnum),
+    (CASE WHEN $P!{OrderByCustomer} THEN customer.name END), soItem.id, postso.id]]>
+	</queryString>
+	<field name="COMPANY" class="java.lang.String"/>
+	<field name="GROUPBY" class="java.lang.String"/>
+	<field name="CUSTOMER" class="java.lang.String"/>
+	<field name="PRODUCTNUM" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="DESCRIPTION" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="SO" class="java.lang.String"/>
+	<field name="STATUSNAME" class="java.lang.String"/>
+	<field name="ITEMID" class="java.lang.Integer"/>
+	<field name="UOM" class="java.lang.String"/>
+	<field name="QTYFULFILLED" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="TOTALPRICE" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="DATELASTFULFILLED" class="java.util.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="SYMBOL" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="CUSTOMERPO" class="java.lang.String"/>
+	<variable name="totalQty_soItemID" class="java.lang.Double" resetType="Group" resetGroup="soItemID" calculation="Sum">
+		<variableExpression><![CDATA[$F{QTYFULFILLED}]]></variableExpression>
+	</variable>
+	<variable name="totalPrice_soItemID" class="java.math.BigDecimal" resetType="Group" resetGroup="soItemID" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTALPRICE}]]></variableExpression>
+	</variable>
+	<variable name="totalQty_Group" class="java.lang.Double" resetType="Group" resetGroup="Group" calculation="Sum">
+		<variableExpression><![CDATA[$F{QTYFULFILLED}]]></variableExpression>
+	</variable>
+	<variable name="totalPrice_Group" class="java.math.BigDecimal" resetType="Group" resetGroup="Group" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTALPRICE}]]></variableExpression>
+	</variable>
+	<variable name="totalQty_Report" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{QTYFULFILLED}]]></variableExpression>
+	</variable>
+	<variable name="totalPrice_Report" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTALPRICE}]]></variableExpression>
+	</variable>
+	<variable name="PriceDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_PRICE")]]></variableExpression>
+	</variable>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<variable name="CostDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_COST")]]></variableExpression>
+	</variable>
+	<variable name="DateFormat" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+	</variable>
+	<variable name="isMultiCurrency" class="java.lang.Boolean">
+		<variableExpression><![CDATA[com.evnt.eve.modules.CurrencyModule.isMultiCurrency()]]></variableExpression>
+	</variable>
+	<group name="Group">
+		<groupExpression><![CDATA[$F{GROUPBY}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField" mode="Transparent" x="0" y="0" width="732" height="14" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="2500ac40-834b-4367-8518-10f4a87ce8a8"/>
+					<box leftPadding="0">
+						<pen lineWidth="0.0" lineStyle="Solid"/>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{cbGroupBy}.equals("IF(soItem.productNum = '', soItem.description, soItem.productNum)") ? $F{PRODUCTNUM} + ($F{DESCRIPTION}.equals("") ? "" : " - " + $F{DESCRIPTION})
+: $F{GROUPBY} == null ? "" : $F{GROUPBY}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement key="line-4" positionType="Float" mode="Transparent" x="0" y="14" width="732" height="1" uuid="f57971b6-14ec-42d4-9476-ff5eb6968983"/>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="14" splitType="Stretch">
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField" mode="Transparent" x="577" y="1" width="80" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="e13c8838-965d-41b3-a1b2-2eaa37f01f6b"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{cbGroupBy}.equals("IF(soItem.productNum = '', soItem.description, soItem.productNum)")
+    ? $V{totalQty_Group} == null ? "" : new DecimalFormat($V{QtyDecimal}).format($V{totalQty_Group}) + " " + $F{UOM}
+    : $V{totalQty_Group}]]></textFieldExpression>
+					<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField" mode="Transparent" x="657" y="1" width="75" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="3176cf7b-3481-4253-968f-de74f3a513e3"/>
+					<box rightPadding="0"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{isMultiCurrency} ?
+com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, $V{totalPrice_Group}, $V{PriceDecimal})
+:
+$V{totalPrice_Group}]]></textFieldExpression>
+					<patternExpression><![CDATA[$V{PriceDecimal}]]></patternExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-6" mode="Transparent" x="511" y="1" width="66" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="56135e9a-20a5-4176-aaae-c7cb2220efa8"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[Totals:]]></text>
+				</staticText>
+				<line>
+					<reportElement key="line-2" positionType="Float" mode="Transparent" x="511" y="1" width="221" height="1" forecolor="#000000" backcolor="#FFFFFF" uuid="554cfc87-5ea2-4e6a-bdb0-6ca66590fdf8">
+						<printWhenExpression><![CDATA[$P{ShowDetails}]]></printWhenExpression>
+					</reportElement>
+					<graphicElement fill="Solid">
+						<pen lineWidth="1.0" lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="soItemID">
+		<groupExpression><![CDATA[$F{ITEMID}]]></groupExpression>
+		<groupFooter>
+			<band height="14">
+				<printWhenExpression><![CDATA[$P{ShowDetails} && $P{CombinePartialQuantities}]]></printWhenExpression>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" hyperlinkType="Reference">
+					<reportElement key="textField" stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="1" width="100" height="13" isPrintWhenDetailOverflows="true" forecolor="#000099" backcolor="#FFFFFF" uuid="4e87d77c-0d30-46e4-9168-74519e1d53d3">
+						<printWhenExpression><![CDATA[$P{cbGroupBy}.equals("customer.name") || $P{cbGroupBy}.equals("shipstate.name")]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="5"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PRODUCTNUM}]]></textFieldExpression>
+					<anchorNameExpression><![CDATA["ProductNum"]]></anchorNameExpression>
+					<hyperlinkReferenceExpression><![CDATA[$F{PRODUCTNUM}]]></hyperlinkReferenceExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" hyperlinkType="Reference">
+					<reportElement key="textField" stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="1" width="308" height="13" isPrintWhenDetailOverflows="true" forecolor="#000099" backcolor="#FFFFFF" uuid="c9bf7e6f-cbb1-4cdc-906a-6246d0e506fc">
+						<printWhenExpression><![CDATA[!$P{cbGroupBy}.equals("customer.name") && !$P{cbGroupBy}.equals("shipstate.name")]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="5"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CUSTOMER}]]></textFieldExpression>
+					<anchorNameExpression><![CDATA["CustomerName"]]></anchorNameExpression>
+					<hyperlinkReferenceExpression><![CDATA[$F{CUSTOMER}]]></hyperlinkReferenceExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" hyperlinkType="Reference">
+					<reportElement key="textField" stretchType="RelativeToBandHeight" mode="Transparent" x="308" y="1" width="89" height="13" isPrintWhenDetailOverflows="true" forecolor="#000099" backcolor="#FFFFFF" uuid="118d86c0-b5e9-4de4-a0b3-d0869eb0a2ec"/>
+					<box leftPadding="3"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SO}]]></textFieldExpression>
+					<anchorNameExpression><![CDATA["SONum"]]></anchorNameExpression>
+					<hyperlinkReferenceExpression><![CDATA[$F{SO}]]></hyperlinkReferenceExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" hyperlinkType="Reference">
+					<reportElement key="textField" stretchType="RelativeToTallestObject" mode="Transparent" x="100" y="1" width="208" height="13" isPrintWhenDetailOverflows="true" forecolor="#000099" backcolor="#FFFFFF" uuid="a5bfdbf9-b98c-4154-a8de-5389684855d5">
+						<printWhenExpression><![CDATA[($P{cbGroupBy}.equals("customer.name") || $P{cbGroupBy}.equals("shipstate.name")) && !$F{DESCRIPTION}.equals("")]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="3"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESCRIPTION}]]></textFieldExpression>
+					<anchorNameExpression><![CDATA["ProductNum"]]></anchorNameExpression>
+					<hyperlinkReferenceExpression><![CDATA[$F{PRODUCTNUM}]]></hyperlinkReferenceExpression>
+					<hyperlinkTooltipExpression><![CDATA[$F{PRODUCTNUM}]]></hyperlinkTooltipExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField" stretchType="RelativeToBandHeight" mode="Transparent" x="577" y="1" width="80" height="13" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="fe7d60bc-548a-469c-93d4-3f858f02f4ff"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{totalQty_soItemID} == null ? "" : new DecimalFormat($V{QtyDecimal}).format($V{totalQty_soItemID}) + " " + $F{UOM}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField" stretchType="RelativeToBandHeight" mode="Transparent" x="657" y="1" width="75" height="13" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="038728f0-35b4-4c04-b196-c3edbd7b8dd1"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{isMultiCurrency} ?
+com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, $V{totalPrice_soItemID}, $V{PriceDecimal})
+:
+$V{totalPrice_soItemID}]]></textFieldExpression>
+					<patternExpression><![CDATA[$V{PriceDecimal}]]></patternExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" hyperlinkType="Reference">
+					<reportElement key="textField" stretchType="RelativeToBandHeight" mode="Transparent" x="397" y="1" width="114" height="13" isPrintWhenDetailOverflows="true" forecolor="#000099" backcolor="#FFFFFF" uuid="8c7ae941-2bcb-494c-99a4-ba8db90e7c27"/>
+					<box leftPadding="3"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CUSTOMERPO}]]></textFieldExpression>
+					<anchorNameExpression><![CDATA["SONum"]]></anchorNameExpression>
+					<hyperlinkReferenceExpression><![CDATA[$F{SO}]]></hyperlinkReferenceExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="511" y="1" width="66" height="13" uuid="6bffc457-31d1-45c6-b4ef-45c5f3fda404">
+						<printWhenExpression><![CDATA[$F{DATELASTFULFILLED} != null]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Open Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DATELASTFULFILLED}]]></textFieldExpression>
+					<patternExpression><![CDATA[$V{DateFormat}]]></patternExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="511" y="1" width="66" height="13" uuid="1f53df99-2641-4793-a2a2-d270256a8690">
+						<printWhenExpression><![CDATA[$F{DATELASTFULFILLED} == null]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Open Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{STATUSNAME}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement positionType="Float" x="0" y="13" width="732" height="1" uuid="22adfc99-80b9-4285-8c33-c7400f7a59cd"/>
+					<graphicElement>
+						<pen lineWidth="0.5" lineColor="#CCCCCC"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="64" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-4" mode="Transparent" x="0" y="40" width="732" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="7ba7f674-41ff-4c5e-ae61-21c48be92916"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Date Range: " + (
+    $P{dateRange1}.getYear() <= -900 && $P{dateRange2}.getYear() >= 1100
+        ? "All"
+        : (new SimpleDateFormat($V{DateFormat})).format($P{dateRange1}) + " - " + (new SimpleDateFormat($V{DateFormat})).format($P{dateRange2})
+)]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-6" x="0" y="54" width="732" height="10" uuid="e7fed65b-0aec-46ec-9325-cb9332963533"/>
+				<textElement>
+					<font fontName="Open Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement key="staticText-7" mode="Transparent" x="0" y="18" width="732" height="22" forecolor="#000000" backcolor="#FFFFFF" uuid="c5bdacb0-4eb4-4883-82bb-a9c2eac3b2a1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Open Sans" size="16" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ReportTitle}.equals("%") ? "Customer Purchase History" : $P{ReportTitle}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-15" x="0" y="0" width="732" height="18" uuid="2fd9dcd6-f55d-4a74-a84d-e1ded3436570"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMPANY}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="17" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText-2" mode="Transparent" x="308" y="0" width="89" height="16" forecolor="#000000" backcolor="#999999" uuid="8bb5832f-bf01-4e4d-8498-f0e4a2dcecb0">
+					<printWhenExpression><![CDATA[$P{ShowDetails}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[SO #]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-3" mode="Transparent" x="511" y="0" width="66" height="16" forecolor="#000000" backcolor="#999999" uuid="1ac44ba0-e389-4f76-875e-f11102435007">
+					<printWhenExpression><![CDATA[$P{ShowDetails}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Shipped]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" mode="Transparent" x="577" y="0" width="80" height="16" forecolor="#000000" backcolor="#999999" uuid="c25bd8bc-0edd-4c49-a916-d9b28e9abbc6"/>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Qty Shipped]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-5" mode="Transparent" x="657" y="0" width="75" height="16" forecolor="#000000" backcolor="#999999" uuid="53a0492d-72fb-4015-bd92-6ddddf899e08"/>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Price]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-8" mode="Transparent" x="0" y="0" width="100" height="16" forecolor="#000000" backcolor="#999999" uuid="72ebc3dd-2900-4296-b417-9ecad3b75dfa">
+					<printWhenExpression><![CDATA[$P{cbGroupBy}.equals("customer.name") || $P{cbGroupBy}.equals("shipstate.name")]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Product #]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-9" mode="Transparent" x="0" y="0" width="308" height="16" forecolor="#000000" backcolor="#999999" uuid="65b5d3e8-7dba-4bbc-a9d4-925b25ede848">
+					<printWhenExpression><![CDATA[!$P{cbGroupBy}.equals("customer.name") && !$P{cbGroupBy}.equals("shipstate.name")]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Customer]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="16" width="732" height="1" uuid="690ddba4-922e-4ded-b3e2-3c561815c02a"/>
+			</line>
+			<staticText>
+				<reportElement key="staticText-8" mode="Transparent" x="100" y="0" width="208" height="16" forecolor="#000000" backcolor="#999999" uuid="ffced6f7-5f8a-4be6-a774-4886e2f58964">
+					<printWhenExpression><![CDATA[$P{cbGroupBy}.equals("customer.name") || $P{cbGroupBy}.equals("shipstate.name")]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Description]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-2" mode="Transparent" x="397" y="0" width="114" height="16" forecolor="#000000" backcolor="#999999" uuid="84024066-b91c-40e2-9372-eaae5fc82b66">
+					<printWhenExpression><![CDATA[$P{ShowDetails}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Customer PO#]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16">
+			<printWhenExpression><![CDATA[$P{ShowDetails} && !$P{CombinePartialQuantities}]]></printWhenExpression>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" hyperlinkType="Reference">
+				<reportElement key="textField" stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="1" width="308" height="13" isPrintWhenDetailOverflows="true" forecolor="#000099" backcolor="#FFFFFF" uuid="210ca3d6-b391-43f3-892c-d4a58a636b04">
+					<printWhenExpression><![CDATA[!$P{cbGroupBy}.equals("customer.name") && !$P{cbGroupBy}.equals("shipstate.name")]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CUSTOMER}]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["CustomerName"]]></anchorNameExpression>
+				<hyperlinkReferenceExpression><![CDATA[$F{CUSTOMER}]]></hyperlinkReferenceExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" stretchType="RelativeToBandHeight" mode="Transparent" x="577" y="1" width="80" height="13" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="c71052b1-b4d7-4e02-8b57-6bb0d3138ad8"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new DecimalFormat($V{QtyDecimal}).format($F{QTYFULFILLED} == null ? 0 : $F{QTYFULFILLED}) + " " + $F{UOM}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" stretchType="RelativeToBandHeight" mode="Transparent" x="657" y="1" width="75" height="13" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="c6d645e9-ebe5-4551-9174-5039fec2de41"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{isMultiCurrency} ?
+com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, $F{TOTALPRICE}, $V{PriceDecimal})
+:
+$F{TOTALPRICE}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{PriceDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" hyperlinkType="Reference">
+				<reportElement key="textField" stretchType="RelativeToBandHeight" mode="Transparent" x="308" y="1" width="89" height="13" isPrintWhenDetailOverflows="true" forecolor="#000099" backcolor="#FFFFFF" uuid="3bc46631-892a-4028-a34e-5e194ca1a054"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SO}]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["SONum"]]></anchorNameExpression>
+				<hyperlinkReferenceExpression><![CDATA[$F{SO}]]></hyperlinkReferenceExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" hyperlinkType="Reference">
+				<reportElement key="textField" stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="1" width="100" height="13" isPrintWhenDetailOverflows="true" forecolor="#000099" backcolor="#FFFFFF" uuid="9fe76f19-3c46-4020-a2b3-708b1cfb4174">
+					<printWhenExpression><![CDATA[$P{cbGroupBy}.equals("customer.name") || $P{cbGroupBy}.equals("shipstate.name")]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRODUCTNUM}]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["ProductNum"]]></anchorNameExpression>
+				<hyperlinkReferenceExpression><![CDATA[$F{PRODUCTNUM}]]></hyperlinkReferenceExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" hyperlinkType="Reference">
+				<reportElement key="textField" stretchType="RelativeToTallestObject" mode="Transparent" x="100" y="1" width="208" height="13" isPrintWhenDetailOverflows="true" forecolor="#000099" backcolor="#FFFFFF" uuid="0fa22f68-98fb-4b42-9e98-4e84a505bce5">
+					<printWhenExpression><![CDATA[($P{cbGroupBy}.equals("customer.name") || $P{cbGroupBy}.equals("shipstate.name")) && !$F{DESCRIPTION}.equals("")]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCRIPTION}]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["ProductNum"]]></anchorNameExpression>
+				<hyperlinkReferenceExpression><![CDATA[$F{PRODUCTNUM}]]></hyperlinkReferenceExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" hyperlinkType="Reference">
+				<reportElement key="textField" stretchType="RelativeToBandHeight" mode="Transparent" x="397" y="1" width="114" height="13" isPrintWhenDetailOverflows="true" forecolor="#000099" backcolor="#FFFFFF" uuid="e17eb97f-75aa-4699-b5e6-770a504a9f38"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CUSTOMERPO}]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["SONum"]]></anchorNameExpression>
+				<hyperlinkReferenceExpression><![CDATA[$F{SO}]]></hyperlinkReferenceExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="511" y="1" width="66" height="13" uuid="a3352865-5ab5-44d7-9ac9-14bd854bb2ae">
+					<printWhenExpression><![CDATA[$F{DATELASTFULFILLED} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Open Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DATELASTFULFILLED}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{DateFormat}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="511" y="1" width="66" height="13" uuid="6a870c17-a4fa-43ec-919a-3664a1333581">
+					<printWhenExpression><![CDATA[$F{DATELASTFULFILLED} == null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Open Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{STATUSNAME}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement key="line-2" positionType="Float" mode="Transparent" x="0" y="14" width="732" height="1" forecolor="#000000" backcolor="#FFFFFF" uuid="56fe8d95-130c-4584-9ae5-23c137d8b3b8">
+					<printWhenExpression><![CDATA[!$P{ShowDetails}]]></printWhenExpression>
+				</reportElement>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.25" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement positionType="Float" x="0" y="15" width="732" height="1" uuid="c574e0ce-db56-4b4b-b4cb-fd6cf16e336f"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#CCCCCC"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="14" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-2" mode="Transparent" x="0" y="0" width="577" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="20f1208e-3192-4816-87a3-95872166ffdc">
+					<printWhenExpression><![CDATA[$P{IS_IGNORE_PAGINATION} == false]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.LONG)).format(new Date())]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-3" mode="Transparent" x="577" y="0" width="107" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="2fc8a7e9-a703-4780-9549-04bed76d52e0">
+					<printWhenExpression><![CDATA[$P{IS_IGNORE_PAGINATION} == false]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" evaluationTime="Report" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-4" mode="Transparent" x="684" y="0" width="48" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="65bb3ab3-9dc4-4fcf-9262-9ec58d1b929d">
+					<printWhenExpression><![CDATA[$P{IS_IGNORE_PAGINATION} == false]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="36" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-16" mode="Transparent" x="577" y="0" width="80" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="99d98b9e-3e3b-40c1-8d25-ebe8eae837a3"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{totalQty_Report}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-17" mode="Transparent" x="657" y="0" width="75" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="d9d5d591-7c8a-412f-b10f-0b3dd1d63c07"/>
+				<box rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{isMultiCurrency} ?
+com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, $V{totalPrice_Report}, $V{PriceDecimal})
+:
+$V{totalPrice_Report}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{PriceDecimal}]]></patternExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-10" mode="Transparent" x="511" y="0" width="66" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="879572e5-cfea-4161-a55f-9d40600533a7"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Grand Totals:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-22" mode="Transparent" x="0" y="22" width="577" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="9511f62f-ef8e-48e3-bb9e-9e4cd6ab5194">
+					<printWhenExpression><![CDATA[$P{IS_IGNORE_PAGINATION} == false]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.LONG)).format(new Date())]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-23" mode="Transparent" x="577" y="22" width="107" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="c1be143f-0979-4901-8df1-b88f31941e51">
+					<printWhenExpression><![CDATA[$P{IS_IGNORE_PAGINATION} == false]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" evaluationTime="Report" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-24" mode="Transparent" x="684" y="22" width="48" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="6e2ce5d6-e959-4e45-8ac0-3d64947dbd05">
+					<printWhenExpression><![CDATA[$P{IS_IGNORE_PAGINATION} == false]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+</jasperReport>

@@ -1,0 +1,703 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReverseLotHistory" pageWidth="792" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f349ddf1-4879-46c5-bcaa-9aaa4b87b234">
+	<property name="ireport.zoom" value="1.4641000000000008"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<subDataset name="SubReport" uuid="f7df1452-9014-46a0-8924-a275bb9e39db">
+		<parameter name="woItemIDs" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT PART.NUM AS PARTNUM,
+       PART.DESCRIPTION,
+       ABS(IL.CHANGEQTY) AS CHANGEQTY,
+       TIL.INFO AS LOT,
+       IL.INFO AS EVENT,
+       ILT.DESCRIPTION AS TYPE,
+       IL.EVENTDATE,
+       IL.ID AS ILID,
+       IL.QTYONHAND,
+       IL.TYPEID,
+       IL.INFO,
+       CASE WHEN SUBSTRING(IL.INFO FROM 1 FOR 13) = 'FINISHED GOOD' THEN SUBSTRING(IL.INFO FROM 15 FOR 10) ELSE '' END AS WONUMBER,
+       IL.TYPEID AS ILTYPE,
+       COMPANY.NAME AS COMPANY,
+       COALESCE(TAG.QTY,0) AS TAGQTY,
+       COALESCE(TAGEND.QTY,0) AS TAGENDQTY,
+       WOITEMS.WOITEMIDS,
+       VENDOR.NAME AS VENDOR,
+       PHONE.DATUS AS PHONE,
+       EMAIL.DATUS AS EMAIL
+
+FROM INVENTORYLOG IL
+     LEFT OUTER JOIN TIINVENTORYLOG TIL ON IL.ID = TIL.INVENTORYLOGID AND TIL.PARTTRACKINGID = 1
+     INNER JOIN PART ON IL.PARTID = PART.ID
+     INNER JOIN INVENTORYLOGTYPE ILT ON IL.TYPEID = ILT.ID
+     LEFT OUTER JOIN COMPANY ON COMPANY.ID=1
+     LEFT OUTER JOIN WOITEM ON IL.RECORDID = WOITEM.ID AND IL.TABLEID = -355941248 AND IL.TYPEID IN (10, 50)
+     LEFT OUTER JOIN (SELECT GROUP_CONCAT(ID) AS WOITEMIDS, WOID AS WOID
+                      FROM WOITEM
+                      WHERE TYPEID = 20
+                      GROUP BY WOID) AS WOITEMS ON WOITEMS.WOID = WOITEM.WOID
+     LEFT OUTER JOIN TAG ON IL.BEGTAGNUM = TAG.NUM
+     LEFT OUTER JOIN TAG TAGEND ON IL.ENDTAGNUM = TAGEND.NUM
+     LEFT OUTER JOIN (SELECT PARTRACKINFO.INVLOGID AS INVLOGID, GROUP_CONCAT(PARTRACKINFO.TRACKVALUE, ', ') AS TRACKVALUE
+                      FROM (SELECT TIINVENTORYLOG.INVENTORYLOGID AS INVLOGID,
+                                   CONCAT(PARTTRACKING.ABBR, ': ',
+                                      GROUP_CONCAT((CASE WHEN PARTTRACKING.TYPEID = 10 THEN TIINVENTORYLOG.INFO
+                                                         WHEN PARTTRACKING.TYPEID = 20 THEN SUBSTRING(TIINVENTORYLOG.INFODATE FROM 1 FOR 11)
+                                                         WHEN PARTTRACKING.TYPEID = 30 THEN SUBSTRING(TIINVENTORYLOG.INFODATE FROM 1 FOR 11)
+                                                         WHEN PARTTRACKING.TYPEID = 40 THEN TIINVENTORYLOGSN.SERIALNUM
+                                                         WHEN PARTTRACKING.TYPEID = 50 THEN CAST(TIINVENTORYLOG.INFODOUBLE AS DECIMAL(18,2))
+                                                         WHEN PARTTRACKING.TYPEID = 60 THEN CAST(TIINVENTORYLOG.INFODOUBLE AS DECIMAL(18,5))
+                                                         WHEN PARTTRACKING.TYPEID = 70 THEN TIINVENTORYLOG.INFOINTEGER
+                                                         WHEN PARTTRACKING.TYPEID = 80 THEN TIINVENTORYLOG.INFOINTEGER
+                                                         ELSE TIINVENTORYLOG.INFO END))) AS TRACKVALUE
+                            FROM TIINVENTORYLOG
+                                 INNER JOIN PARTTRACKING ON TIINVENTORYLOG.PARTTRACKINGID = PARTTRACKING.ID AND PARTTRACKING.ID = 1
+                                 LEFT OUTER JOIN TIINVENTORYLOGSN ON TIINVENTORYLOG.ID = TIINVENTORYLOGSN.TIINVENTORYLOGID
+                            GROUP BY TIINVENTORYLOG.INVENTORYLOGID, PARTTRACKING.ABBR, PARTTRACKING.SORTORDER
+                            ORDER BY PARTTRACKING.SORTORDER) AS PARTRACKINFO
+                      GROUP BY PARTRACKINFO.INVLOGID) TRACKINFO ON IL.ID = TRACKINFO.INVLOGID
+     LEFT OUTER JOIN RECEIPTITEM ON IL.RECORDID = RECEIPTITEM.ID AND IL.TYPEID = 10 AND IL.TABLEID = 1259138490
+     LEFT OUTER JOIN POITEM ON RECEIPTITEM.POITEMID = POITEM.ID
+     LEFT OUTER JOIN PO ON POITEM.POID = PO.ID
+     LEFT OUTER JOIN VENDOR ON PO.VENDORID = VENDOR.ID
+     LEFT OUTER JOIN CONTACT PHONE ON VENDOR.ACCOUNTID = PHONE.ACCOUNTID AND PHONE.TYPEID = 50 AND PHONE.DEFAULTFLAG = 1
+     LEFT OUTER JOIN CONTACT EMAIL ON VENDOR.ACCOUNTID = EMAIL.ACCOUNTID AND EMAIL.TYPEID = 20 AND EMAIL.DEFAULTFLAG = 1
+
+WHERE WOITEM.ID IN ($P!{woItemIDs})
+
+ORDER BY PART.NUM, IL.EVENTDATE DESC]]>
+		</queryString>
+		<field name="PARTNUM" class="java.lang.String"/>
+		<field name="DESCRIPTION" class="java.lang.String">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="CHANGEQTY" class="java.math.BigDecimal">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="LOT" class="java.lang.String"/>
+		<field name="EVENT" class="java.lang.String"/>
+		<field name="EVENTDATE" class="java.sql.Timestamp">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="ILID" class="java.lang.Long"/>
+		<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+			<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+		</variable>
+		<variable name="SUM_CHANGEQTY" class="java.lang.Double" incrementType="Group" incrementGroup="Log" calculation="Sum">
+			<variableExpression><![CDATA[$F{CHANGEQTY}]]></variableExpression>
+		</variable>
+		<group name="Log">
+			<groupExpression><![CDATA[$F{ILID}]]></groupExpression>
+		</group>
+	</subDataset>
+	<parameter name="partNum" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Lot" class="java.lang.String"/>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["../Other/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORTDESCRIPTION" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Shows the history for the specified lot number."]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT PART.NUM AS PARTNUM,
+       PART.DESCRIPTION,
+       IL.CHANGEQTY,
+       TIL.INFO AS LOT,
+       IL.INFO AS EVENT,
+       ILT.DESCRIPTION AS TYPE,
+       IL.EVENTDATE,
+       IL.ID AS ILID,
+       IL.QTYONHAND,
+       IL.TYPEID,
+       IL.INFO,
+       CASE WHEN SUBSTRING(IL.INFO FROM 1 FOR 13) = 'FINISHED GOOD' THEN SUBSTRING(IL.INFO FROM (POSITION('#' IN IL.INFO)+1) FOR 20) ELSE '' END AS WONUMBER,
+       IL.TYPEID AS ILTYPE,
+       COMPANY.NAME AS COMPANY,
+       COALESCE(TAG.QTY,0) AS TAGQTY,
+       COALESCE(TAGEND.QTY,0) AS TAGENDQTY,
+       WOITEMS.WOITEMIDS,
+       CUSTOMER.NAME AS CUSTOMER,
+       PHONE.DATUS AS PHONE,
+       EMAIL.DATUS AS EMAIL
+
+FROM INVENTORYLOG IL
+     INNER JOIN TIINVENTORYLOG TIL ON IL.ID = TIL.INVENTORYLOGID AND TIL.PARTTRACKINGID = 1
+     INNER JOIN PART ON IL.PARTID = PART.ID
+     INNER JOIN INVENTORYLOGTYPE ILT ON IL.TYPEID = ILT.ID
+     LEFT OUTER JOIN COMPANY ON COMPANY.ID=1
+     LEFT OUTER JOIN WOITEM ON IL.RECORDID = WOITEM.ID AND IL.TABLEID = -355941248 AND IL.TYPEID IN (10, 50)
+     LEFT OUTER JOIN (SELECT GROUP_CONCAT(ID) AS WOITEMIDS, WOID AS WOID
+                      FROM WOITEM
+                      WHERE TYPEID = 20
+                      GROUP BY WOID) AS WOITEMS ON WOITEMS.WOID = WOITEM.WOID
+     LEFT OUTER JOIN TAG ON IL.BEGTAGNUM = TAG.NUM
+     LEFT OUTER JOIN TAG TAGEND ON IL.ENDTAGNUM = TAGEND.NUM
+     LEFT OUTER JOIN (SELECT PARTRACKINFO.INVLOGID AS INVLOGID, GROUP_CONCAT(PARTRACKINFO.TRACKVALUE, ', ') AS TRACKVALUE
+                      FROM (SELECT TIINVENTORYLOG.INVENTORYLOGID AS INVLOGID,
+                                   CONCAT(PARTTRACKING.ABBR,': ',
+                                     GROUP_CONCAT((CASE WHEN PARTTRACKING.TYPEID = 10 THEN TIINVENTORYLOG.INFO
+                                                        WHEN PARTTRACKING.TYPEID = 20 THEN SUBSTRING(TIINVENTORYLOG.INFODATE FROM 1 FOR 11)
+                                                        WHEN PARTTRACKING.TYPEID = 30 THEN SUBSTRING(TIINVENTORYLOG.INFODATE FROM 1 FOR 11)
+                                                        WHEN PARTTRACKING.TYPEID = 40 THEN TIINVENTORYLOGSN.SERIALNUM
+                                                        WHEN PARTTRACKING.TYPEID = 50 THEN CAST(TIINVENTORYLOG.INFODOUBLE AS DECIMAL(18,2))
+                                                        WHEN PARTTRACKING.TYPEID = 60 THEN CAST(TIINVENTORYLOG.INFODOUBLE AS DECIMAL(18,5))
+                                                        WHEN PARTTRACKING.TYPEID = 70 THEN TIINVENTORYLOG.INFOINTEGER
+                                                        WHEN PARTTRACKING.TYPEID = 80 THEN TIINVENTORYLOG.INFOINTEGER
+                                                   ELSE TIINVENTORYLOG.INFO END ))) AS TRACKVALUE
+                            FROM TIINVENTORYLOG
+                                 INNER JOIN PARTTRACKING ON TIINVENTORYLOG.PARTTRACKINGID = PARTTRACKING.ID
+                                 LEFT OUTER JOIN TIINVENTORYLOGSN ON TIINVENTORYLOG.ID = TIINVENTORYLOGSN.TIINVENTORYLOGID
+                            GROUP BY TIINVENTORYLOG.INVENTORYLOGID, PARTTRACKING.ABBR, PARTTRACKING.SORTORDER
+                            ORDER BY PARTTRACKING.SORTORDER) AS PARTRACKINFO
+                      GROUP BY PARTRACKINFO.INVLOGID) TRACKINFO ON IL.ID = TRACKINFO.INVLOGID
+     LEFT OUTER JOIN SHIPITEM ON IL.RECORDID = SHIPITEM.ID AND IL.TYPEID = 20 AND IL.TABLEID = 1555030112
+     LEFT OUTER JOIN SOITEM ON SHIPITEM.SOITEMID = SOITEM.ID
+     LEFT OUTER JOIN SO ON SOITEM.SOID = SO.ID
+     LEFT OUTER JOIN CUSTOMER ON CUSTOMER.ID = SO.CUSTOMERID
+     LEFT OUTER JOIN CONTACT PHONE ON CUSTOMER.ACCOUNTID = PHONE.ACCOUNTID AND PHONE.TYPEID = 50 AND PHONE.DEFAULTFLAG = 1
+     LEFT OUTER JOIN CONTACT EMAIL ON CUSTOMER.ACCOUNTID = EMAIL.ACCOUNTID AND EMAIL.TYPEID = 60 AND EMAIL.DEFAULTFLAG = 1
+
+WHERE PART.NUM LIKE $P{partNum}
+  AND IL.TYPEID != 40
+  AND COALESCE(UPPER(TRACKINFO.TRACKVALUE),'') LIKE UPPER(CONCAT('%',$P{Lot},'%'))
+
+ORDER BY PART.NUM, IL.EVENTDATE DESC]]>
+	</queryString>
+	<field name="PARTNUM" class="java.lang.String"/>
+	<field name="DESCRIPTION" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="CHANGEQTY" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="LOT" class="java.lang.String"/>
+	<field name="EVENT" class="java.lang.String"/>
+	<field name="TYPE" class="java.lang.String"/>
+	<field name="EVENTDATE" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ILID" class="java.lang.Long"/>
+	<field name="QTYONHAND" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="TYPEID" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="INFO" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="WONUMBER" class="java.lang.String"/>
+	<field name="ILTYPE" class="java.lang.Integer"/>
+	<field name="COMPANY" class="java.lang.String"/>
+	<field name="TAGQTY" class="java.math.BigDecimal"/>
+	<field name="TAGENDQTY" class="java.math.BigDecimal"/>
+	<field name="WOITEMIDS" class="java.lang.String"/>
+	<field name="CUSTOMER" class="java.lang.String"/>
+	<field name="PHONE" class="java.lang.String"/>
+	<field name="EMAIL" class="java.lang.String"/>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<variable name="SUM_CHANGEQTY" class="java.lang.Double" incrementType="Group" incrementGroup="Log" calculation="Sum">
+		<variableExpression><![CDATA[$F{CHANGEQTY}]]></variableExpression>
+	</variable>
+	<group name="Log">
+		<groupExpression><![CDATA[$F{ILID}]]></groupExpression>
+		<groupFooter>
+			<band height="16">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="444" y="0" width="50" height="14" uuid="e45f92f8-b50f-430b-9ebb-b133911b2ed0"/>
+					<box leftPadding="3" rightPadding="3">
+						<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font fontName="Open Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CHANGEQTY}]]></textFieldExpression>
+					<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="365" y="0" width="79" height="14" uuid="dd055e60-541d-4b69-82dd-148e7f6bb989"/>
+					<box leftPadding="3" rightPadding="3">
+						<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Open Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{EVENTDATE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="211" y="0" width="57" height="14" uuid="dbdc3460-d819-428b-95be-163d27ad12f5"/>
+					<box leftPadding="3" rightPadding="3">
+						<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Open Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TYPE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="0" y="0" width="81" height="14" uuid="2380ac50-ae98-49e4-bdce-934e908ea536"/>
+					<box leftPadding="3" rightPadding="3">
+						<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Open Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PARTNUM}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="268" y="0" width="97" height="14" uuid="bb79571f-29bb-46e7-ae6f-2d32bfc1d83f"/>
+					<box leftPadding="3" rightPadding="3">
+						<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Open Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{EVENT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="81" y="0" width="130" height="14" uuid="52421c96-6a37-4d87-bb07-2725b01638f2"/>
+					<box leftPadding="3" rightPadding="3">
+						<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Open Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESCRIPTION}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="551" y="0" width="62" height="14" uuid="9d982738-45a9-46c5-8a89-05af1914bf7f"/>
+					<box leftPadding="3" rightPadding="3">
+						<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Open Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CUSTOMER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="494" y="0" width="57" height="14" uuid="88f35e4e-6671-414f-a1e4-e5aaa6b2acfb"/>
+					<box leftPadding="3" rightPadding="3">
+						<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Open Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{LOT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="613" y="0" width="62" height="14" uuid="7a8533a9-2005-47b3-9f0a-ee1c4a7625a7"/>
+					<box leftPadding="3" rightPadding="3">
+						<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Open Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PHONE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="675" y="0" width="77" height="14" uuid="1515d43a-5954-4bfb-9a9b-cee21dc1aded"/>
+					<box leftPadding="3" rightPadding="3">
+						<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Open Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{EMAIL}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement positionType="Float" x="0" y="14" width="752" height="1" uuid="af23b303-0b74-43fb-a567-52d55fbb1bc3"/>
+					<graphicElement>
+						<pen lineWidth="0.75" lineColor="#999999"/>
+					</graphicElement>
+				</line>
+				<componentElement>
+					<reportElement positionType="Float" x="20" y="15" width="581" height="1" uuid="9206cfd3-863b-4370-8953-ebce3f20b95f">
+						<printWhenExpression><![CDATA[!$F{WOITEMIDS}.equals("")]]></printWhenExpression>
+					</reportElement>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="SubReport" uuid="fa207d68-8371-4b86-9877-3222ddb52e8f">
+							<datasetParameter name="woItemIDs">
+								<datasetParameterExpression><![CDATA[$F{WOITEMIDS}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+						<jr:column width="120" uuid="a30a28db-819d-44d8-bca8-eaeed27d1e3f">
+							<jr:tableHeader height="0" rowSpan="1"/>
+							<jr:tableFooter height="0" rowSpan="1"/>
+							<jr:columnHeader height="18" rowSpan="1">
+								<box>
+									<bottomPen lineWidth="1.0"/>
+								</box>
+								<staticText>
+									<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="120" height="18" isRemoveLineWhenBlank="true" uuid="d9184100-656a-48f3-b76e-b9706173dd17"/>
+									<box leftPadding="3" rightPadding="3">
+										<bottomPen lineWidth="0.0"/>
+									</box>
+									<textElement verticalAlignment="Bottom">
+										<font fontName="Open Sans" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Part Number]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter height="0" rowSpan="1"/>
+							<jr:detailCell height="14" rowSpan="1">
+								<box>
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+									<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="120" height="14" uuid="60672132-14f6-4e58-b8da-b72d9e3ee872"/>
+									<box leftPadding="3" rightPadding="3">
+										<bottomPen lineWidth="0.0" lineColor="#999999"/>
+									</box>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Open Sans"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{PARTNUM}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="200" uuid="25fd2e8b-70aa-4530-9cc2-3e195596f48e">
+							<jr:tableHeader height="0" rowSpan="1"/>
+							<jr:tableFooter height="0" rowSpan="1"/>
+							<jr:columnHeader height="18" rowSpan="1">
+								<box>
+									<bottomPen lineWidth="1.0"/>
+								</box>
+								<staticText>
+									<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="200" height="18" isRemoveLineWhenBlank="true" uuid="9d3f4ea8-1d0f-4796-a20b-e03228b6a07a"/>
+									<box leftPadding="3" rightPadding="3">
+										<bottomPen lineWidth="0.0"/>
+									</box>
+									<textElement verticalAlignment="Bottom">
+										<font fontName="Open Sans" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Event]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter height="0" rowSpan="1"/>
+							<jr:detailCell height="14" rowSpan="1">
+								<box>
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+									<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="200" height="14" uuid="2bd15c7b-1872-4944-9b4a-cc9fd9754dee"/>
+									<box leftPadding="3" rightPadding="3">
+										<bottomPen lineWidth="0.0" lineColor="#999999"/>
+									</box>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Open Sans" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{EVENT}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="81" uuid="1c506fa0-4b88-45a8-b79b-ef9963443cad">
+							<jr:tableHeader height="0" rowSpan="1"/>
+							<jr:tableFooter height="0" rowSpan="1"/>
+							<jr:columnHeader height="18" rowSpan="1">
+								<box>
+									<bottomPen lineWidth="1.0"/>
+								</box>
+								<staticText>
+									<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="81" height="18" isRemoveLineWhenBlank="true" uuid="f7217fe9-18b5-4e46-b732-d2b259e02611"/>
+									<box leftPadding="3" rightPadding="3">
+										<bottomPen lineWidth="0.0"/>
+									</box>
+									<textElement verticalAlignment="Bottom">
+										<font fontName="Open Sans" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Event Date]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter height="0" rowSpan="1"/>
+							<jr:detailCell height="14" rowSpan="1">
+								<box>
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+									<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="81" height="14" uuid="0ab7adcc-b0b1-4a71-8a3a-2a56f1fe0ec0"/>
+									<box leftPadding="3" rightPadding="3">
+										<bottomPen lineWidth="0.0" lineColor="#999999"/>
+									</box>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Open Sans" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{EVENTDATE}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="70" uuid="2c921508-8da9-4e3a-bc41-466dd7a7659f">
+							<jr:tableHeader height="0" rowSpan="1"/>
+							<jr:tableFooter height="0" rowSpan="1"/>
+							<jr:columnHeader height="18" rowSpan="1">
+								<box>
+									<bottomPen lineWidth="1.0"/>
+								</box>
+								<staticText>
+									<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="70" height="18" isRemoveLineWhenBlank="true" uuid="10515af6-29da-454c-91ce-8805892bcb93"/>
+									<box leftPadding="3" rightPadding="3">
+										<bottomPen lineWidth="0.0"/>
+									</box>
+									<textElement textAlignment="Center" verticalAlignment="Bottom">
+										<font fontName="Open Sans" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Qty]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter height="0" rowSpan="1"/>
+							<jr:detailCell height="14" rowSpan="1">
+								<box>
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+									<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="70" height="14" uuid="efc78f2a-9f90-4e72-a5f3-a8d19e12514b"/>
+									<box>
+										<bottomPen lineWidth="0.0" lineColor="#999999"/>
+									</box>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Open Sans" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{CHANGEQTY}]]></textFieldExpression>
+									<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="110" uuid="41b64031-bb77-47f5-a400-7f4ddaf9351c">
+							<jr:tableHeader height="0" rowSpan="1"/>
+							<jr:tableFooter height="0" rowSpan="1"/>
+							<jr:columnHeader height="18" rowSpan="1">
+								<box>
+									<bottomPen lineWidth="1.0"/>
+								</box>
+								<staticText>
+									<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="110" height="18" isRemoveLineWhenBlank="true" uuid="360e68d2-86af-4e41-9ad7-d3261194c601"/>
+									<box leftPadding="3" rightPadding="3">
+										<bottomPen lineWidth="0.0"/>
+									</box>
+									<textElement verticalAlignment="Bottom">
+										<font fontName="Open Sans" size="9" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Lot #]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter height="0" rowSpan="1"/>
+							<jr:detailCell height="14" rowSpan="1">
+								<box>
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+									<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="110" height="14" uuid="ef29c0c3-9664-4b73-879e-cf541146b494"/>
+									<box leftPadding="3" rightPadding="3">
+										<bottomPen lineWidth="0.0" lineColor="#999999"/>
+									</box>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Open Sans" size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{LOT}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="80" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="24" width="752" height="26" uuid="9fcc9673-1598-4ddb-b0d5-2c31bdd501a1"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Reverse Lot History Report]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="9" width="752" height="20" uuid="41ed10ee-ee90-43e0-9048-2c654f6291b7"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="Open Sans" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMPANY}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="54" width="46" height="21" uuid="2dfc2264-60d4-48c1-9f66-4516d57c6a2e"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Open Sans" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Lot #"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="46" y="54" width="118" height="21" uuid="88027637-d120-411c-bd57-64251f81602b"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Open Sans" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LOT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="28" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="81" height="28" uuid="77a06df4-870e-41f1-a4ef-347a8ae44b30"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Part Number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="81" y="0" width="130" height="28" uuid="ead77a3e-9a31-42d6-ad59-1415b6158f55"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Description]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="211" y="0" width="57" height="28" uuid="e9b7fc81-b9f8-4366-b88c-78b688d69bce"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="268" y="0" width="97" height="28" uuid="985a30ca-3860-4061-b221-5fdc80a3e0ba"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Event]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="444" y="0" width="50" height="28" uuid="3a7600a9-18e3-429c-8be7-1bc3762c1228"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Qty]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="365" y="0" width="79" height="28" uuid="187d0e15-a386-4348-947f-f094021d45bb"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Event Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="551" y="0" width="62" height="28" uuid="440d9c43-d96b-4d2c-8dfa-26401f0ef0fb"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Customer]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="494" y="0" width="57" height="28" uuid="bc681807-ad0b-4c9e-bd85-725f33d26e3c"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Lot #]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="613" y="0" width="62" height="28" uuid="8e670421-7a18-4e6b-a066-028bddeea628"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Phone]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="675" y="0" width="77" height="28" uuid="7cc4a0f6-c436-4444-bb20-0523859a45cc"/>
+				<box leftPadding="3" rightPadding="3">
+					<bottomPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Email]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<pageFooter>
+		<band height="14">
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-14" mode="Transparent" x="0" y="0" width="341" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="866092c9-405f-40f3-b663-3f0c68774459"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.LONG)).format(new Date())]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-13" mode="Transparent" x="521" y="0" width="183" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="bbb342e0-db23-4358-8e2e-d70be5b920a3"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-12" mode="Transparent" x="704" y="0" width="48" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="a4797d63-17ea-4618-801f-b8c2b21e5b09"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="9" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

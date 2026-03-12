@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="inventory_item_summary" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cb13fb4f-31c7-4f0a-bf5a-4af04bba757a">
+	<property name="ireport.zoom" value="1.4641000000000006"/>
+	<property name="ireport.x" value="51"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="partNum" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="productTree1" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="productTree2" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="ShowAllTrees" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA["true"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="locationGroupID" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRange1" class="java.util.Date">
+		<parameterDescription><![CDATA[Last 365 Days]]></parameterDescription>
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRange2" class="java.util.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    COALESCE(producttree.name, "N/A") AS productTree,
+    part.num AS partNum,
+    part.description AS partDescription,
+    SUM(COALESCE(opening.qty, 0)) AS openingQty,
+    SUM(COALESCE(purchases.qty, 0)) AS purchaseQty,
+    ABS(SUM(COALESCE(sales.qty, 0))) - SUM(COALESCE(returns.qty, 0)) AS soldQty,
+    SUM(COALESCE(adjustments.qty, 0)) AS adjustedQty,
+    SUM(COALESCE(closing.qty, 0)) AS closingQty,
+    company.name AS companyName
+FROM part
+LEFT JOIN product ON part.id = product.partid
+LEFT JOIN producttotree ON product.id = producttotree.productid
+LEFT JOIN producttree ON producttotree.producttreeid = producttree.id
+CROSS JOIN company
+LEFT JOIN (
+    SELECT il.partId, SUM(il.qtyonhand) AS qty
+    FROM inventorylog il
+    INNER JOIN (
+        SELECT partId, locationGroupId, MAX(eventDate) AS maxDate, MAX(id) AS maxId
+        FROM inventorylog
+        WHERE eventDate < $P{dateRange1}
+          AND locationGroupId IN ($P!{locationGroupID})
+        GROUP BY partId, locationGroupId
+    ) AS latest ON il.partId = latest.partId
+        AND il.locationGroupId = latest.locationGroupId
+        AND il.eventDate = latest.maxDate
+        AND il.id = latest.maxId
+    GROUP BY il.partId
+) AS opening ON part.id = opening.partId
+LEFT JOIN (
+    SELECT il.partId, SUM(il.changeQty) AS qty
+    FROM inventorylog il
+    LEFT JOIN receiptitem ri ON CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(il.info, 'Receipt Item ', -1), ' ', 1) AS UNSIGNED) = ri.id
+    WHERE il.eventDate BETWEEN $P{dateRange1} AND SUBDATE($P{dateRange2}, INTERVAL 1 Second)
+      AND il.typeId IN (10, 15)
+      AND il.locationGroupId IN ($P!{locationGroupID})
+      AND (ri.soitemid IS NULL OR il.info NOT LIKE '%Receipt Item%')
+    GROUP BY il.partId
+) AS purchases ON part.id = purchases.partId
+LEFT JOIN (
+    SELECT il.partId, SUM(il.changeQty) AS qty
+    FROM inventorylog il
+    INNER JOIN receiptitem ri ON CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(il.info, 'Receipt Item ', -1), ' ', 1) AS UNSIGNED) = ri.id
+    WHERE il.eventDate BETWEEN $P{dateRange1} AND SUBDATE($P{dateRange2}, INTERVAL 1 Second)
+      AND il.typeId = 10
+      AND il.locationGroupId IN ($P!{locationGroupID})
+      AND ri.soitemid IS NOT NULL
+    GROUP BY il.partId
+) AS returns ON part.id = returns.partId
+LEFT JOIN (
+    SELECT partId, SUM(changeQty) AS qty
+    FROM inventorylog
+    WHERE eventDate BETWEEN $P{dateRange1} AND SUBDATE($P{dateRange2}, INTERVAL 1 Second)
+      AND typeId IN (20, 90)
+      AND locationGroupId IN ($P!{locationGroupID})
+    GROUP BY partId
+) AS sales ON part.id = sales.partId
+LEFT JOIN (
+    SELECT partId, SUM(changeQty) AS qty
+    FROM inventorylog
+    WHERE eventDate BETWEEN $P{dateRange1} AND SUBDATE($P{dateRange2}, INTERVAL 1 Second)
+      AND typeId IN (60, 64, 65, 67, 68, 70, 71)
+      AND locationGroupId IN ($P!{locationGroupID})
+    GROUP BY partId
+) AS adjustments ON part.id = adjustments.partId
+LEFT JOIN (
+    SELECT il.partId, SUM(il.qtyonhand) AS qty
+    FROM inventorylog il
+    INNER JOIN (
+        SELECT partId, locationGroupId, MAX(eventDate) AS maxDate, MAX(id) AS maxId
+        FROM inventorylog
+        WHERE eventDate <= SUBDATE($P{dateRange2}, INTERVAL 1 Second)
+          AND locationGroupId IN ($P!{locationGroupID})
+        GROUP BY partId, locationGroupId
+    ) AS latest ON il.partId = latest.partId
+        AND il.locationGroupId = latest.locationGroupId
+        AND il.eventDate = latest.maxDate
+        AND il.id = latest.maxId
+    GROUP BY il.partId
+) AS closing ON part.id = closing.partId
+WHERE company.id = 1
+  AND part.num LIKE $P{partNum}
+  AND (product.activeflag = 1 OR product.activeflag IS NULL)
+  AND ($P{ShowAllTrees} = 1 OR producttree.id IN ($P!{productTree1}))
+  AND (
+    COALESCE(opening.qty, 0) != 0
+    OR COALESCE(purchases.qty, 0) != 0
+    OR COALESCE(sales.qty, 0) != 0
+    OR COALESCE(adjustments.qty, 0) != 0
+    OR COALESCE(returns.qty, 0) != 0
+  )
+GROUP BY producttree.id, part.id, company.name
+ORDER BY producttree.name, part.num]]>
+	</queryString>
+	<field name="partNum" class="java.lang.String"/>
+	<field name="partDescription" class="java.lang.String"/>
+	<field name="openingQty" class="java.math.BigDecimal"/>
+	<field name="purchaseQty" class="java.math.BigDecimal"/>
+	<field name="soldQty" class="java.math.BigDecimal"/>
+	<field name="adjustedQty" class="java.math.BigDecimal"/>
+	<field name="closingQty" class="java.math.BigDecimal"/>
+	<field name="companyName" class="java.lang.String"/>
+	<field name="productTree" class="java.lang.String"/>
+	<variable name="totalOpening" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{openingQty}]]></variableExpression>
+	</variable>
+	<variable name="totalPurchase" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{purchaseQty}]]></variableExpression>
+	</variable>
+	<variable name="totalSold" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{soldQty}]]></variableExpression>
+	</variable>
+	<variable name="totalAdjusted" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{adjustedQty}]]></variableExpression>
+	</variable>
+	<variable name="totalClosing" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{closingQty}]]></variableExpression>
+	</variable>
+	<variable name="DateFormat" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="802" height="30" uuid="6104f55e-1c6a-474f-8f0e-5dd65a39d9da"/>
+				<textElement>
+					<font fontName="Open Sans" size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Inventory Item Summary]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="30" width="802" height="20" uuid="c0975269-fc47-4405-a573-035621f342b0"/>
+				<textElement>
+					<font fontName="Open Sans" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{companyName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="50" width="802" height="20" uuid="10175622-fdca-42a1-9e51-ef47d3ea4ca4"/>
+				<textElement>
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{dateRange1}.getYear() <= -900 && $P{dateRange2}.getYear() >= 1100
+  ? "Date Range: All"
+  : "Date Range: " + (new SimpleDateFormat("dd MMM yyyy")).format($P{dateRange1}.getTime()) + " - " +
+(new SimpleDateFormat("dd MMM yyyy")).format($P{dateRange2}.getTime() - 86400000)]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="30" splitType="Stretch">
+			<textField>
+				<reportElement mode="Opaque" x="120" y="0" width="118" height="30" backcolor="#E0E0E0" uuid="8bd209ea-32be-44bc-a6c6-a42b3d72021d"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ITEM CODE"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="238" y="0" width="214" height="30" backcolor="#E0E0E0" uuid="ec77e936-89fd-48cd-b4a6-4f11ba706b96"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ITEM NAME"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="452" y="0" width="70" height="30" backcolor="#E0E0E0" uuid="5cc3a3a4-79db-4a84-b880-bf41e01fc229"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["OPENING QUANTITY"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="522" y="0" width="70" height="30" backcolor="#E0E0E0" uuid="79fb612d-e695-4631-ac70-f03b07f486ba"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["QUANTITY PURCHASED"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="592" y="0" width="70" height="30" backcolor="#E0E0E0" uuid="91303414-e34f-4596-84c4-d75b4b27b9b4"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["QUANTITY SOLD"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="662" y="0" width="70" height="30" backcolor="#E0E0E0" uuid="470a0bd6-04a9-454f-89e5-f172cfcd4ff5"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["QUANTITY ADJUSTED"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="732" y="0" width="70" height="30" backcolor="#E0E0E0" uuid="5a165b8c-6685-41b6-a31f-4ca1d2ea4e86"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CLOSING QUANTITY"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="0" y="0" width="120" height="30" backcolor="#E0E0E0" uuid="edff6a50-9f9d-4844-925c-0e4ea48a5540"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PRODUCT TREE"]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="120" y="0" width="118" height="20" uuid="b68d1097-8712-44c9-8288-d211419afcf9"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{partNum}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="238" y="0" width="214" height="20" uuid="a8436435-cea4-4f60-a2e8-ff495dbcb1e0"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{partDescription}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="452" y="0" width="70" height="20" uuid="8d1de365-5312-444f-babf-85b498f7df68"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph rightIndent="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{openingQty}.compareTo(BigDecimal.ZERO) == 0 ? "-" : $F{openingQty}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="522" y="0" width="70" height="20" uuid="0ca07bb7-7af2-45a9-84b9-faf90a75438e"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph rightIndent="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{purchaseQty}.compareTo(BigDecimal.ZERO) == 0 ? "-" : $F{purchaseQty}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="592" y="0" width="70" height="20" uuid="15a84aa8-6e75-4e39-af04-0ef2ed1deafd"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph rightIndent="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{soldQty}.compareTo(BigDecimal.ZERO) == 0 ? "-" : $F{soldQty}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="662" y="0" width="70" height="20" uuid="b5f5d37d-69b7-4b34-808b-1909f59c5f2a"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph rightIndent="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{adjustedQty}.compareTo(BigDecimal.ZERO) == 0 ? "-" : $F{adjustedQty}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="732" y="0" width="70" height="20" uuid="015b0b13-f4ca-4d12-8d42-eb629554c4ab"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="9"/>
+					<paragraph rightIndent="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{closingQty}.compareTo(BigDecimal.ZERO) == 0 ? "-" : $F{closingQty}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="0" y="0" width="120" height="20" uuid="74f3705e-cd52-414b-91b7-f3e3dc920518"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{productTree}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="452" height="20" backcolor="#E0E0E0" uuid="f299a463-7bbd-4a94-837c-69dc39e060bf"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" isBold="true"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<text><![CDATA[Totals:]]></text>
+			</staticText>
+			<textField pattern="#,##0">
+				<reportElement mode="Opaque" x="452" y="0" width="70" height="20" backcolor="#E0E0E0" uuid="0153f605-f8ec-4c8e-8419-a8fc7cbc8908"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" isBold="true"/>
+					<paragraph rightIndent="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{totalOpening}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Opaque" x="522" y="0" width="70" height="20" backcolor="#E0E0E0" uuid="b7fa4045-5d97-4fac-9f14-0a165a158404"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" isBold="true"/>
+					<paragraph rightIndent="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{totalPurchase}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Opaque" x="592" y="0" width="70" height="20" backcolor="#E0E0E0" uuid="fe6fa5d6-3964-46bd-8cb5-02dc238b8df9"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" isBold="true"/>
+					<paragraph rightIndent="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{totalSold}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Opaque" x="662" y="0" width="70" height="20" backcolor="#E0E0E0" uuid="975054c0-c0d1-465e-9833-8179e5493e5c"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" isBold="true"/>
+					<paragraph rightIndent="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{totalAdjusted}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Opaque" x="732" y="0" width="70" height="20" backcolor="#E0E0E0" uuid="3956707b-35fb-42f6-9460-12d6b4b0b48e"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Open Sans" isBold="true"/>
+					<paragraph rightIndent="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{totalClosing}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

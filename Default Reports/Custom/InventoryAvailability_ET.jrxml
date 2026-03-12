@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="InventoryAvailabilityByUOM_ET" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="fb026d18-1955-4d6e-bbc8-8d6fe238cdec">
+	<property name="ireport.zoom" value="1.2100000000000006"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Zebra" fontName="Open Sans">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{PAGE_COUNT}.intValue() % 2 == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#EAEAEA" pattern="" fontName="Open Sans"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:/Program Files/Fishbowl/Server/reports/Inventory/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="partNum" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="module" class="java.lang.Object" isForPrompting="false">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRangeNone" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="Skip" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORTDESCRIPTION" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["This is a consolidated report of the Inventory Module. The Count parameter specifies the number of records to return. The Skip parameter skips that many records before starting the count."]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Count" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["1000"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="locationGroupID" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowPartsWithZeroQuantity" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowTimeStamp" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ReportTitle" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="ShowCfPart1" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="Part Custom Field 1"/>
+		<property name="Sort" value="3"/>
+		<parameterDescription><![CDATA[Display field]]></parameterDescription>
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowCfPart2" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="Part Custom Field 2"/>
+		<property name="Sort" value="3"/>
+		<parameterDescription><![CDATA[Display Field]]></parameterDescription>
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowCfPart3" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="Part Custom Field 3"/>
+		<property name="Sort" value="3"/>
+		<parameterDescription><![CDATA[Display Field]]></parameterDescription>
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CustomField:Part1" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="Part Custom Field 1"/>
+		<property name="Sort" value="2"/>
+		<property name="Table" value="PART"/>
+		<property name="Type" value="Custom Field"/>
+		<property name="Tooltip" value="Select an Part custom field to display"/>
+		<parameterDescription><![CDATA[Select a field]]></parameterDescription>
+	</parameter>
+	<parameter name="CustomField:Part2" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="Part Custom Field 2"/>
+		<property name="Sort" value="2"/>
+		<property name="Table" value="PART"/>
+		<property name="Type" value="Custom Field"/>
+		<property name="Tooltip" value="Select an Part custom field to display"/>
+		<parameterDescription><![CDATA[Select a field]]></parameterDescription>
+	</parameter>
+	<parameter name="CustomField:Part3" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="Part Custom Field 3"/>
+		<property name="Sort" value="2"/>
+		<property name="Table" value="PART"/>
+		<property name="Type" value="Custom Field"/>
+		<property name="Tooltip" value="Select an Part custom field to display"/>
+		<parameterDescription><![CDATA[Select a field]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:Partcf1" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="Part Custom Field 1"/>
+		<property name="Sort" value="1"/>
+		<property name="Alias" value="Field Title"/>
+		<parameterDescription><![CDATA[Field Title]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:Partcf2" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="Part Custom Field 2"/>
+		<property name="Sort" value="1"/>
+		<property name="Alias" value="Field Title"/>
+		<parameterDescription><![CDATA[Field Title]]></parameterDescription>
+	</parameter>
+	<parameter name="FieldTitle:Partcf3" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Custom Fields"/>
+		<property name="Group" value="Part Custom Field 3"/>
+		<property name="Sort" value="1"/>
+		<property name="Alias" value="Field Title"/>
+		<parameterDescription><![CDATA[Field Title]]></parameterDescription>
+	</parameter>
+	<parameter name="cfFilter" class="java.lang.String" isForPrompting="false">
+		<property name="Type" value="Custom Field"/>
+		<property name="Table" value="PART"/>
+		<property name="Group" value="Filter by Part Custom Field"/>
+		<property name="Sort" value="1"/>
+		<parameterDescription><![CDATA[Select a field]]></parameterDescription>
+	</parameter>
+	<parameter name="cfFilterData" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Filter by Part Custom Field"/>
+		<property name="Sort" value="2"/>
+		<property name="Tooltip" value="Type a value to filter by. Use % for wildcard searches. If the custom field is a checkbox, use true or false."/>
+		<parameterDescription><![CDATA[Enter filter data]]></parameterDescription>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    PART.NUM AS PART,
+    PRODUCT.NUM AS PRODUCT,
+    PRODUCT.DESCRIPTION,
+    locationgroup.name AS LOCATIONGROUP,
+    produom.CODE AS UOMCODE,
+    (SELECT NAME FROM COMPANY WHERE ID = 1) AS COMPANY,
+    ROUND(COALESCE(INVENTORYTOTALS.TOTALONHAND,0), 4)*Coalesce(UC.Multiply,1) / Coalesce(UC.Factor,1) AS QTY,
+    ROUND(COALESCE(INVENTORYTOTALS.TOTALNOTAVAILABLE,0), 4)*Coalesce(UC.Multiply,1) / Coalesce(UC.Factor,1) AS UNAVAILABLE,
+    ROUND(COALESCE(INVENTORYTOTALS.TOTALDROPSHIP,0), 4)*Coalesce(UC.Multiply,1) / Coalesce(UC.Factor,1) AS DROPSHIP,
+    ROUND(COALESCE(COMMITTED.TOTAL,0), 4)*Coalesce(UC.Multiply,1) / Coalesce(UC.Factor,1) AS QTYCOMMITTED,
+    ROUND(COALESCE(INVENTORYTOTALS.TOTALALLOCATED,0), 4)*Coalesce(UC.Multiply,1) / Coalesce(UC.Factor,1) AS ALLOCATED,
+    ROUND(COALESCE(INVENTORYTOTALS.TOTALONORDER,0), 4)*Coalesce(UC.Multiply,1) / Coalesce(UC.Factor,1) AS ONORDER,
+    ROUND((COALESCE(INVENTORYTOTALS.TOTALONHAND,0) - COALESCE(INVENTORYTOTALS.TOTALALLOCATED,0) - COALESCE(INVENTORYTOTALS.TOTALNOTAVAILABLE,0) + COALESCE(INVENTORYTOTALS.TOTALDROPSHIP,0)), 4)*Coalesce(UC.Multiply,1) / Coalesce(UC.Factor,1) AS AVAILABLE,
+    ROUND(COALESCE(INVENTORYTOTALS.totalNotAvailabletopick,0), 4)*Coalesce(UC.Multiply,1) / Coalesce(UC.Factor,1) AS totalNotAvailabletopick,
+    $P!{CustomField:Part1} AS partcf1,
+    $P!{CustomField:Part2} AS partcf2,
+    $P!{CustomField:Part3} AS partcf3
+FROM
+    part
+    LEFT JOIN product ON product.partid = part.id
+    LEFT JOIN uom produom on produom.id = product.uomid
+    LEFT JOIN uomconversion uc on uc.touomid = product.uomid and uc.fromuomid = part.uomid
+    LEFT JOIN (
+        SELECT
+            partId,
+            locationGroupId,
+            SUM(qtyOnHand) AS totalOnHand,
+            SUM(qtyNotAvailable) AS totalNotAvailable,
+            SUM(qtyNotAvailabletopick) AS totalNotAvailabletopick,
+            SUM(qtyDropship) AS totalDropship,
+            SUM(qtyAllocated) AS totalAllocated,
+            SUM(qtyOnOrder) AS totalOnOrder
+        FROM
+            qtyInventoryTotals
+        WHERE locationGroupId IN ($P!{locationGroupID})
+        GROUP BY partId, locationGroupId
+    ) AS inventoryTotals ON inventoryTotals.partId = part.id
+    LEFT JOIN locationgroup ON locationgroup.id = inventoryTotals.locationGroupId
+    LEFT JOIN (
+        SELECT
+            partId,
+            locationGroupId,
+            SUM(qty) AS total
+        FROM
+            qtyCommitted
+        WHERE locationGroupId IN ($P!{locationGroupID})
+        GROUP BY partId, locationGroupId
+    ) AS committed ON committed.partId = part.id AND committed.locationGroupId = inventoryTotals.locationGroupId
+WHERE
+    part.num LIKE $P{partNum}
+    AND part.id != 0
+    AND part.typeid = 10
+    AND part.activeflag = 1
+    AND COALESCE(UPPER($P!{cfFilter}),'') LIKE UPPER($P{cfFilterData})
+    AND (
+        CASE
+            WHEN $P{ShowPartsWithZeroQuantity} = 1 THEN 1
+            ELSE CASE
+                WHEN (COALESCE(INVENTORYTOTALS.TOTALONHAND,0) + COALESCE(INVENTORYTOTALS.TOTALNOTAVAILABLE,0) + COALESCE(INVENTORYTOTALS.TOTALDROPSHIP,0) + COALESCE(COMMITTED.TOTAL,0) + COALESCE(INVENTORYTOTALS.TOTALALLOCATED,0) + COALESCE(INVENTORYTOTALS.TOTALONORDER,0)) > 0 THEN 1
+                ELSE 0
+            END
+        END = 1
+    )
+GROUP BY LOCATIONGROUP,Coalesce(PRODUCT,PART)
+ORDER BY lOCATIONGROUP, PART, QTY]]>
+	</queryString>
+	<field name="PART" class="java.lang.String"/>
+	<field name="PRODUCT" class="java.lang.String"/>
+	<field name="DESCRIPTION" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="LOCATIONGROUP" class="java.lang.String"/>
+	<field name="UOMCODE" class="java.lang.String"/>
+	<field name="COMPANY" class="java.lang.String"/>
+	<field name="QTY" class="java.lang.Double"/>
+	<field name="UNAVAILABLE" class="java.lang.Double"/>
+	<field name="DROPSHIP" class="java.lang.Double"/>
+	<field name="QTYCOMMITTED" class="java.lang.Double"/>
+	<field name="ALLOCATED" class="java.lang.Double"/>
+	<field name="ONORDER" class="java.lang.Double"/>
+	<field name="totalNotAvailabletopick" class="java.lang.Double"/>
+	<field name="partcf1" class="java.lang.Object"/>
+	<field name="partcf2" class="java.lang.Object"/>
+	<field name="partcf3" class="java.lang.Object"/>
+	<field name="AVAILABLE" class="java.lang.Double"/>
+	<variable name="PriceDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_PRICE")]]></variableExpression>
+	</variable>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<variable name="CostDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_COST")]]></variableExpression>
+	</variable>
+	<group name="LocationGroup">
+		<groupExpression><![CDATA[$F{LOCATIONGROUP}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<textField>
+					<reportElement x="0" y="0" width="802" height="20" uuid="485a372f-e1e3-4e21-a525-8815b54b0a71"/>
+					<box topPadding="1" leftPadding="10" bottomPadding="1" rightPadding="2">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Open Sans" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{LOCATIONGROUP}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="40" splitType="Stretch">
+			<textField>
+				<reportElement key="staticText-9" mode="Transparent" x="0" y="18" width="802" height="22" forecolor="#000000" backcolor="#FFFFFF" uuid="dbb8b825-e680-4be7-b71a-94eb3e6f7deb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Open Sans" size="16" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ReportTitle}.equals("%") ? "Inventory Availability by UOM" : $P{ReportTitle}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-16" x="0" y="0" width="802" height="18" uuid="55712413-a502-48ee-a426-f169c71ab68f"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMPANY}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="35" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="90" height="35" uuid="428f90fe-923a-473d-a532-60882b89a5b6"/>
+				<box leftPadding="2" bottomPadding="3" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom" markup="none">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Product]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="440" y="0" width="62" height="35" uuid="c45b0dce-a3f8-4283-af77-2fa3946572a9"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" markup="none">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[On
+Hand]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="320" y="0" width="60" height="35" uuid="e43ae2d1-ed59-41aa-8dc2-64b526c7127c"/>
+				<box leftPadding="2" bottomPadding="3" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" markup="none">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[UOM]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="622" y="0" width="60" height="35" uuid="e0e08eeb-260e-4592-8ccb-2295eff3084c"/>
+				<box leftPadding="2" bottomPadding="3" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" markup="none">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Drop
+Ship]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="742" y="0" width="60" height="35" uuid="9c6274ca-bb7c-487e-bcbe-ce6f8905bfc9"/>
+				<box leftPadding="2" bottomPadding="3" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" markup="none">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Committed]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="90" y="0" width="230" height="35" uuid="153a847b-765f-4a64-845e-459f33f8964b"/>
+				<box leftPadding="2" bottomPadding="3" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom" markup="none">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Description]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="562" y="0" width="60" height="35" uuid="4d7fcb6c-b2d3-428e-b0eb-9ffca7fceee3"/>
+				<box leftPadding="2" bottomPadding="3" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" markup="none">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Not
+Available]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="502" y="0" width="60" height="35" uuid="018a6181-16e6-4d1b-b378-d69fbd65950f"/>
+				<box leftPadding="2" bottomPadding="3" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" markup="none">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Allocated]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="682" y="0" width="60" height="35" uuid="1f58ec4c-6b3e-418e-b635-bfd58e489dcb"/>
+				<box leftPadding="2" bottomPadding="3" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" markup="none">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[On
+Order]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="380" y="0" width="60" height="35" uuid="d8fb6f9d-9692-4e4f-969c-5a563ce78ed4"/>
+				<box leftPadding="2" bottomPadding="3" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" markup="none">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Available (per UOM)]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="0" y="0" width="90" height="15" uuid="98c8b3d1-623f-4188-be39-a1895ad72905"/>
+				<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="2"/>
+				<textElement>
+					<font fontName="Open Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRODUCT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="90" y="0" width="230" height="15" uuid="3ecdb394-ae7e-4c4f-b1b7-550be9e95784"/>
+				<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="2"/>
+				<textElement>
+					<font fontName="Open Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCRIPTION}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="320" y="0" width="60" height="15" uuid="8453cad8-eaff-43c2-81da-dc772f634fee"/>
+				<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="2"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UOMCODE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="440" y="0" width="62" height="15" uuid="88b457e2-1e7c-4232-b921-4b65a8e0c86a"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{QTY}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="502" y="0" width="60" height="15" uuid="07dede00-a9e1-4b94-a015-b04361a41452"/>
+				<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="2"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ALLOCATED}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="562" y="0" width="60" height="15" uuid="bb072d9b-708e-48cb-bcb4-5b3da8fe9531"/>
+				<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="2"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNAVAILABLE}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="622" y="0" width="60" height="15" uuid="31d6fb50-e1b6-4d06-9cb7-63428ca8157b"/>
+				<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="2"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DROPSHIP}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="380" y="0" width="60" height="15" uuid="9d2a8165-f7e1-41b0-bef4-1fb5dfc73a09"/>
+				<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="2"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[Math.floor($F{AVAILABLE}.doubleValue())]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="682" y="0" width="60" height="15" uuid="f60cc53b-de14-4c1a-84ff-c6e10478094d"/>
+				<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="2"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ONORDER}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="742" y="0" width="60" height="15" uuid="ae3f791b-9eec-403a-8d02-fade612c20be"/>
+				<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="2"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{QTYCOMMITTED}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="17" splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>

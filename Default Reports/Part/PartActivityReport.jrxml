@@ -1,0 +1,694 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PartActivityReport" pageWidth="792" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="732" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="9c7e3592-782a-4dbf-8f3f-53a4476c070b">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="partNum" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<property name="Tooltip" value="Choose a part number to run the report for. Leave this field blank to run for all parts"/>
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="locationID" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<property name="Tooltip" value="Choose a part number to run the report for. Leave this field blank to run for all parts"/>
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="locationGroupID" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<property name="Tooltip" value="Choose a part number to run the report for. Leave this field blank to run for all parts"/>
+		<defaultValueExpression><![CDATA["-1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:/Program Files/Fishbowl/Server/reports/WorkOrder/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="module" class="java.lang.Object" isForPrompting="false">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckTransfer" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Transaction Types"/>
+		<property name="Group" value="Order"/>
+		<property name="Tooltip" value="Choose to show/hide inventory move transactions from the Consignment module with &quot;Transfer&quot; selected as the type by checking/unchecking this checkbox"/>
+		<parameterDescription><![CDATA[30,901]]></parameterDescription>
+		<defaultValueExpression><![CDATA["30"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckYield" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Transaction Types"/>
+		<property name="Group" value="Order"/>
+		<property name="Tooltip" value="Choose to show/hide inventory move transactions from the Inventory module by checking/unchecking this checkbox. If Yield shows Yield S50004 this means the items were moved by the picking transaction"/>
+		<parameterDescription><![CDATA[40,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["40"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckReceiving" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Transaction Types"/>
+		<property name="Group" value="Order"/>
+		<property name="Tooltip" value="Choose to show/hide purchase order receipt transactions by checking/unchecking this checkbox"/>
+		<parameterDescription><![CDATA[10,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["10"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckShipping" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Transaction Types"/>
+		<property name="Group" value="Order"/>
+		<property name="Tooltip" value="Choose to show/hide sales order ship transactions by checking/unchecking this checkbox"/>
+		<parameterDescription><![CDATA[20,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["20"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckConsume" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Transaction Types"/>
+		<property name="Group" value="Order"/>
+		<property name="Tooltip" value="Choose to show/hide transactions of raw good consumption on a work order by checking/unchecking this checkbox"/>
+		<parameterDescription><![CDATA[50,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["50"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckAdjust" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Transaction Types"/>
+		<property name="Group" value="Adjustments"/>
+		<property name="Tooltip" value="Choose to show/hide transactions of changing the location group assigned on a specific location by checking/unchecking this checkbox"/>
+		<parameterDescription><![CDATA[60,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["60"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckAdjustTracking" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Transaction Types"/>
+		<property name="Group" value="Adjustments"/>
+		<property name="Tooltip" value="Choose to show/hide part tracking adjustments (for example, changing a Lot # from 5 to 6) by checking/unchecking this checkbox"/>
+		<parameterDescription><![CDATA[72,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["72"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckAdjustIncrease" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Transaction Types"/>
+		<property name="Group" value="Adjustments"/>
+		<property name="Tooltip" value="Choose to show/hide cycle count transactions that increased quantity by checking/unchecking this checkbox"/>
+		<parameterDescription><![CDATA[64,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["64"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckAdjustDecrease" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Transaction Types"/>
+		<property name="Group" value="Adjustments"/>
+		<property name="Tooltip" value="Choose to show/hide cycle count transactions that decreased quantity by checking/unchecking this checkbox"/>
+		<parameterDescription><![CDATA[65,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["65"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckAdjustScrap" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Transaction Types"/>
+		<property name="Group" value="Adjustments"/>
+		<property name="Tooltip" value="Choose to show/hide scrap inventory transactions by checking/unchecking this checkbox"/>
+		<parameterDescription><![CDATA[67,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["67"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckAdjustUOM" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Transaction Types"/>
+		<property name="Group" value="Adjustments"/>
+		<property name="Tooltip" value="Choose to show/hide UOM changes on parts by checking/unchecking this checkbox"/>
+		<parameterDescription><![CDATA[69,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["900"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRange1" class="java.util.Date" isForPrompting="false">
+		<property name="Tooltip" value="Enter the desired dates to see activity for. The date range looks at the EventDate on the INVENTORYLOG table in the database, meaning the date the transaction happened"/>
+		<property name="Group" value="Filters"/>
+		<property name="Sort" value="-2"/>
+		<parameterDescription><![CDATA[This Month]]></parameterDescription>
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRange2" class="java.util.Date" isForPrompting="false">
+		<property name="Tooltip" value="Enter the desired dates to see activity for. The date range looks at the EventDate on the INVENTORYLOG table in the database, meaning the date the transaction happened"/>
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORTDESCRIPTION" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Shows the activity history for a part or all parts. Note: UOM changes only show correctly when all Location Groups are selected"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckVoidReceipt" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Transaction Types"/>
+		<property name="Group" value="Void"/>
+		<property name="Tooltip" value="Choose to show/hide void receipt transactions by checking/unchecking this checkbox"/>
+		<parameterDescription><![CDATA[15,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["15"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TrackingInfo" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<property name="Tooltip" value="Choose a part number to run the report for. Leave this field blank to run for all parts"/>
+		<defaultValueExpression><![CDATA[new String("%")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="salesPersonUser" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<property name="Tooltip" value="Choose a part number to run the report for. Leave this field blank to run for all parts"/>
+		<property name="Sort" value="-1"/>
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cbOrderBy" class="java.lang.String" isForPrompting="false">
+		<property name="Tooltip" value="Select whether to order the report information by Order of Events or Event Date"/>
+		<property name="Group" value="Other Settings"/>
+		<parameterDescription><![CDATA[inventorylog.id,Order of Events,inventorylog.eventdate,Event Date]]></parameterDescription>
+		<defaultValueExpression><![CDATA["inventorylog.id"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TagNumber" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Filters"/>
+		<property name="Tooltip" value="Choose a part number to run the report for. Leave this field blank to run for all parts"/>
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cbGroupBy" class="java.lang.String" isForPrompting="false">
+		<property name="Tooltip" value="Select to group by part number or location group"/>
+		<property name="Group" value="Other Settings"/>
+		<parameterDescription><![CDATA[Inventorylog.locationgroupID,Location Group,part.num,Part Number]]></parameterDescription>
+		<defaultValueExpression><![CDATA["Inventorylog.locationgroupID"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckEnableTracking" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Transaction Types"/>
+		<property name="Group" value="Tracking"/>
+		<property name="Tooltip" value="Choose to show/hide enable part tracking transactions by checking/unchecking this checkbox. Only shows on the report if the part has inventory quantity"/>
+		<parameterDescription><![CDATA[73,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["73"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckDisableTracking" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Transaction Types"/>
+		<property name="Group" value="Tracking"/>
+		<property name="Tooltip" value="Choose to show/hide disable part tracking transactions by checking/unchecking this checkbox. Only shows on the report if the part has inventory quantity"/>
+		<parameterDescription><![CDATA[74,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["74"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckShowInactive" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Other Settings"/>
+		<property name="Tooltip" value="Choose to show/hide parts that have an Inactive status by checking/unchecking this checkbox"/>
+		<parameterDescription><![CDATA[0,100]]></parameterDescription>
+		<defaultValueExpression><![CDATA["100"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckShowActive" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Other Settings"/>
+		<property name="Tooltip" value="Choose to show/hide parts that have an Inactive status by checking/unchecking this checkbox"/>
+		<parameterDescription><![CDATA[1,100]]></parameterDescription>
+		<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowTagNum" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Tooltip" value="Select whether to order the report information by Order of Events or Event Date"/>
+		<property name="Group" value="Other Settings"/>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ckVoidedShipments" class="java.lang.String" isForPrompting="false">
+		<property name="Tab" value="Transaction Types"/>
+		<property name="Group" value="Void"/>
+		<property name="Tooltip" value="Choose to show/hide voided shipments by checking/unchecking this checkbox"/>
+		<parameterDescription><![CDATA[90,900]]></parameterDescription>
+		<defaultValueExpression><![CDATA["90"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ReportTitle" class="java.lang.String" isForPrompting="false">
+		<property name="Group" value="Other Settings"/>
+	</parameter>
+	<queryString>
+		<![CDATA[SET SESSION group_concat_max_len = 100000;
+
+SELECT INVENTORYLOG.ID AS INVENTORYLOGID,
+    INVENTORYLOG.BEGTAGNUM, BEGLOC.NAME AS BEGLOCATION, BEGLOCGRP.NAME AS BEGGROUP, INVENTORYLOG.ENDTAGNUM, ENDLOC.NAME AS ENDLOCATION, ENDLOCGRP.NAME AS ENDGROUP,
+    INVENTORYLOG.EVENTDATE, INVENTORYLOG.CHANGEQTY, INVENTORYLOG.QTYONHAND, COALESCE(INVENTORYLOG.INFO, '') AS INFO, INVENTORYLOGTYPE.DESCRIPTION AS EVENT, TRACKINFO.TRACKVALUE AS TRACKINFO,
+    PART.NUM AS PART, UOM.CODE AS UOMCODE, SYSUSER.USERNAME AS USERNAME,
+    LOCGRP.NAME AS GROUPNAME, INVENTORYLOG.LOCATIONGROUPID, COMPANY.NAME AS COMPANY
+
+FROM INVENTORYLOG
+    INNER JOIN LOCATIONGROUP LOCGRP ON INVENTORYLOG.LOCATIONGROUPID = LOCGRP.ID
+    INNER JOIN INVENTORYLOGTYPE ON INVENTORYLOG.TYPEID = INVENTORYLOGTYPE.ID
+    INNER JOIN LOCATION BEGLOC ON INVENTORYLOG.BEGLOCATIONID = BEGLOC.ID
+    INNER JOIN LOCATIONGROUP BEGLOCGRP ON BEGLOC.LOCATIONGROUPID = BEGLOCGRP.ID
+    INNER JOIN LOCATION ENDLOC ON INVENTORYLOG.ENDLOCATIONID = ENDLOC.ID
+    INNER JOIN LOCATIONGROUP ENDLOCGRP ON ENDLOC.LOCATIONGROUPID = ENDLOCGRP.ID
+    INNER JOIN PART ON INVENTORYLOG.PARTID = PART.ID
+    INNER JOIN UOM ON PART.UOMID = UOM.ID
+    INNER JOIN SYSUSER ON INVENTORYLOG.USERID = SYSUSER.ID
+    INNER JOIN COMPANY ON COMPANY.ID = 1
+    LEFT OUTER JOIN (SELECT PARTRACKINFO.INVLOGID AS INVLOGID, GROUP_CONCAT(PARTRACKINFO.TRACKVALUE, ', ') AS TRACKVALUE
+        FROM (SELECT TIINVENTORYLOG.INVENTORYLOGID AS INVLOGID, CONCAT(PARTTRACKING.ABBR, ': ',
+                GROUP_CONCAT((CASE
+		    WHEN PARTTRACKING.TYPEID = 10 THEN TIINVENTORYLOG.INFO
+                    WHEN PARTTRACKING.TYPEID = 20 THEN SUBSTRING(TIINVENTORYLOG.INFODATE FROM 1 FOR 11)
+                    WHEN PARTTRACKING.TYPEID = 30 THEN SUBSTRING(TIINVENTORYLOG.INFODATE FROM 1 FOR 11)
+                    WHEN PARTTRACKING.TYPEID = 40 THEN TIINVENTORYLOGSN.SERIALNUM
+                    WHEN PARTTRACKING.TYPEID = 50 THEN CAST(TIINVENTORYLOG.INFODOUBLE AS DECIMAL(18,2))
+                    WHEN PARTTRACKING.TYPEID = 60 THEN CAST(TIINVENTORYLOG.INFODOUBLE AS DECIMAL(18,5))
+                    WHEN PARTTRACKING.TYPEID = 70 THEN TIINVENTORYLOG.INFOINTEGER
+                    WHEN PARTTRACKING.TYPEID = 80 THEN TIINVENTORYLOG.INFOINTEGER
+                    ELSE TIINVENTORYLOG.INFO
+                END ))) AS TRACKVALUE
+            FROM TIINVENTORYLOG
+                INNER JOIN PARTTRACKING ON (TIINVENTORYLOG.PARTTRACKINGID = PARTTRACKING.ID)
+                LEFT OUTER JOIN TIINVENTORYLOGSN ON (TIINVENTORYLOG.ID = TIINVENTORYLOGSN.TIINVENTORYLOGID)
+                GROUP BY TIINVENTORYLOG.INVENTORYLOGID, PARTTRACKING.ABBR, PARTTRACKING.SORTORDER
+            ORDER BY PARTTRACKING.SORTORDER) AS PARTRACKINFO
+        GROUP BY PARTRACKINFO.INVLOGID) TRACKINFO ON (INVENTORYLOG.ID = TRACKINFO.INVLOGID)
+
+WHERE inventorylog.typeid IN ($P!{ckTransfer}, $P!{ckYield},$P!{ckReceiving},$P!{ckAdjustTracking},$P!{ckAdjustUOM},$P!{ckShipping},$P!{ckConsume},$P!{ckAdjust},$P!{ckAdjustIncrease},$P!{ckAdjustDecrease},$P!{ckAdjustScrap},$P!{ckVoidReceipt},$P!{ckEnableTracking},$P!{ckDisableTracking},$P!{ckVoidedShipments})
+  AND inventorylog.eventdate >= $P{dateRange1}
+  AND inventorylog.eventdate <= DATE_SUB($P{dateRange2}, INTERVAL 1 SECOND)
+  AND (inventorylog.beglocationid LIKE $P{locationID} OR inventorylog.endlocationid LIKE $P{locationID})
+  AND (COALESCE(inventorylog.begtagnum, 0) LIKE $P{TagNumber} OR COALESCE(inventorylog.endtagnum, 0) LIKE $P{TagNumber})
+  AND inventorylog.locationgroupid IN ($P!{locationGroupID})
+  AND UPPER(part.num) LIKE UPPER($P{partNum})
+  AND UPPER(sysuser.username) LIKE UPPER($P{salesPersonUser})
+  AND COALESCE(UPPER(trackInfo.trackValue),'') LIKE UPPER(CONCAT('%', $P{TrackingInfo}, '%'))
+  AND part.activeflag IN ($P{ckShowActive}, $P{ckShowInactive})
+
+ORDER BY $P!{cbGroupBy}, $P!{cbOrderBy}, inventorylog.id]]>
+	</queryString>
+	<field name="INVENTORYLOGID" class="java.lang.Long"/>
+	<field name="BEGTAGNUM" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="BEGLOCATION" class="java.lang.String"/>
+	<field name="BEGGROUP" class="java.lang.String"/>
+	<field name="ENDTAGNUM" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ENDLOCATION" class="java.lang.String"/>
+	<field name="ENDGROUP" class="java.lang.String"/>
+	<field name="EVENTDATE" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="CHANGEQTY" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="QTYONHAND" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="INFO" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="EVENT" class="java.lang.String"/>
+	<field name="TRACKINFO" class="java.lang.String"/>
+	<field name="PART" class="java.lang.String"/>
+	<field name="UOMCODE" class="java.lang.String"/>
+	<field name="USERNAME" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="GROUPNAME" class="java.lang.String"/>
+	<field name="LOCATIONGROUPID" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="COMPANY" class="java.lang.String"/>
+	<variable name="PriceDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_PRICE")]]></variableExpression>
+	</variable>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<variable name="CostDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_COST")]]></variableExpression>
+	</variable>
+	<variable name="DateFormat" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+	</variable>
+	<group name="Location">
+		<groupExpression><![CDATA[$P{cbGroupBy}.equals("Inventorylog.locationgroupID") ?
+    $F{LOCATIONGROUPID} :
+    $F{PART}]]></groupExpression>
+		<groupHeader>
+			<band height="18" splitType="Stretch">
+				<textField isBlankWhenNull="true">
+					<reportElement key="textField" x="0" y="4" width="732" height="14" uuid="c2781c49-e105-46e1-a8c3-9d93d3839a8d"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Open Sans" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{cbGroupBy}.equals("Inventorylog.locationgroupID") ?
+    $F{GROUPNAME} :
+    $F{PART}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="64" splitType="Stretch">
+			<textField>
+				<reportElement key="staticText-12" mode="Transparent" x="0" y="18" width="732" height="22" forecolor="#000000" backcolor="#FFFFFF" uuid="e72b5e9a-1708-4860-a163-64dee1a54c52"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Open Sans" size="16" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ReportTitle}.equals("%") ? "Part Activity Report" : $P{ReportTitle}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-13" mode="Transparent" x="0" y="40" width="732" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="c5881301-9cf6-4dd7-82e4-4070287945d6"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{dateRange1}.getYear() <= -900 && $P{dateRange2}.getYear() >= 1100
+  ? "Date Range: All"
+  : "Date Range: " + (new SimpleDateFormat($V{DateFormat})).format($P{dateRange1}) + " - " +
+(new SimpleDateFormat($V{DateFormat})).format($P{dateRange2}.getTime()-86400000)]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-14" x="0" y="0" width="732" height="18" uuid="48912251-3d75-432b-8d71-586783ad15b7"/>
+				<textElement textAlignment="Center">
+					<font fontName="Open Sans" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMPANY}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-15" x="0" y="54" width="732" height="10" uuid="5f757fc4-a44f-4591-a4b8-6408f90fd1a7"/>
+				<textElement>
+					<font fontName="Open Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" "]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="37" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText-2" mode="Transparent" x="0" y="0" width="120" height="32" forecolor="#000000" backcolor="#999999" uuid="2f088dd5-04c4-4a3a-b043-cb69ca7ee00c"/>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Location]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-3" mode="Transparent" x="120" y="0" width="96" height="32" forecolor="#000000" backcolor="#999999" uuid="486a0365-fc99-4ff0-9aae-b1e18e6e71bd"/>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Event]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" mode="Transparent" x="299" y="0" width="151" height="32" forecolor="#000000" backcolor="#999999" uuid="ecff0bed-6d56-44ac-83d5-be53d64ac9a7"/>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Reference]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-5" mode="Transparent" x="450" y="0" width="59" height="32" forecolor="#000000" backcolor="#999999" uuid="61b18dc9-227e-4dcb-9ce7-7efe2b6f7a88"/>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[User]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-6" mode="Transparent" x="509" y="0" width="77" height="32" forecolor="#000000" backcolor="#999999" uuid="8af256b6-1359-4e14-bc58-c8cbb49de3cf"/>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Part]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-9" mode="Transparent" x="586" y="0" width="146" height="32" forecolor="#000000" backcolor="#999999" uuid="7c90b82c-037a-4af5-ba76-b2818bc47fb5"/>
+				<box leftPadding="3" rightPadding="3"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Tracking Info]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-10" mode="Transparent" x="216" y="0" width="83" height="32" forecolor="#000000" backcolor="#999999" uuid="0db348e3-a2db-499e-9cb0-57bd0719f534"/>
+				<box leftPadding="1" rightPadding="1"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Proportional" lineSpacingSize="1.0"/>
+				</textElement>
+				<text><![CDATA[Change Qty
+LG On Hand]]></text>
+			</staticText>
+			<line>
+				<reportElement x="228" y="16" width="70" height="1" uuid="2ce967ec-8331-46f6-beb0-9762c807114c"/>
+				<graphicElement>
+					<pen lineWidth="2.0"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="0" y="32" width="732" height="1" uuid="2c140d1c-4eb0-40e2-8570-c753f7c42e37"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="33" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="Event - Move" mode="Transparent" x="0" y="0" width="216" height="14" uuid="7c185147-ed0a-4339-82a6-866620cc0fb3">
+					<printWhenExpression><![CDATA[new Boolean(!($F{EVENT}.equals("adj:uom")))]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Open Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GROUPNAME} + "- " +
+($F{GROUPNAME}.equals($F{BEGGROUP}) ? $F{BEGLOCATION} : $F{ENDLOCATION})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="Event - UOM Change" mode="Transparent" x="0" y="0" width="216" height="14" uuid="44c8f412-bd05-402c-b21d-5537b41a4173">
+					<printWhenExpression><![CDATA[new Boolean(($F{EVENT}.equals("adj:uom")))]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Open Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA["UOM Change For All Location Groups"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="Date" positionType="Float" mode="Transparent" x="0" y="14" width="216" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="bcfe4791-baff-4274-8120-536822c3d0ff"/>
+				<box leftPadding="11">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EVENTDATE}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{DateFormat} + " h:mm a"]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="Tracking" positionType="Float" mode="Transparent" x="0" y="25" width="216" height="5" forecolor="#000000" backcolor="#FFFFFF" uuid="053192f9-aa1f-46df-afc3-d209334e45ff"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{EVENT}.equals("adj:exp")) ? "Trk Info: "+$F{INFO} : $F{EVENT}+" "+$F{INFO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="Change Qty" mode="Transparent" x="216" y="0" width="54" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="6346c73c-bd90-4593-816b-d9ae0af6ebb5"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CHANGEQTY}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="On Hand Qty" positionType="Float" mode="Transparent" x="216" y="17" width="54" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="001361e2-8482-4598-9259-6ff15a05d92a"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{QTYONHAND}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="Change UOM" mode="Transparent" x="270" y="0" width="28" height="14" uuid="8bb48576-753d-44fc-a8e3-b1445c6decc8"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UOMCODE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="On Hand UOM" positionType="Float" mode="Transparent" x="270" y="17" width="28" height="16" uuid="8fd9f847-a94d-4d4c-899f-2105387e4047"/>
+				<box topPadding="2" leftPadding="3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UOMCODE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="Begin Location" mode="Opaque" x="299" y="0" width="65" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="3e5dd112-6f9f-413d-890d-8434fbb812ef">
+					<printWhenExpression><![CDATA[new Boolean($F{EVENT}.equals("Yield") || $F{EVENT}.equals("Transfer"))]]></printWhenExpression>
+				</reportElement>
+				<box rightPadding="5">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BEGGROUP} + " - " + $F{BEGLOCATION} + "\n" +
+($P{ShowTagNum}
+    ? "(Tag "+$F{BEGTAGNUM}+") --> "
+    : "")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="End Location" mode="Transparent" x="364" y="0" width="86" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="850d6b2f-af57-4fd6-b292-4727ed2f20af"/>
+				<box leftPadding="5" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ENDGROUP} + " - " + $F{ENDLOCATION}+"\n" +
+($P{ShowTagNum}
+    ? "(Tag" + $F{ENDTAGNUM} + ")"
+    : "")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="User" mode="Transparent" x="450" y="0" width="59" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="58a64a51-1a52-4280-aaac-068285edbe07"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{USERNAME}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" hyperlinkType="Reference">
+				<reportElement key="Part" mode="Transparent" x="509" y="0" width="77" height="14" forecolor="#000099" backcolor="#FFFFFF" uuid="0e28fd38-fbc8-43ba-9a2b-4ed05b69fd8c"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PART}]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["PartNum"]]></anchorNameExpression>
+				<hyperlinkReferenceExpression><![CDATA[$F{PART}]]></hyperlinkReferenceExpression>
+			</textField>
+			<line>
+				<reportElement key="line-6" positionType="Float" x="232" y="15" width="62" height="1" uuid="2b63ecef-7957-43b0-81c2-d67ba8ee3a63"/>
+			</line>
+			<line>
+				<reportElement key="line-8" positionType="Float" x="0" y="32" width="732" height="1" forecolor="#CCCCCC" uuid="ed3409dd-00f3-4db4-91cc-e1fa4be3d169"/>
+			</line>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField" positionType="Float" x="298" y="14" width="434" height="18" isPrintWhenDetailOverflows="true" uuid="2c02b696-88de-4bce-985d-a4c5d48e03e1"/>
+				<box leftPadding="196"/>
+				<textElement textAlignment="Right">
+					<font fontName="Open Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TRACKINFO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="14" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-3" mode="Transparent" x="0" y="0" width="565" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="6f9de473-4ac5-4955-b624-d2906a4ac19f"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.LONG)).format(new Date())]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-4" mode="Transparent" x="565" y="0" width="119" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="fbd7a012-bc6f-45c5-92fe-4a4a303e28cc"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-5" mode="Transparent" x="684" y="0" width="48" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="08657347-9501-4419-add1-898361c990a4"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

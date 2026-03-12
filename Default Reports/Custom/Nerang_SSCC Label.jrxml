@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Nerang_SSCC Label" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="beba3fb4-d43c-4673-9b06-245840737cc4">
+	<property name="ireport.zoom" value="1.3636363636363675"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="357"/>
+	<style name="Barcode" hAlign="Center" vAlign="Middle" fontName="Open Sans" fontSize="7" isBold="true" pdfFontName="Helvetica"/>
+	<parameter name="shipID" class="java.lang.String">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+
+    so.num AS orderNum,
+    so.customerPo AS altOrderNum,
+    soitem.productNum,
+    soitem.description,
+    substring(shipcarton.sscc,11,7) as SSCC,
+    right(10 - right((substring(shipcarton.sscc,11,1)*3 +
+         substring(shipcarton.sscc,12,1) +
+         substring(shipcarton.sscc,13,1)*3 +
+         substring(shipcarton.sscc,14,1) +
+         substring(shipcarton.sscc,15,1)*3 +
+         substring(shipcarton.sscc,16,1) +
+         substring(shipcarton.sscc,17,1)*3) + 85,1),1) as CheckBit,
+    Product.UPC as PartUPC, sum(shipitem.qtyshipped) AS PALLETQTY,
+Date_Format(TRACKINGINFO.INFODATE, "%y%m%d") as ExpGtin,
+TRACKINGINFO.INFODATE, TBATCH.INFO as BOXSERIAL
+
+FROM
+    shipitem
+    JOIN ship ON ship.id = shipitem.shipId
+     LEFT JOIN soitem ON soitem.id = shipitem.soitemId
+    LEFT JOIN so ON so.id = soitem.soId
+    LEFT JOIN product ON product.id = shipitem.itemid
+
+    LEFT JOIN shipcarton ON shipcarton.id = shipitem.shipCartonId
+    LEFT JOIN TRACKINGINFO on trackinginfo.recordid = shipitem.id and parttrackingid = 3 and tableid = 1555030112
+  LEFT JOIN TRACKINGINFO  as TBATCH on TBATCH.recordid = shipitem.id and TBATCH.parttrackingid = 1 and TBATCH.tableid = 1555030112
+WHERE ship.id = $P{shipID}
+group by shipitem.shipcartonid]]>
+	</queryString>
+	<field name="orderNum" class="java.lang.String"/>
+	<field name="altOrderNum" class="java.lang.String"/>
+	<field name="productNum" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="description" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="sscc" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="PartUPC" class="java.lang.String"/>
+	<field name="PALLETQTY" class="java.math.BigDecimal"/>
+	<field name="INFODATE" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ExpGtin" class="java.lang.String"/>
+	<field name="CheckBit" class="java.lang.String"/>
+	<field name="BOXSERIAL" class="java.lang.String"/>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<detail>
+		<band height="546" splitType="Stretch">
+			<staticText>
+				<reportElement x="131" y="42" width="297" height="27" uuid="225c9e54-8206-4295-b3dd-4962d8a1b4c9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NERANG PARK POULTRY]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="134" y="125" width="289" height="18" uuid="88946ff1-df63-4f18-9f17-0962b977b5b3"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="13" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="134" y="144" width="216" height="18" uuid="7d258940-f863-4190-8670-c13022616086"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="13"/>
+				</textElement>
+				<text><![CDATA[ITEM No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="350" y="144" width="73" height="18" uuid="e98a522c-a493-4647-99cd-b8731347ece3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="13"/>
+				</textElement>
+				<text><![CDATA[Quantity]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="134" y="162" width="216" height="38" uuid="fd8683a2-8ebd-4576-990a-eccbc9cf7a08"/>
+				<box leftPadding="0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="26" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PartUPC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="350" y="162" width="73" height="38" uuid="11b58e85-1859-4dd5-8571-47ac8c10081d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="26" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PALLETQTY}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<staticText>
+				<reportElement x="134" y="200" width="162" height="18" uuid="9d429567-fcf1-4511-bff5-2f9325c0b1c2"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="13"/>
+				</textElement>
+				<text><![CDATA[USE BY (ddmmyyyy)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="296" y="200" width="127" height="18" uuid="883eb0e9-e1e1-458f-9e8d-3d8eac2d7ce7"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="13"/>
+				</textElement>
+				<text><![CDATA[Batch]]></text>
+			</staticText>
+			<line>
+				<reportElement x="131" y="284" width="297" height="1" uuid="e126584a-18b1-41c7-9802-f8dd3a203bee"/>
+			</line>
+			<componentElement>
+				<reportElement style="Barcode" x="146" y="307" width="277" height="91" uuid="2a97f92b-a88f-46b5-a8ca-62173d734c6a"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="GlobalTradeItemNumber" drawText="false" checksumRequired="false" barHeight="140">
+					<jr:codeExpression><![CDATA["(02)" + $F{PartUPC} + "(15)" + $F{ExpGtin}  + "(21)" + $F{BOXSERIAL}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement style="Barcode" x="149" y="417" width="274" height="93" uuid="815cfee3-b55a-4d63-93c4-bb29c7595a8e"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="GlobalTradeItemNumber" drawText="false" checksumRequired="false" barHeight="140">
+					<jr:codeExpression><![CDATA["(00)3931937600" + $F{sscc} +
+$F{CheckBit}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<textField isBlankWhenNull="true">
+				<reportElement x="134" y="87" width="291" height="38" uuid="4dcf199f-277e-4211-951c-e9163ad084c2"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="26" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["3931937600" + $F{sscc} +
+$F{CheckBit}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="136" y="69" width="287" height="18" uuid="568c848a-8b03-4261-973a-6306a22bca59"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="11"/>
+				</textElement>
+				<text><![CDATA[SSCC]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="141" y="516" width="287" height="18" uuid="12b24353-b136-424b-9eb7-91ac9ef198e2"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(00)3931937600" + $F{sscc} +
+$F{CheckBit}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="296" y="218" width="127" height="38" uuid="1c85ee87-a3cf-456d-b1a4-21b90787c55a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="26" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BOXSERIAL}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
+				<reportElement x="134" y="218" width="162" height="38" uuid="e422beac-75ec-4e16-9328-4975a81a19a1"/>
+				<box leftPadding="0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Open Sans" size="26" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INFODATE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="141" y="398" width="287" height="18" uuid="d6a04bbc-e0b1-4d7d-8694-b1317c731a3e"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(02)" + $F{PartUPC} + "(15)" + $F{ExpGtin} + "(21)" + $F{BOXSERIAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

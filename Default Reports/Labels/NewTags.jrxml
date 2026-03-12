@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="NewTags" columnCount="3" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="195" leftMargin="13" rightMargin="13" topMargin="36" bottomMargin="36" uuid="a95c501f-919e-4d98-ab98-030bd69b88a4">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="Qty" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Integer(30)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORTDESCRIPTION" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["New Tags for Avery 8160 Labels."]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TagStartingPoint" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RepeatTag" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cbPrintTagsUsing" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[NextAvailable, Next Available, Repeat, Repeat Tag, StartingPoint, Tag Starting Point]]></parameterDescription>
+		<defaultValueExpression><![CDATA["NextAvailable"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="StartAtLabel" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Integer(1)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[CALL CreateList($P!{Qty}, 'qty');
+CALL CreateList($P!{StartAtLabel} - 1, 'start');
+SELECT MAX(Tag.num) as Tag, 1 AS selectorder
+  FROM tag, tmp_qty
+ WHERE tag.typeID != 10
+ GROUP BY tmp_qty.cnt
+
+UNION ALL
+
+SELECT 0, 0
+FROM tmp_start
+
+ORDER BY 1]]>
+	</queryString>
+	<field name="TAG" class="java.lang.Integer"/>
+	<field name="SELECTORDER" class="java.lang.Integer"/>
+	<variable name="TagCount" class="java.lang.Integer" resetType="None">
+		<variableExpression><![CDATA[new Integer($V{REPORT_COUNT}.intValue() + $F{TAG}.intValue() - ($P{StartAtLabel}.intValue() - 1) )]]></variableExpression>
+	</variable>
+	<variable name="StartingPointCount" class="java.lang.Integer" resetType="None">
+		<variableExpression><![CDATA[new Integer($V{REPORT_COUNT}.intValue() + $P{TagStartingPoint}.intValue() + (-1) - ($P{StartAtLabel}.intValue() - 1))]]></variableExpression>
+	</variable>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band height="72">
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField" x="45" y="57" width="100" height="15" uuid="132d6e1e-8593-4c28-be2f-d0bb485d8f3b">
+					<printWhenExpression><![CDATA[$F{TAG} > 0]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Open Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cbPrintTagsUsing}.equals("Repeat") ?
+    $P{RepeatTag} :
+    $P{cbPrintTagsUsing}.equals("StartingPoint") ?
+        $V{StartingPointCount} :
+        $V{TagCount}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="16" y="3" width="168" height="54" uuid="339f8fcb-9c14-4000-9d81-1383938136e2">
+					<printWhenExpression><![CDATA[$F{TAG} > 0]]></printWhenExpression>
+				</reportElement>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128B" drawText="false" checksumRequired="false" barWidth="0">
+					<jr:codeExpression><![CDATA[$P{cbPrintTagsUsing}.equals("Repeat") ?
+    $P{RepeatTag}.toString() :
+    $P{cbPrintTagsUsing}.equals("StartingPoint") ?
+        $V{StartingPointCount}.toString() :
+        $V{TagCount}.toString()]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>
