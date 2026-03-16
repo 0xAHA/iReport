@@ -83,7 +83,8 @@ FROM po
     LEFT JOIN tag ON receiptitem.tagid = tag.id
     LEFT JOIN location ON tag.locationid = location.id
 WHERE receiptitem.statusId != 10
-AND DATE(receiptitem.datereceived) BETWEEN DATE($P{dateRange1}) AND DATE($P{dateRange2})
+AND DATE(poItem.dateLastFulfillment) BETWEEN DATE($P{dateRange1}) AND DATE($P{dateRange2})
+
 AND (COALESCE($P{poNum}, '') = '' OR po.num = $P{poNum})
 ORDER BY receiptitem.datereceived, po.num, poItem.poLineItem]]>
 	</queryString>
