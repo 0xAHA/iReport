@@ -66,17 +66,18 @@
     CustomFieldByName(poItem.customfields, 'Gluten') AS Gluten,
     CustomFieldByName(poItem.customfields, 'AFL') AS AFL,
     CustomFieldByName(poItem.customfields, 'Fum') AS Fum,
-    receive.dateCreated AS receiveDate,
-    receiveItem.qty AS receiveQty,
+    receiptitem.datereceived AS receiveDate,
+    receiptitem.qty AS receiveQty,
     location.name AS binLocation,
-    CASE WHEN receiveItem.rejected = 1 THEN 'Y' ELSE 'N' END AS isRejected
+    CustomFieldByName(poItem.customfields, 'Rejected') AS isRejected
 FROM po
     INNER JOIN poItem ON po.id = poItem.poId
     INNER JOIN part ON poItem.partId = part.id
     INNER JOIN vendor ON po.vendorId = vendor.id
-    LEFT JOIN receive ON receive.poId = po.id
-    LEFT JOIN receiveItem ON receiveItem.receiveId = receive.id AND receiveItem.poItemId = poItem.id
-    LEFT JOIN location ON receiveItem.locationId = location.id
+    LEFT JOIN receipt ON receipt.poid = po.id
+    LEFT JOIN receiptitem ON receiptitem.receiptid = receipt.id AND receiptitem.poitemid = poItem.id
+    LEFT JOIN tag ON receiptitem.tagid = tag.id
+    LEFT JOIN location ON tag.locationid = location.id
 WHERE po.num = $P{poNum}
 LIMIT 1]]>
 	</queryString>
@@ -120,7 +121,7 @@ LIMIT 1]]>
 	<field name="AFL" class="java.lang.String"/>
 	<field name="Fum" class="java.lang.String"/>
 	<field name="receiveDate" class="java.sql.Timestamp"/>
-	<field name="receiveQty" class="java.math.BigDecimal"/>
+	<field name="receiveQty" class="java.lang.Double"/>
 	<field name="binLocation" class="java.lang.String"/>
 	<field name="isRejected" class="java.lang.String"/>
 	<title>
