@@ -1,2 +1,3 @@
 # Ignore compiled JasperReports files
 *.jasper
+*.pdf

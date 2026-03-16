@@ -1,17 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
-              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
-              name="Corson_DMP"
-              pageWidth="595" pageHeight="842"
-              whenNoDataType="AllSectionsNoDetail"
-              columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20"
-              uuid="41776e9c-4dd8-4c22-8ca6-38d575b6bae4">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Corson_DMP" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="41776e9c-4dd8-4c22-8ca6-38d575b6bae4">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="1.948717100000005"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="336"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<style name="default" isDefault="true" fontName="Arial" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
@@ -24,6 +17,9 @@
 	<style name="large24" fontName="Arial" fontSize="24" isBold="true"/>
 	<parameter name="poNum" class="java.lang.String">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="module" class="java.lang.Object" isForPrompting="false">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT
@@ -126,46 +122,39 @@ LIMIT 1]]>
 	<field name="isRejected" class="java.lang.String"/>
 	<title>
 		<band height="62" splitType="Stretch">
-			<!-- Print date top-left -->
 			<textField>
 				<reportElement x="0" y="0" width="120" height="10" uuid="3bfce35f-beba-4fee-8b12-dd838eab1d67"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
 				<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("d/MM/yyyy").format(new java.util.Date())]]></textFieldExpression>
 			</textField>
-			<!-- Version -->
 			<staticText>
 				<reportElement x="0" y="12" width="120" height="10" uuid="b3fefedb-6fee-4fa6-9ea0-33f1604ae70e"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
 				<text><![CDATA[Version: 1]]></text>
 			</staticText>
-			<!-- DMP label -->
 			<staticText>
 				<reportElement x="0" y="30" width="45" height="28" uuid="b08ebd95-e0d9-4dcd-adb4-0a98d998d2bd"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="16" isBold="true"/></textElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
 				<text><![CDATA[DMP]]></text>
 			</staticText>
-			<!-- DMP number = poNum -->
 			<textField isBlankWhenNull="true">
 				<reportElement x="48" y="28" width="110" height="32" uuid="9370b318-97b0-4f3d-8cab-83afc591b527"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="20" isBold="true"/></textElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="20" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{poNum} != null ? $F{poNum} : ""]]></textFieldExpression>
 			</textField>
-			<!-- CORSON heading centre -->
-			<staticText>
-				<reportElement x="157" y="2" width="241" height="30" uuid="73902a30-4b74-4033-8c20-535875523c2f"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="26" isBold="true"/></textElement>
-				<text><![CDATA[CORSON]]></text>
-			</staticText>
-			<!-- Warwick Mill sub-heading -->
-			<staticText>
-				<reportElement x="157" y="34" width="241" height="14" uuid="066c844c-4b70-4387-a1fe-ef32ffeaac10"/>
-				<textElement textAlignment="Center"><font fontName="Arial" size="10"/></textElement>
-				<text><![CDATA[Warwick Mill]]></text>
-			</staticText>
-			<!-- Company address block top-right -->
 			<staticText>
 				<reportElement x="400" y="0" width="155" height="62" uuid="c8be01f6-95b7-48f7-9a37-0ddb7a383c15"/>
-				<textElement textAlignment="Right" verticalAlignment="Top"><font fontName="Arial" size="7"/></textElement>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Arial" size="7"/>
+				</textElement>
 				<text><![CDATA[Defiance Maize Products Pty Ltd
 Trading as Corson
 Churchill Drive
@@ -175,111 +164,114 @@ Facsimile: +64 07 4661 3749
 ACN: 009 738 050
 ABN: 18 009 738 050]]></text>
 			</staticText>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="158" y="0" width="242" height="62" uuid="1dde88d8-a602-4a79-b154-cb3b66955617"/>
+				<imageExpression><![CDATA[com.evnt.util.ImageUtil.decodeImage(((com.evnt.eve.modules.ReportHelperModule) $P{module}).getImageData("Company", 1, true))]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<detail>
 		<band height="698" splitType="Prevent">
-
-			<!-- ============================================================ -->
-			<!-- OUTER BORDER -->
-			<!-- ============================================================ -->
 			<rectangle>
-				<reportElement x="0" y="0" width="555" height="652" uuid="6c344d54-2b1d-4364-aa74-f5f9fab99fb7"/>
-				<graphicElement><pen lineWidth="1.0"/></graphicElement>
+				<reportElement x="0" y="29" width="555" height="652" uuid="6c344d54-2b1d-4364-aa74-f5f9fab99fb7"/>
+				<graphicElement>
+					<pen lineWidth="1.0"/>
+				</graphicElement>
 			</rectangle>
-
-			<!-- ============================================================ -->
-			<!-- ROW 0: Form instruction text (y=0 h=28) -->
-			<!-- ============================================================ -->
 			<staticText>
 				<reportElement x="2" y="1" width="551" height="26" uuid="295e259a-f558-4b6b-91ea-f78728a3a4fe"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="7" isItalic="true"/></textElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isItalic="true"/>
+				</textElement>
 				<text><![CDATA[Maize Receival Form/Delivery Advice - Grower / Supplier / Agent Must: Ensure delivery is recorded in correct name. Check the accuracy of this delivery advice before leaving the weigh bridge. "End and end" weighings are not guaranteed.]]></text>
 			</staticText>
-			<!-- Horizontal line under instruction text -->
 			<line>
 				<reportElement x="0" y="28" width="555" height="1" uuid="6693a97a-595e-4262-9868-c453e99a6a89"/>
 			</line>
-
-			<!-- ============================================================ -->
-			<!-- ROW 1: MAIZE / ORDER section headers (y=28 h=14) -->
-			<!-- ============================================================ -->
 			<staticText>
 				<reportElement x="0" y="29" width="280" height="13" uuid="9d5c06ab-8f39-4cfc-837e-f3e73334af5e"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="8" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
 				<text><![CDATA[MAIZE]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="280" y="29" width="275" height="13" uuid="4a781670-da59-489c-a70f-23f901872294"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="8" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
 				<text><![CDATA[ORDER]]></text>
 			</staticText>
-			<!-- Vertical divider MAIZE/ORDER -->
 			<line>
 				<reportElement x="280" y="28" width="1" height="223" uuid="4ebd2ecc-60c1-4421-b6a9-d1464684080e"/>
 			</line>
-			<!-- Horizontal line under MAIZE/ORDER headers -->
 			<line>
 				<reportElement x="0" y="42" width="555" height="1" uuid="90d8dfdb-1799-42ea-9812-d79f694b5e94"/>
 			</line>
-
-			<!-- ============================================================ -->
-			<!-- ROW 2: Date / Depot / Grower Details (y=42 h=40) -->
-			<!-- ============================================================ -->
 			<staticText>
-				<reportElement x="2" y="43" width="55" height="9" uuid="35fce9b1-d319-4fd6-8acf-10af8edd2f88"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<reportElement x="2" y="44" width="55" height="9" uuid="35fce9b1-d319-4fd6-8acf-10af8edd2f88"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Date]]></text>
 			</staticText>
-			<!-- Receive date value -->
 			<textField isBlankWhenNull="true">
 				<reportElement x="2" y="53" width="136" height="27" uuid="2af1bdb8-9435-4084-ac85-f2ca44e25a0f"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="11" isBold="true"/></textElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{receiveDate} != null ? new java.text.SimpleDateFormat("d/MM/yy").format($F{receiveDate}) : ""]]></textFieldExpression>
 			</textField>
-			<!-- Vertical divider at x=140 (Date/Depot split) -->
 			<line>
 				<reportElement x="140" y="42" width="1" height="40" uuid="30a02ae4-afca-45f6-940b-c0e92b37b748"/>
 			</line>
 			<staticText>
-				<reportElement x="142" y="43" width="55" height="9" uuid="c322f590-39c5-4565-828c-8184b2f6cf69"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<reportElement x="142" y="44" width="55" height="9" uuid="c322f590-39c5-4565-828c-8184b2f6cf69"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Depot]]></text>
 			</staticText>
-			<!-- Depot: blank field for manual entry -->
 			<textField isBlankWhenNull="true">
-				<reportElement x="142" y="53" width="136" height="27" uuid="37368095-bb63-4fa3-b07c-dd101acbecde"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="11" isBold="true"/></textElement>
+				<reportElement x="144" y="53" width="136" height="27" uuid="37368095-bb63-4fa3-b07c-dd101acbecde"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[""]]></textFieldExpression>
 			</textField>
-			<!-- Grower Details label (ORDER column) -->
 			<staticText>
-				<reportElement x="282" y="43" width="100" height="9" uuid="8dbfa308-784a-4171-9780-dbac9abd4b19"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<reportElement x="282" y="44" width="100" height="9" uuid="8dbfa308-784a-4171-9780-dbac9abd4b19"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Grower Details]]></text>
 			</staticText>
-			<!-- Grower value -->
 			<textField isBlankWhenNull="true">
 				<reportElement x="282" y="53" width="171" height="27" uuid="dabe803a-b4f0-4777-9ab9-b13f7f2c9171"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="11" isBold="true"/></textElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{Grower} != null ? $F{Grower} : ""]]></textFieldExpression>
 			</textField>
-			<!-- Horizontal line y=82 -->
 			<line>
 				<reportElement x="0" y="82" width="555" height="1" uuid="ddc9d0a7-e87f-4888-9a2e-2f28134a2253"/>
 			</line>
-
-			<!-- ============================================================ -->
-			<!-- ROW 3: CLIENT / CONTRACT No / Grower cont. (y=82 h=30) -->
-			<!-- ============================================================ -->
 			<staticText>
 				<reportElement x="2" y="83" width="55" height="9" uuid="6b2744ad-d85d-4607-bf45-6320070a5c0c"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[CLIENT]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement x="2" y="92" width="136" height="18" uuid="51707eec-e598-4aeb-a7af-205a54fe9587"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="10" isBold="true"/></textElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{vendorName} != null ? $F{vendorName} : ""]]></textFieldExpression>
 			</textField>
 			<line>
@@ -287,36 +279,41 @@ ABN: 18 009 738 050]]></text>
 			</line>
 			<staticText>
 				<reportElement x="142" y="83" width="80" height="9" uuid="41c9f27a-2945-4965-8208-1fdf9d247cc9"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[CONTRACT No]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement x="142" y="92" width="136" height="18" uuid="5430b3bb-3c84-4ad2-a9aa-8346eb5d7d70"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="10" isBold="true"/></textElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{ContractNum} != null ? $F{ContractNum} : ""]]></textFieldExpression>
 			</textField>
-			<!-- Grower Details continued (test results line 1: Soy/Glu) -->
 			<textField isBlankWhenNull="true">
 				<reportElement x="282" y="83" width="171" height="27" uuid="cca7ed16-ef1f-4e6a-87af-78b74bb04404"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="9"/></textElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[("Soy: " + ($F{Soy} != null ? $F{Soy} : "-") + "  Glu: " + ($F{Gluten} != null ? $F{Gluten} : "-"))]]></textFieldExpression>
 			</textField>
-			<!-- Horizontal line y=112 -->
 			<line>
 				<reportElement x="0" y="112" width="555" height="1" uuid="8d5d5588-829f-4be5-ab13-88be0a7f1e0c"/>
 			</line>
-
-			<!-- ============================================================ -->
-			<!-- ROW 4: VARIETY / SEASON / (test results AFL/Fum) (y=112 h=30) -->
-			<!-- ============================================================ -->
 			<staticText>
 				<reportElement x="2" y="113" width="55" height="9" uuid="2653774d-2b4c-4bad-9c35-79f4435fcf4c"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
 				<text><![CDATA[VARIETY]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement x="2" y="122" width="136" height="18" uuid="73e1818f-6961-42d1-ad6e-ec82f9e402a0"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="10" isBold="true"/></textElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{partNum} != null ? $F{partNum} : ""]]></textFieldExpression>
 			</textField>
 			<line>
@@ -324,36 +321,42 @@ ABN: 18 009 738 050]]></text>
 			</line>
 			<staticText>
 				<reportElement x="142" y="113" width="55" height="9" uuid="d002f84f-e081-4fcd-b821-3ef8af18acfb"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[SEASON]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="142" y="122" width="136" height="18" uuid="f65be124-77a5-44f6-bd71-d9fa357b4033"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="10" isBold="true"/></textElement>
+				<reportElement x="142" y="122" width="134" height="18" uuid="f65be124-77a5-44f6-bd71-d9fa357b4033"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{Season} != null ? $F{Season} : ""]]></textFieldExpression>
 			</textField>
-			<!-- AFL / Fum test results in ORDER column -->
 			<textField isBlankWhenNull="true">
 				<reportElement x="282" y="113" width="171" height="27" uuid="4296c2a1-ccc7-4d51-9a4e-f8c4b19a9537"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="9"/></textElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[("AFL: " + ($F{AFL} != null ? $F{AFL} : "-") + "  Fum: " + ($F{Fum} != null ? $F{Fum} : "-"))]]></textFieldExpression>
 			</textField>
-			<!-- Horizontal line y=142 -->
 			<line>
 				<reportElement x="0" y="142" width="555" height="1" uuid="72346b2b-07b7-4950-8990-43cc655c4e8e"/>
 			</line>
-
-			<!-- ============================================================ -->
-			<!-- ROW 5: MOISTURE / KG/HL / Full Test result (y=142 h=48) -->
-			<!-- ============================================================ -->
 			<staticText>
 				<reportElement x="2" y="143" width="55" height="9" uuid="8ab04655-f3f8-4cf3-bed4-5ecb74f964f7"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[MOISTURE]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement x="2" y="153" width="136" height="35" uuid="b2a5e540-cf24-4aa1-8b25-1e4e23da6d63"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="14" isBold="true"/></textElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{Moisture} != null ? $F{Moisture} : ""]]></textFieldExpression>
 			</textField>
 			<line>
@@ -361,56 +364,50 @@ ABN: 18 009 738 050]]></text>
 			</line>
 			<staticText>
 				<reportElement x="142" y="143" width="55" height="9" uuid="41776e9c-4dd8-4c22-8ca6-33333333cccc"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
 				<text><![CDATA[KG/HL]]></text>
 			</staticText>
-			<!-- KG/HL value 1 -->
 			<textField isBlankWhenNull="true">
-				<reportElement x="142" y="153" width="136" height="16" uuid="41776e9c-4dd8-4c22-8ca6-55555555eeee"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="11" isBold="true"/></textElement>
+				<reportElement x="142" y="153" width="136" height="35" uuid="41776e9c-4dd8-4c22-8ca6-55555555eeee"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{KGHL} != null ? $F{KGHL} : ""]]></textFieldExpression>
 			</textField>
-			<!-- KG/HL value 2 (GrossWeight1 / 1000 as a second reading placeholder) -->
-			<textField isBlankWhenNull="true">
-				<reportElement x="142" y="170" width="136" height="18" uuid="41776e9c-4dd8-4c22-8ca6-777777770000"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="11" isBold="true"/></textElement>
-				<textFieldExpression><![CDATA[""]]></textFieldExpression>
-			</textField>
-			<!-- Full Test result in ORDER column (Pass/Fail) -->
 			<staticText>
 				<reportElement x="282" y="143" width="60" height="9" uuid="41776e9c-4dd8-4c22-8ca6-999999992222"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
 				<text><![CDATA[Full Test Result]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement x="282" y="153" width="171" height="35" uuid="41776e9c-4dd8-4c22-8ca6-ccccccccdddd"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="16" isBold="true"/></textElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{FullTest} != null ? $F{FullTest} : ""]]></textFieldExpression>
 			</textField>
-			<!-- Horizontal line y=190 -->
 			<line>
 				<reportElement x="0" y="190" width="555" height="1" uuid="11111111-1111-4111-8111-111111111111"/>
 			</line>
-			<!-- ============================================================ -->
-			<!-- ROW 6: PARTICLE SIZE header (y=190 h=14) -->
-			<!-- ============================================================ -->
 			<staticText>
 				<reportElement x="0" y="191" width="280" height="13" uuid="33333333-3333-4333-8333-333333333333"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="7" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
 				<text><![CDATA[PARTICLE SIZE]]></text>
 			</staticText>
-			<!-- Grower Details ORDER column continues down -->
 			<line>
 				<reportElement x="0" y="204" width="555" height="1" uuid="55555555-5555-4555-8555-555555555555"/>
 			</line>
-
-			<!-- ============================================================ -->
-			<!-- ROW 7: 4.75 / Broken / Cracked / Dead column headers (y=204 h=16) -->
-			<!-- ============================================================ -->
-			<!-- 4 columns in MAIZE section: each 70pts wide -->
 			<staticText>
 				<reportElement x="0" y="205" width="70" height="14" uuid="77777777-7777-4777-8777-777777777777"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="7" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
 				<text><![CDATA[4.75]]></text>
 			</staticText>
 			<line>
@@ -418,7 +415,9 @@ ABN: 18 009 738 050]]></text>
 			</line>
 			<staticText>
 				<reportElement x="70" y="205" width="70" height="14" uuid="bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="7" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
 				<text><![CDATA[Broken]]></text>
 			</staticText>
 			<line>
@@ -426,7 +425,9 @@ ABN: 18 009 738 050]]></text>
 			</line>
 			<staticText>
 				<reportElement x="140" y="205" width="70" height="14" uuid="ffffffff-ffff-4fff-8fff-ffffffffffff"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="7" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
 				<text><![CDATA[Cracked]]></text>
 			</staticText>
 			<line>
@@ -434,304 +435,346 @@ ABN: 18 009 738 050]]></text>
 			</line>
 			<staticText>
 				<reportElement x="210" y="205" width="70" height="14" uuid="44445555-6666-4777-8888-999900001111"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="7" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
 				<text><![CDATA[Dead]]></text>
 			</staticText>
 			<line>
 				<reportElement x="0" y="220" width="280" height="1" uuid="66667777-8888-4999-8000-111122223333"/>
 			</line>
-
-			<!-- ============================================================ -->
-			<!-- ROW 8: Particle size values (y=220 h=30) -->
-			<!-- ============================================================ -->
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="221" width="70" height="28" uuid="88889999-0000-4111-8222-333344445555"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="12" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{PS475} != null ? $F{PS475} : ""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="70" y="221" width="70" height="28" uuid="00001111-2222-4333-8444-555566667777"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="12" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{PSBroken} != null ? $F{PSBroken} : ""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="140" y="221" width="70" height="28" uuid="22223333-4444-4111-8666-777788889999"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="12" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{PSCracked} != null ? $F{PSCracked} : ""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="210" y="221" width="70" height="28" uuid="44445555-6666-4111-8888-999900001111"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="12" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{PSDead} != null ? $F{PSDead} : ""]]></textFieldExpression>
 			</textField>
-			<!-- Horizontal line y=250 -->
 			<line>
 				<reportElement x="0" y="250" width="555" height="1" uuid="66667777-8888-4111-8000-111122223333"/>
 			</line>
-
-			<!-- ============================================================ -->
-			<!-- ROW 9: Y/N Labels row (y=250 h=14) -->
-			<!-- ============================================================ -->
-			<!-- MAIZE section: 4 Y/N labels (each 70pts) -->
 			<staticText>
 				<reportElement x="0" y="251" width="70" height="22" uuid="88889999-0000-4111-8111-333344445555"/>
-				<textElement verticalAlignment="Top"><font fontName="Arial" size="6"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Aflatoxin
 Present Y/N]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="70" y="251" width="70" height="22" uuid="00001111-2222-4111-8111-555566667777"/>
-				<textElement verticalAlignment="Top"><font fontName="Arial" size="6"/></textElement>
+				<reportElement x="72" y="250" width="70" height="22" uuid="00001111-2222-4111-8111-555566667777"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Infestation
 Y/N]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="140" y="251" width="70" height="22" uuid="22223333-4444-4bbb-8111-777788889999"/>
-				<textElement verticalAlignment="Top"><font fontName="Arial" size="6"/></textElement>
+				<reportElement x="141" y="251" width="70" height="22" uuid="22223333-4444-4bbb-8111-777788889999"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Sprouted
 Y/N]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="210" y="251" width="70" height="22" uuid="44445555-6666-4ddd-8111-999900001111"/>
-				<textElement verticalAlignment="Top"><font fontName="Arial" size="6"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Impurities
 Y/N]]></text>
 			</staticText>
-			<!-- ORDER section continues: Weed Seeds Y/N -->
 			<staticText>
-				<reportElement x="280" y="251" width="90" height="22" uuid="66667777-8888-4fff-8111-111122223333"/>
-				<textElement verticalAlignment="Top"><font fontName="Arial" size="6"/></textElement>
+				<reportElement x="281" y="251" width="90" height="22" uuid="66667777-8888-4fff-8111-111122223333"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Weed Seeds
 Y/N]]></text>
 			</staticText>
-			<!-- Vertical dividers in Y/N section -->
 			<line>
 				<reportElement x="370" y="250" width="1" height="65" uuid="88889999-0000-4000-8222-333344445555"/>
 			</line>
 			<staticText>
-				<reportElement x="372" y="251" width="80" height="22" uuid="00001111-2222-4000-8222-555566667777"/>
-				<textElement verticalAlignment="Top"><font fontName="Arial" size="6"/></textElement>
+				<reportElement x="373" y="251" width="80" height="22" uuid="00001111-2222-4000-8222-555566667777"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[BIN
 Number]]></text>
 			</staticText>
-			<!-- Vertical divider before Accept/Reject -->
 			<line>
 				<reportElement x="453" y="250" width="1" height="65" uuid="22223333-4444-4000-8222-777788889999"/>
 			</line>
 			<staticText>
-				<reportElement x="455" y="251" width="98" height="10" uuid="44445555-6666-4000-8222-999900001111"/>
-				<textElement><font fontName="Arial" size="6"/></textElement>
+				<reportElement x="456" y="251" width="98" height="10" uuid="44445555-6666-4000-8222-999900001111"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Accept]]></text>
 			</staticText>
-
-			<!-- ============================================================ -->
-			<!-- ROW 10: Y/N values row (y=273 h=42) -->
-			<!-- ============================================================ -->
 			<textField isBlankWhenNull="true">
-				<reportElement x="0" y="273" width="70" height="42" uuid="66667777-8888-4000-8222-111122223333"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="14" isBold="true"/></textElement>
+				<reportElement x="1" y="272" width="70" height="42" uuid="66667777-8888-4000-8222-111122223333"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{Aflatoxin} != null ? $F{Aflatoxin} : ""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="70" y="273" width="70" height="42" uuid="88889999-0000-4bbb-8222-333344445555"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="14" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{Infestation} != null ? $F{Infestation} : ""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="140" y="273" width="70" height="42" uuid="00001111-2222-4bbb-8222-555566667777"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="14" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{Sprouted} != null ? $F{Sprouted} : ""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="210" y="273" width="70" height="42" uuid="22223333-4444-4bbb-8222-777788889999"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="14" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{Impurities} != null ? $F{Impurities} : ""]]></textFieldExpression>
 			</textField>
-			<!-- Weed Seeds value -->
 			<textField isBlankWhenNull="true">
 				<reportElement x="280" y="273" width="90" height="42" uuid="44445555-6666-4bbb-8222-999900001111"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="14" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{WeedSeeds} != null ? $F{WeedSeeds} : ""]]></textFieldExpression>
 			</textField>
-			<!-- BIN Number (location) -->
 			<textField isBlankWhenNull="true">
 				<reportElement x="372" y="273" width="80" height="42" uuid="66667777-8888-4bbb-8222-111122223333"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="14" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{binLocation} != null ? $F{binLocation} : ""]]></textFieldExpression>
 			</textField>
-			<!-- Accept circle / Reject text -->
 			<textField isBlankWhenNull="true">
 				<reportElement x="455" y="271" width="98" height="20" uuid="88889999-0000-4ccc-8222-333344445555"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="10" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA["N".equals($F{isRejected}) ? "ACCEPT" : ""]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="455" y="291" width="98" height="10" uuid="00001111-2222-4ccc-8222-555566667777"/>
-				<textElement><font fontName="Arial" size="6"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
 				<text><![CDATA[Reject]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement x="455" y="300" width="98" height="15" uuid="22223333-4444-4ccc-8222-777788889999"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="10" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA["Y".equals($F{isRejected}) ? "REJECTED" : ""]]></textFieldExpression>
 			</textField>
-			<!-- Horizontal line y=315 -->
 			<line>
 				<reportElement x="0" y="315" width="555" height="1" uuid="44445555-6666-4ccc-8222-999900001111"/>
 			</line>
-			<!-- ============================================================ -->
-			<!-- ROW 11: Transport section (y=315 h=60) -->
-			<!-- ============================================================ -->
-			<!-- Transport label -->
 			<staticText>
 				<reportElement x="2" y="316" width="60" height="9" uuid="66667777-8888-4ccc-8222-111122223333"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Transport]]></text>
 			</staticText>
-			<!-- Transport value -->
 			<textField isBlankWhenNull="true">
 				<reportElement x="2" y="326" width="180" height="22" uuid="88889999-0000-4ddd-8333-333344445555"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="11" isBold="true"/></textElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{Transport} != null ? $F{Transport} : ""]]></textFieldExpression>
 			</textField>
-			<!-- Vertical divider at x=185 -->
 			<line>
 				<reportElement x="185" y="315" width="1" height="60" uuid="00001111-2222-4ddd-8333-555566667777"/>
 			</line>
-			<!-- Truck Code label -->
 			<staticText>
 				<reportElement x="187" y="316" width="60" height="9" uuid="22223333-4444-4ddd-8333-777788889999"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Truck Code]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement x="187" y="326" width="90" height="22" uuid="44445555-6666-4ddd-8333-999900001111"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="11" isBold="true"/></textElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{TruckCode} != null ? $F{TruckCode} : ""]]></textFieldExpression>
 			</textField>
-			<!-- Vertical divider at x=280 -->
 			<line>
 				<reportElement x="280" y="315" width="1" height="60" uuid="66667777-8888-4ddd-8333-111122223333"/>
 			</line>
-			<!-- Truck Rego label -->
 			<staticText>
 				<reportElement x="282" y="316" width="60" height="9" uuid="88889999-0000-4eee-8333-333344445555"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Truck Rego]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement x="282" y="326" width="100" height="22" uuid="00001111-2222-4eee-8333-555566667777"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="11" isBold="true"/></textElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{TruckRego} != null ? $F{TruckRego} : ""]]></textFieldExpression>
 			</textField>
-			<!-- Vertical divider at x=385 -->
 			<line>
 				<reportElement x="385" y="315" width="1" height="60" uuid="22223333-4444-4eee-8333-777788889999"/>
 			</line>
-			<!-- Trailer Rego label (blank - manual entry) -->
 			<staticText>
 				<reportElement x="387" y="316" width="80" height="9" uuid="44445555-6666-4eee-8333-999900001111"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Trailer Rego]]></text>
 			</staticText>
-			<!-- Blank trailer rego field -->
 			<textField isBlankWhenNull="true">
 				<reportElement x="387" y="326" width="80" height="22" uuid="66667777-8888-4eee-8333-111122223333"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="11" isBold="true"/></textElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[""]]></textFieldExpression>
 			</textField>
-			<!-- Vertical divider at x=470 -->
 			<line>
 				<reportElement x="470" y="315" width="1" height="60" uuid="88889999-0000-4fff-8333-333344445555"/>
 			</line>
-			<!-- Trailer Rego 2 label -->
 			<staticText>
 				<reportElement x="472" y="316" width="81" height="9" uuid="00001111-2222-4fff-8333-555566667777"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Trailer Rego 2]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement x="472" y="326" width="81" height="22" uuid="22223333-4444-4fff-8333-777788889999"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="11" isBold="true"/></textElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[""]]></textFieldExpression>
 			</textField>
-			<!-- Horizontal line y=348 (Weight Limit Type row) -->
 			<line>
 				<reportElement x="0" y="348" width="555" height="1" uuid="44445555-6666-4fff-8333-999900001111"/>
 			</line>
-
-			<!-- Weight Limit Type row (y=348 h=27) -->
 			<staticText>
 				<reportElement x="2" y="349" width="200" height="9" uuid="66667777-8888-4000-8444-111122223333"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Weight Limit Type: GML / CML / HML / GHMS]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement x="2" y="359" width="200" height="14" uuid="88889999-0000-4000-8444-333344445555"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="10" isBold="true"/></textElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{WeightLimitType} != null ? $F{WeightLimitType} : ""]]></textFieldExpression>
 			</textField>
-			<!-- Vertical divider at x=280 in weight limit row -->
 			<line>
 				<reportElement x="280" y="348" width="1" height="27" uuid="00001111-2222-4000-8444-555566667777"/>
 			</line>
-			<!-- Permit No label -->
 			<staticText>
 				<reportElement x="282" y="349" width="60" height="9" uuid="22223333-4444-4000-8444-777788889999"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Permit No:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement x="282" y="359" width="170" height="14" uuid="44445555-6666-4000-8444-999900001111"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="10" isBold="true"/></textElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{PermitNo} != null ? $F{PermitNo} : ""]]></textFieldExpression>
 			</textField>
-			<!-- Vertical divider at x=455 in weight limit row -->
 			<line>
 				<reportElement x="455" y="348" width="1" height="27" uuid="e8954d76-bf5e-4086-a4ff-3c9f0ed5ab48"/>
 			</line>
-			<!-- Extra / SAA label -->
 			<staticText>
 				<reportElement x="457" y="349" width="96" height="9" uuid="88889999-0000-4000-8555-333344445555"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Extra / SAA]]></text>
 			</staticText>
-			<!-- Blank Extra/SAA field -->
 			<textField isBlankWhenNull="true">
 				<reportElement x="457" y="359" width="96" height="14" uuid="00001111-2222-4000-8555-555566667777"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="10" isBold="true"/></textElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[""]]></textFieldExpression>
 			</textField>
-			<!-- Horizontal line y=375 -->
 			<line>
 				<reportElement x="0" y="375" width="555" height="1" uuid="22223333-4444-4000-8555-777788889999"/>
 			</line>
-
-			<!-- ============================================================ -->
-			<!-- WEIGHTS SECTION (y=375 onwards) -->
-			<!-- ============================================================ -->
-			<!-- Gross Weight in Words row (y=375 h=20) -->
 			<staticText>
 				<reportElement x="2" y="376" width="120" height="9" uuid="44445555-6666-4000-8555-999900001111"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Gross Weight in Words]]></text>
 			</staticText>
-			<!-- blank field for manual entry -->
 			<textField isBlankWhenNull="true">
 				<reportElement x="2" y="386" width="551" height="14" uuid="66667777-8888-4000-8555-111122223333"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="10"/></textElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
 				<textFieldExpression><![CDATA[""]]></textFieldExpression>
 			</textField>
-			<!-- Horizontal line y=400 -->
 			<line>
 				<reportElement x="0" y="400" width="555" height="1" uuid="7c8228e4-dadc-4edc-935c-eee555d405d7"/>
 			</line>
-
-			<!-- Weight column headers (y=400 h=16) -->
-			<!-- Gross Weight | Tare Weight | Payment Weights -->
 			<staticText>
 				<reportElement x="0" y="401" width="185" height="14" uuid="0703dc87-c4a8-44ef-99e9-c676b99a7fcb"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="7" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
 				<text><![CDATA[Gross Weight]]></text>
 			</staticText>
 			<line>
@@ -739,7 +782,9 @@ Number]]></text>
 			</line>
 			<staticText>
 				<reportElement x="186" y="401" width="185" height="14" uuid="44445555-6666-4000-8555-999900001112"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="7" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
 				<text><![CDATA[Tare Weight]]></text>
 			</staticText>
 			<line>
@@ -747,182 +792,214 @@ Number]]></text>
 			</line>
 			<staticText>
 				<reportElement x="372" y="401" width="183" height="14" uuid="88889999-0000-4000-8555-333344445556"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="7" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
 				<text><![CDATA[Payment Weights]]></text>
 			</staticText>
 			<line>
 				<reportElement x="0" y="415" width="555" height="1" uuid="00001111-2222-4000-8555-555566667778"/>
 			</line>
-
-			<!-- Gross Weight 1 / Tare Weight 1 / Payment Gross (y=415 h=32) -->
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="416" width="185" height="30" uuid="22223333-4444-4000-8555-777788889990"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="16" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{GrossWeight1} != null ? $F{GrossWeight1} : ""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="186" y="416" width="185" height="30" uuid="7d3cd785-ff46-4fa3-8305-b65668f3b0db"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="16" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{TareWeight1} != null ? $F{TareWeight1} : ""]]></textFieldExpression>
 			</textField>
-			<!-- Payment Weights: Gross label -->
 			<staticText>
 				<reportElement x="374" y="416" width="60" height="9" uuid="a6664741-0d72-4548-85fc-a42076238209"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Gross]]></text>
 			</staticText>
 			<line>
 				<reportElement x="0" y="446" width="371" height="1" uuid="7d705cd3-9f19-4377-b67f-1fd908d27e1f"/>
 			</line>
-
-			<!-- Gross Weight 2 / Tare Weight 2 / Payment Gross value (y=446 h=32) -->
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="447" width="185" height="30" uuid="d4fe53ac-bcc9-4817-b17f-b314dd73e606"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="16" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{GrossWeight2} != null ? $F{GrossWeight2} : ""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="186" y="447" width="185" height="30" uuid="fa99b87e-86a1-41fe-b845-3617075cef12"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="16" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{TareWeight2} != null ? $F{TareWeight2} : ""]]></textFieldExpression>
 			</textField>
-			<!-- Payment Gross value (spans both GW rows) -->
 			<textField isBlankWhenNull="true">
 				<reportElement x="374" y="426" width="179" height="50" uuid="a3b3877d-8c01-4096-afa6-372f15bc6dbc"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="20" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="20" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{TotalGrossWeight} != null ? $F{TotalGrossWeight} : ""]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement x="0" y="477" width="555" height="1" uuid="03df9e3a-8c44-400a-b3ff-933b5ac98b4f"/>
 			</line>
-
-			<!-- Tare payment label + value (y=477 h=50) -->
 			<staticText>
 				<reportElement x="374" y="478" width="60" height="9" uuid="c7d5eec8-8f87-4024-9144-a4a84d2e2349"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Tare]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement x="374" y="488" width="179" height="38" uuid="43b8faf8-5996-4b56-85f8-665a382bb09f"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="20" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="20" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{TotalTareWeight} != null ? $F{TotalTareWeight} : ""]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement x="0" y="526" width="555" height="1" uuid="b4bf0894-f3e6-421b-a006-47290e35a9e4"/>
 			</line>
-
-			<!-- Total Gross / Total Tare labels (y=526 h=14) -->
 			<staticText>
 				<reportElement x="2" y="527" width="90" height="9" uuid="2d8c4abf-4482-4a40-be9a-4061dfad196a"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Total Gross]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="186" y="527" width="90" height="9" uuid="53f4db08-07f5-4156-861e-b76cc4b15bf8"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Total Tare]]></text>
 			</staticText>
-			<!-- Nett label -->
 			<staticText>
 				<reportElement x="374" y="527" width="60" height="9" uuid="3b057333-afff-4a0e-b571-6ef387a37777"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Nett]]></text>
 			</staticText>
-
-			<!-- Total Gross / Total Tare / Nett values (y=536 h=38) -->
 			<textField isBlankWhenNull="true">
 				<reportElement x="2" y="537" width="183" height="36" uuid="00001111-2222-4000-8555-555566667779"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="20" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="20" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{TotalGrossWeight} != null ? $F{TotalGrossWeight} : ""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="186" y="537" width="185" height="36" uuid="22223333-4444-4000-8555-777788889991"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="20" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="20" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{TotalTareWeight} != null ? $F{TotalTareWeight} : ""]]></textFieldExpression>
 			</textField>
-			<!-- Nett = TotalGross - TotalTare (calculated) -->
 			<textField isBlankWhenNull="true">
 				<reportElement x="374" y="537" width="179" height="36" uuid="44445555-6666-4000-8555-999900001113"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="Arial" size="20" isBold="true"/></textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="20" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[($F{TotalGrossWeight} != null && $F{TotalTareWeight} != null && !$F{TotalGrossWeight}.trim().isEmpty() && !$F{TotalTareWeight}.trim().isEmpty()) ? String.format("%.2f", Double.parseDouble($F{TotalGrossWeight}.trim()) - Double.parseDouble($F{TotalTareWeight}.trim())) : ""]]></textFieldExpression>
 			</textField>
-			<!-- Horizontal line y=573 -->
 			<line>
 				<reportElement x="0" y="573" width="555" height="1" uuid="66667777-8888-4000-8555-111122223335"/>
 			</line>
-			<!-- ============================================================ -->
-			<!-- SIGNATURE SECTION (y=573 h=79) -->
-			<!-- ============================================================ -->
-			<!-- Left signatures -->
 			<staticText>
 				<reportElement x="2" y="574" width="175" height="9" uuid="88889999-0000-4000-8555-333344445557"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Signature - Receiving Officer]]></text>
 			</staticText>
-			<!-- Signature box for Receiving Officer -->
 			<rectangle>
 				<reportElement x="2" y="584" width="265" height="30" uuid="341c5047-9e98-40a6-95db-1e55c91a961c"/>
-				<graphicElement><pen lineWidth="0.5"/></graphicElement>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
 			</rectangle>
-			<!-- Vertical divider in signature section -->
 			<line>
 				<reportElement x="280" y="573" width="1" height="79" uuid="ffce9ac5-40fb-4765-86a7-eabd6d47c64f"/>
 			</line>
-			<!-- Right: Statutory Declaration -->
 			<staticText>
 				<reportElement x="282" y="574" width="271" height="9" uuid="b90ae0b3-c942-4ebd-8558-c3b615f6aa32"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Statutory Declaration Received - Yes / No]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="282" y="588" width="271" height="9" uuid="2a46b847-5519-452e-9044-421ac4b81c9f"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Statutory Declaration No]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement x="282" y="598" width="271" height="14" uuid="cc28c649-5996-47e2-8c1a-bb4e9196f3f4"/>
-				<textElement verticalAlignment="Middle"><font fontName="Arial" size="9"/></textElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[""]]></textFieldExpression>
 			</textField>
-			<!-- Horizontal line separating sig rows y=614 -->
 			<line>
 				<reportElement x="0" y="614" width="555" height="1" uuid="88ef73b8-f1d0-420c-addc-9fed8566572f"/>
 			</line>
-			<!-- Grower/Agent/Supplier signature -->
 			<staticText>
 				<reportElement x="2" y="615" width="175" height="9" uuid="31e8133e-8e7b-40bd-924e-9f401cb2a056"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Signature - Grower / Agent / Supplier]]></text>
 			</staticText>
 			<rectangle>
 				<reportElement x="2" y="625" width="265" height="25" uuid="e1792eda-cfd6-4885-87cd-e8eedbce7c6a"/>
-				<graphicElement><pen lineWidth="0.5"/></graphicElement>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
 			</rectangle>
-			<!-- Signature - Verification (QA) -->
 			<staticText>
 				<reportElement x="282" y="615" width="271" height="9" uuid="6ca63c04-ce87-4ff9-bfc6-0e57a2adcbf7"/>
-				<textElement><font fontName="Arial" size="7"/></textElement>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<text><![CDATA[Signature - Verification (QA)]]></text>
 			</staticText>
 			<rectangle>
 				<reportElement x="282" y="625" width="271" height="25" uuid="273b391c-707c-43a0-9853-4e7ece3ada0e"/>
-				<graphicElement><pen lineWidth="0.5"/></graphicElement>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
 			</rectangle>
-
+			<line>
+				<reportElement x="0" y="273" width="453" height="1" uuid="0e1a5595-6b99-4a47-bd87-fa0cf3c4ba9f"/>
+			</line>
 		</band>
 	</detail>
-
-	<!-- ============================================================ -->
-	<!-- PAGE FOOTER: Distribution line -->
-	<!-- ============================================================ -->
 	<pageFooter>
 		<band height="18">
 			<staticText>
 				<reportElement x="0" y="4" width="555" height="12" uuid="11112222-3333-4000-8666-666677778890"/>
-				<textElement textAlignment="Center"><font fontName="Arial" size="7"/></textElement>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7"/>
+				</textElement>
 				<text><![CDATA[Distribution:   1. Office Copy (White)   2. Growers Copy (Pink)   3. Weigh Bridge Copy (Blue)   4. Lab Copy (Green)]]></text>
 			</staticText>
 		</band>
 	</pageFooter>
-
 </jasperReport>
