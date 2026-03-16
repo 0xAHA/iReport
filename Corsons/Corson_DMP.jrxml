@@ -18,13 +18,13 @@
 	<parameter name="poNum" class="java.lang.String">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
-	<parameter name="dateRange1" class="java.util.Date" isForPrompting="false">
-		<parameterDescription><![CDATA[Today]]></parameterDescription>
-		<defaultValueExpression><![CDATA[new Date]]></defaultValueExpression>
+	<parameter name="dateRange1" class="java.util.Date">
+		<parameterDescription><![CDATA[From Date (defaults to today)]]></parameterDescription>
+		<defaultValueExpression><![CDATA[new java.util.Date()]]></defaultValueExpression>
 	</parameter>
-	<parameter name="dateRange2" class="java.util.Date" isForPrompting="false">
-		<parameterDescription><![CDATA[]]></parameterDescription>
-		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	<parameter name="dateRange2" class="java.util.Date">
+		<parameterDescription><![CDATA[To Date (defaults to today)]]></parameterDescription>
+		<defaultValueExpression><![CDATA[new java.util.Date()]]></defaultValueExpression>
 	</parameter>
 	<parameter name="PoLineNum" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
@@ -87,8 +87,8 @@ FROM po
     LEFT JOIN location ON tag.locationid = location.id
 WHERE receiptitem.statusId != 10
 AND DATE(receiptitem.datereceived) BETWEEN DATE($P{dateRange1}) AND DATE($P{dateRange2})
-AND ($P{poNum} = '' OR po.num = $P{poNum})
-AND ($P{PoLineNum} = '' OR poItem.poLineItem = $P{PoLineNum})
+AND (COALESCE($P{poNum}, '') = '' OR po.num = $P{poNum})
+AND (COALESCE($P{PoLineNum}, '') = '' OR poItem.poLineItem = $P{PoLineNum})
 ORDER BY receiptitem.datereceived, po.num, poItem.poLineItem]]>
 	</queryString>
 	<field name="poNum" class="java.lang.String"/>
