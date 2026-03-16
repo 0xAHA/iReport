@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.948717100000005"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="336"/>
+	<property name="ireport.y" value="417"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<style name="default" isDefault="true" fontName="Arial" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
@@ -18,13 +18,15 @@
 	<parameter name="poNum" class="java.lang.String">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
-	<parameter name="dateRange1" class="java.util.Date">
-		<defaultValueExpression><![CDATA[new java.util.Date()]]></defaultValueExpression>
+	<parameter name="dateRange1" class="java.util.Date" isForPrompting="false">
+		<parameterDescription><![CDATA[Today]]></parameterDescription>
+		<defaultValueExpression><![CDATA[new Date]]></defaultValueExpression>
 	</parameter>
-	<parameter name="dateRange2" class="java.util.Date">
-		<defaultValueExpression><![CDATA[new java.util.Date()]]></defaultValueExpression>
+	<parameter name="dateRange2" class="java.util.Date" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
 	</parameter>
-	<parameter name="poLineNum" class="java.lang.String">
+	<parameter name="PoLineNum" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
 	<parameter name="module" class="java.lang.Object" isForPrompting="false">
@@ -86,8 +88,8 @@ FROM po
 WHERE receiptitem.statusId != 10
 AND DATE(receiptitem.datereceived) BETWEEN DATE($P{dateRange1}) AND DATE($P{dateRange2})
 AND ($P{poNum} = '' OR po.num = $P{poNum})
-AND ($P{poLineNum} = '' OR poItem.lineNum = $P{poLineNum})
-ORDER BY receiptitem.datereceived, po.num, poItem.lineNum]]>
+AND ($P{PoLineNum} = '' OR poItem.poLineItem = $P{PoLineNum})
+ORDER BY receiptitem.datereceived, po.num, poItem.poLineItem]]>
 	</queryString>
 	<field name="poNum" class="java.lang.String"/>
 	<field name="vendorName" class="java.lang.String"/>
