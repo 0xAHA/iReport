@@ -18,6 +18,15 @@
 	<parameter name="poNum" class="java.lang.String">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
+	<parameter name="dateRange1" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new java.util.Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateRange2" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new java.util.Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="poLineNum" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
 	<parameter name="module" class="java.lang.Object" isForPrompting="false">
 		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
 	</parameter>
@@ -70,12 +79,15 @@ FROM po
     INNER JOIN poItem ON po.id = poItem.poId
     INNER JOIN part ON poItem.partId = part.id
     INNER JOIN vendor ON po.vendorId = vendor.id
-    LEFT JOIN receipt ON receipt.poid = po.id
-    LEFT JOIN receiptitem ON receiptitem.receiptid = receipt.id AND receiptitem.poitemid = poItem.id
+    INNER JOIN receipt ON receipt.poid = po.id
+    INNER JOIN receiptitem ON receiptitem.receiptid = receipt.id AND receiptitem.poitemid = poItem.id
     LEFT JOIN tag ON receiptitem.tagid = tag.id
     LEFT JOIN location ON tag.locationid = location.id
-WHERE po.num = $P{poNum}
-LIMIT 1]]>
+WHERE receiptitem.statusId != 10
+AND DATE(receiptitem.datereceived) BETWEEN DATE($P{dateRange1}) AND DATE($P{dateRange2})
+AND ($P{poNum} = '' OR po.num = $P{poNum})
+AND ($P{poLineNum} = '' OR poItem.lineNum = $P{poLineNum})
+ORDER BY receiptitem.datereceived, po.num, poItem.lineNum]]>
 	</queryString>
 	<field name="poNum" class="java.lang.String"/>
 	<field name="vendorName" class="java.lang.String"/>
