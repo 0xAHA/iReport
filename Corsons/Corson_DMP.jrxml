@@ -18,12 +18,12 @@
 	<parameter name="poNum" class="java.lang.String">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
-	<parameter name="dateRange1" class="java.util.Date">
-		<parameterDescription><![CDATA[From Date (defaults to today)]]></parameterDescription>
+	<parameter name="dateRange1" class="java.util.Date" isForPrompting="false">
+		<parameterDescription><![CDATA[Today]]></parameterDescription>
 		<defaultValueExpression><![CDATA[new java.util.Date()]]></defaultValueExpression>
 	</parameter>
-	<parameter name="dateRange2" class="java.util.Date">
-		<parameterDescription><![CDATA[To Date (defaults to today)]]></parameterDescription>
+	<parameter name="dateRange2" class="java.util.Date" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
 		<defaultValueExpression><![CDATA[new java.util.Date()]]></defaultValueExpression>
 	</parameter>
 	<parameter name="module" class="java.lang.Object" isForPrompting="false">
