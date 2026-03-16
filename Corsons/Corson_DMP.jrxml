@@ -31,7 +31,7 @@
     vendor.name AS vendorName,
     part.num AS partNum,
     part.description AS partDescription,
-    poItem.qty AS poQty,
+    poItem.qtyToFulfill AS poQty,
     poItem.note AS poLineNote,
     CustomFieldByName(po.customfields, 'Contract #') AS ContractNum,
     CustomFieldByName(po.customfields, 'Grower') AS Grower,
