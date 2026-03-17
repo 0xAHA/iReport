@@ -181,7 +181,7 @@ COALESCE($P!{cbSecondarySortBy}, 'ZZ')]]>
 			<band height="14">
 				<printWhenExpression><![CDATA[$P{ShowKitHeaders} && $F{kitFlag} != null]]></printWhenExpression>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-					<reportElement key="textField" style="body" positionType="Float" mode="Transparent" x="0" y="0" width="533" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="a0611094-092c-4ff8-b82c-5de2d76928eb">
+					<reportElement key="textField" style="body" positionType="Float" mode="Transparent" x="0" y="0" width="430" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="a0611094-092c-4ff8-b82c-5de2d76928eb">
 						<printWhenExpression><![CDATA[$F{PICKITEMPARTNUM} != null || $F{PICKITEMPARTDESC} != null]]></printWhenExpression>
 					</reportElement>
 					<box leftPadding="0">
@@ -195,6 +195,16 @@ COALESCE($P!{cbSecondarySortBy}, 'ZZ')]]>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{kitHeaderName} + ($P{Show SO Item Description}.equals(true) ? " - " + $F{kitHeaderDescription} : "")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-kitHeaderQty" style="body" positionType="Float" mode="Transparent" x="430" y="0" width="103" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="d4e8f2a1-5c3b-4f9e-b7a2-1e6d8c0f3b9a">
+						<printWhenExpression><![CDATA[$F{kitQty} != null]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None">
+						<font fontName="Open Sans" size="10" isBold="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{kitQty}.stripTrailingZeros().toPlainString() + " kits"]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -642,7 +652,7 @@ COALESCE($P!{cbSecondarySortBy}, 'ZZ')]]>
 					<font fontName="Open Sans" size="9" isItalic="true"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA["(" + $F{kitQty}.stripTrailingZeros().toPlainString() + " kits)"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["(" + $F{PICKITEMQTY}.divide($F{kitQty}, 10, java.math.RoundingMode.HALF_UP).stripTrailingZeros().toPlainString() + " per kit)"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField" style="body" mode="Transparent" x="239" y="0" width="118" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="65d83407-4d05-4f15-9428-ec43539fb707">
