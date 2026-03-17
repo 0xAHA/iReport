@@ -95,7 +95,7 @@
 	WHEN PICKITEM.ORDERTYPEID = 40 THEN XOITEM.NOTE
     END) AS PICKITEMNOTE, COALESCE(SOITEM.DESCRIPTION,PART.DESCRIPTION) AS SOITEMDESCRIPTION, CARRIER.NAME AS CARRIER,
     kitHeader.productNum AS kitHeaderName, kitHeader.description AS kitHeaderDescription, kitHeader.id AS kitFlag,
-    kitHeader.qty AS kitQty
+    kitHeader.qtyToFulfill AS kitQty
 
 FROM pick
     INNER JOIN picktype ON pick.typeid = picktype.id
