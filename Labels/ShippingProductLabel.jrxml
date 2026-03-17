@@ -20,7 +20,8 @@
 		<defaultValueExpression><![CDATA['%']]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[SELECT
+		<![CDATA[(
+SELECT
 so.num AS OrderNum
 ,so.customerPO AS CustPO
 ,soItem.soLineItem AS LineNumber
@@ -35,9 +36,47 @@ JOIN soItem ON soItem.id = shipItem.soItemId
 JOIN product ON product.id = soItem.productId
 JOIN part ON part.id = product.partId
 JOIN so ON so.id = soItem.soId
+LEFT JOIN objectToObject AS obo ON obo.recordid1 = soItem.id AND obo.typeid = 30
+LEFT JOIN soItem AS kitHeader ON kitHeader.id = obo.recordid2 AND kitHeader.typeid = 80
 JOIN mysql.help_topic ht ON ht.help_topic_id < LEAST(CAST(shipItem.qtyShipped AS SIGNED), $P{Count})
 WHERE ship.id = $P{shipID}
 AND soItem.productNum LIKE $P{productNum}
+AND kitHeader.id IS NULL
+)
+UNION ALL
+(
+SELECT
+kits.OrderNum
+,kits.CustPO
+,kits.LineNumber
+,kits.ProductNum
+,kits.Description
+,kits.KitQty AS Qty
+,kits.Barcode
+,now() AS DANDT
+FROM (
+    SELECT
+    so.num AS OrderNum
+    ,so.customerPO AS CustPO
+    ,MIN(kitHeader.soLineItem) AS LineNumber
+    ,kitHeader.productNum AS ProductNum
+    ,kitHeader.description AS Description
+    ,ROUND(MIN(shipItem.qtyShipped) * kitHeader.qtyToFulfill / MIN(soItem.qtyToFulfill)) AS KitQty
+    ,kitPart.num AS Barcode
+    FROM ship
+    JOIN shipItem ON shipItem.shipId = ship.id
+    JOIN soItem ON soItem.id = shipItem.soItemId
+    JOIN so ON so.id = soItem.soId
+    JOIN objectToObject AS obo ON obo.recordid1 = soItem.id AND obo.typeid = 30
+    JOIN soItem AS kitHeader ON kitHeader.id = obo.recordid2 AND kitHeader.typeid = 80
+    JOIN product AS kitProduct ON kitProduct.id = kitHeader.productId
+    JOIN part AS kitPart ON kitPart.id = kitProduct.partId
+    WHERE ship.id = $P{shipID}
+    AND kitHeader.productNum LIKE $P{productNum}
+    GROUP BY kitHeader.id, so.num, so.customerPO, kitHeader.productNum, kitHeader.description, kitHeader.qtyToFulfill, kitPart.num
+) kits
+JOIN mysql.help_topic ht ON ht.help_topic_id < LEAST(kits.KitQty, $P{Count})
+)
 ORDER BY 3]]>
 	</queryString>
 	<field name="OrderNum" class="java.lang.String"/>
