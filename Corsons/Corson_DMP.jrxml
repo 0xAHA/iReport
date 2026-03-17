@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.948717100000005"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="417"/>
+	<property name="ireport.y" value="640"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<style name="default" isDefault="true" fontName="Arial" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
@@ -635,7 +635,7 @@ Number]]></text>
 				<textFieldExpression><![CDATA[$F{Transport} != null ? $F{Transport} : ""]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="185" y="315" width="1" height="60" uuid="00001111-2222-4ddd-8333-555566667777"/>
+				<reportElement x="185" y="315" width="1" height="33" uuid="00001111-2222-4ddd-8333-555566667777"/>
 			</line>
 			<staticText>
 				<reportElement x="187" y="316" width="60" height="9" uuid="22223333-4444-4ddd-8333-777788889999"/>
@@ -671,7 +671,7 @@ Number]]></text>
 				<textFieldExpression><![CDATA[$F{TruckRego} != null ? $F{TruckRego} : ""]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="385" y="315" width="1" height="60" uuid="22223333-4444-4eee-8333-777788889999"/>
+				<reportElement x="383" y="315" width="1" height="33" uuid="22223333-4444-4eee-8333-777788889999"/>
 			</line>
 			<staticText>
 				<reportElement x="387" y="316" width="80" height="9" uuid="44445555-6666-4eee-8333-999900001111"/>
@@ -742,11 +742,8 @@ Number]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{PermitNo} != null ? $F{PermitNo} : ""]]></textFieldExpression>
 			</textField>
-			<line>
-				<reportElement x="455" y="348" width="1" height="27" uuid="e8954d76-bf5e-4086-a4ff-3c9f0ed5ab48"/>
-			</line>
 			<staticText>
-				<reportElement x="457" y="349" width="96" height="9" uuid="88889999-0000-4000-8555-333344445555"/>
+				<reportElement x="472" y="349" width="81" height="9" uuid="88889999-0000-4000-8555-333344445555"/>
 				<textElement>
 					<font fontName="Arial" size="7"/>
 					<paragraph leftIndent="5"/>
@@ -754,7 +751,7 @@ Number]]></text>
 				<text><![CDATA[Extra / SAA]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="457" y="359" width="96" height="14" uuid="00001111-2222-4000-8555-555566667777"/>
+				<reportElement x="472" y="359" width="81" height="14" uuid="00001111-2222-4000-8555-555566667777"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
