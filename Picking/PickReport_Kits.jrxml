@@ -94,7 +94,8 @@
 	WHEN PICKITEM.ORDERTYPEID = 20 THEN SOITEM.NOTE
 	WHEN PICKITEM.ORDERTYPEID = 40 THEN XOITEM.NOTE
     END) AS PICKITEMNOTE, COALESCE(SOITEM.DESCRIPTION,PART.DESCRIPTION) AS SOITEMDESCRIPTION, CARRIER.NAME AS CARRIER,
-    kitHeader.productNum AS kitHeaderName, kitHeader.description AS kitHeaderDescription, kitHeader.id AS kitFlag
+    kitHeader.productNum AS kitHeaderName, kitHeader.description AS kitHeaderDescription, kitHeader.id AS kitFlag,
+    kitHeader.qty AS kitQty
 
 FROM pick
     INNER JOIN picktype ON pick.typeid = picktype.id
@@ -159,6 +160,7 @@ COALESCE($P!{cbSecondarySortBy}, 'ZZ')]]>
 	<field name="kitHeaderDescription" class="java.lang.String"/>
 	<field name="kitHeaderName" class="java.lang.String"/>
 	<field name="kitFlag" class="java.lang.String"/>
+	<field name="kitQty" class="java.math.BigDecimal"/>
 	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
 		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
 	</variable>
@@ -631,6 +633,16 @@ COALESCE($P!{cbSecondarySortBy}, 'ZZ')]]>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{PICKITEMUOM}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-kitQty" style="body" positionType="Float" mode="Transparent" x="150" y="14" width="89" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="c3a7f1e2-84d5-4b9a-a1c6-5e2f8b3d9e07">
+					<printWhenExpression><![CDATA[$F{kitFlag} != null && $F{kitQty} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="9" isItalic="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $F{kitQty}.stripTrailingZeros().toPlainString() + " kits)"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField" style="body" mode="Transparent" x="239" y="0" width="118" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="65d83407-4d05-4f15-9428-ec43539fb707">
