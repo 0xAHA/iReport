@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="1. Picking Part Labels_ESS" pageWidth="283" pageHeight="141" columnWidth="277" leftMargin="3" rightMargin="3" topMargin="3" bottomMargin="3" uuid="4bfbe810-8cfc-445b-9079-00eb4017881c">
+	<property name="ireport.zoom" value="1.6105100000000039"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Barcode" hAlign="Center" vAlign="Middle">
+		<box topPadding="0"/>
+	</style>
+	<parameter name="path" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["../Custom/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="module" class="java.lang.Object" isForPrompting="false">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="shipID" class="java.lang.String"/>
+	<parameter name="Count" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[100]]></defaultValueExpression>
+	</parameter>
+	<parameter name="productNum" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA['%']]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[(
+SELECT
+so.num AS OrderNum
+,so.customerPO AS CustPO
+,soItem.soLineItem AS LineNumber
+,soItem.productNum AS ProductNum
+,soItem.description AS Description
+,shipItem.qtyShipped AS Qty
+,part.num AS Barcode
+,now() AS DANDT
+FROM ship
+JOIN shipItem ON shipItem.shipId = ship.id
+JOIN soItem ON soItem.id = shipItem.soItemId
+JOIN product ON product.id = soItem.productId
+JOIN part ON part.id = product.partId
+JOIN so ON so.id = soItem.soId
+LEFT JOIN objectToObject AS obo ON obo.recordid1 = soItem.id AND obo.typeid = 30
+LEFT JOIN soItem AS kitHeader ON kitHeader.id = obo.recordid2 AND kitHeader.typeid = 80
+JOIN mysql.help_topic ht ON ht.help_topic_id < LEAST(CAST(shipItem.qtyShipped AS SIGNED), $P{Count})
+WHERE ship.id = $P{shipID}
+AND soItem.productNum LIKE $P{productNum}
+AND kitHeader.id IS NULL
+)
+UNION ALL
+(
+SELECT
+kits.OrderNum
+,kits.CustPO
+,kits.LineNumber
+,kits.ProductNum
+,kits.Description
+,kits.KitQty AS Qty
+,kits.Barcode
+,now() AS DANDT
+FROM (
+    SELECT
+    so.num AS OrderNum
+    ,so.customerPO AS CustPO
+    ,MIN(kitHeader.soLineItem) AS LineNumber
+    ,kitHeader.productNum AS ProductNum
+    ,kitHeader.description AS Description
+    ,ROUND(MIN(shipItem.qtyShipped) * kitHeader.qtyToFulfill / MIN(soItem.qtyToFulfill)) AS KitQty
+    ,kitHeader.productNum AS Barcode
+    FROM ship
+    JOIN shipItem ON shipItem.shipId = ship.id
+    JOIN soItem ON soItem.id = shipItem.soItemId
+    JOIN so ON so.id = soItem.soId
+    JOIN objectToObject AS obo ON obo.recordid1 = soItem.id AND obo.typeid = 30
+    JOIN soItem AS kitHeader ON kitHeader.id = obo.recordid2 AND kitHeader.typeid = 80
+    WHERE ship.id = $P{shipID}
+    AND kitHeader.productNum LIKE $P{productNum}
+    GROUP BY kitHeader.id, so.num, so.customerPO, kitHeader.productNum, kitHeader.description, kitHeader.qtyToFulfill
+) kits
+JOIN mysql.help_topic ht ON ht.help_topic_id < LEAST(kits.KitQty, $P{Count})
+)
+ORDER BY 3]]>
+	</queryString>
+	<field name="OrderNum" class="java.lang.String"/>
+	<field name="CustPO" class="java.lang.String"/>
+	<field name="LineNumber" class="java.lang.Integer"/>
+	<field name="productNum" class="java.lang.String"/>
+	<field name="Description" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="Qty" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="Barcode" class="java.lang.String"/>
+	<field name="DANDT" class="java.sql.Timestamp"/>
+	<variable name="DateFormat" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[(System.getProperty("REPORT_DATE_FORMAT"))]]></variableExpression>
+	</variable>
+	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="135" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="5" y="48" width="118" height="24" uuid="8852c3c6-60b4-442c-a2eb-43c18690574e"/>
+				<box topPadding="2" leftPadding="1" bottomPadding="2" rightPadding="1"/>
+				<textElement verticalAlignment="Top" rotation="None">
+					<font fontName="Open Sans" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{productNum}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{DateFormat}]]></patternExpression>
+			</textField>
+			<textField>
+				<reportElement x="5" y="103" width="93" height="16" uuid="2cca1600-2030-4557-b230-7027561309a8"/>
+				<textElement verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Customer Order: "]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="33" width="88" height="20" uuid="f71894bb-7105-4eef-9ffa-d1ab96a5c1a5"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="5" rightPadding="1"/>
+				<textElement verticalAlignment="Bottom" rotation="None">
+					<font fontName="Open Sans" size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[ITEM CODE]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="5" y="119" width="50" height="16" uuid="7326c8d0-75ad-4b5d-a548-33f0eea39a67"/>
+				<textElement verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Quantity:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="61" y="119" width="37" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="5ea0a5c8-eca8-4ede-a8ed-b9bdb3de6af4"/>
+				<box topPadding="2" leftPadding="1" bottomPadding="2" rightPadding="1"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Open Sans" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Qty}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement mode="Transparent" x="141" y="119" width="136" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="995689bc-cc11-47c5-8f4d-155b114bdb16"/>
+				<box topPadding="2" leftPadding="1" bottomPadding="2" rightPadding="1"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Open Sans" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DANDT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="104" y="103" width="173" height="16" uuid="c8ac9f51-9132-46ba-8e32-e93a193502e8"/>
+				<box topPadding="2" leftPadding="1" bottomPadding="2" rightPadding="1"/>
+				<textElement verticalAlignment="Middle" rotation="None">
+					<font fontName="Open Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CustPO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="5" y="72" width="278" height="31" forecolor="#000000" backcolor="#FFFFFF" uuid="045c9277-6004-4ed1-b809-e4a9046aad5a"/>
+				<box topPadding="2" leftPadding="1" bottomPadding="2" rightPadding="1"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Open Sans" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Description}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="0" y="0" width="112" height="33" uuid="378ddec7-6f97-47c4-be93-75d7728dc8e4"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="true" checksumRequired="false" barHeight="50">
+					<jr:codeExpression><![CDATA[$F{productNum}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<image scaleImage="RetainShape" hAlign="Right" vAlign="Top" isUsingCache="false">
+				<reportElement key="Logo" mode="Opaque" x="123" y="1" width="154" height="71" forecolor="#000000" backcolor="#FFFFFF" uuid="baba3e38-b6b4-42f8-a28c-98e62de4fcb4">
+					<printWhenExpression><![CDATA[new Boolean($P{module} != null)]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.0" lineStyle="Solid"/>
+				</graphicElement>
+				<imageExpression><![CDATA[com.evnt.util.ImageUtil.decodeImage(((com.evnt.eve.modules.ReportHelperModule) $P{module}).getImageData("Company", 1, true))]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="104" y="119" width="31" height="16" uuid="bea36254-ee85-457b-98f3-1b0b11fc2e2b"/>
+				<textElement verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Open Sans" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Date:"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
