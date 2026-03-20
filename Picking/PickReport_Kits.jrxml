@@ -96,6 +96,7 @@
     END) AS PICKITEMNOTE, COALESCE(SOITEM.DESCRIPTION,PART.DESCRIPTION) AS SOITEMDESCRIPTION, CARRIER.NAME AS CARRIER,
     kitHeader.productNum AS kitHeaderName, kitHeader.description AS kitHeaderDescription, kitHeader.id AS kitFlag,
     kitHeader.qtyToFulfill AS kitQty,
+    kitHeader.customerPartNum AS kitHeaderCustomerPartNum,
     soitem.productNum AS soItemProductNum, soitem.customerPartNum AS soItemCustomerPartNum
 
 FROM pick
@@ -162,6 +163,7 @@ COALESCE($P!{cbSecondarySortBy}, 'ZZ')]]>
 	<field name="kitHeaderName" class="java.lang.String"/>
 	<field name="kitFlag" class="java.lang.String"/>
 	<field name="kitQty" class="java.math.BigDecimal"/>
+	<field name="kitHeaderCustomerPartNum" class="java.lang.String"/>
 	<field name="soItemProductNum" class="java.lang.String"/>
 	<field name="soItemCustomerPartNum" class="java.lang.String"/>
 	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
@@ -197,7 +199,7 @@ COALESCE($P!{cbSecondarySortBy}, 'ZZ')]]>
 						<font fontName="Open Sans" size="10" isBold="true" isUnderline="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{kitHeaderName} + ($P{Show SO Item Description}.equals(true) ? " - " + $F{kitHeaderDescription} : "")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{kitHeaderName} + ($F{kitHeaderCustomerPartNum} != null && !$F{kitHeaderCustomerPartNum}.trim().isEmpty() ? " (" + $F{kitHeaderCustomerPartNum} + ")" : "") + ($P{Show SO Item Description}.equals(true) ? " - " + $F{kitHeaderDescription} : "")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField-kitHeaderQty" style="body" positionType="Float" mode="Transparent" x="430" y="0" width="103" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="d4e8f2a1-5c3b-4f9e-b7a2-1e6d8c0f3b9a">
