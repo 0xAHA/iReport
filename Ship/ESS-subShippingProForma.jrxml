@@ -547,6 +547,7 @@ FROM So
     LEFT OUTER JOIN Currency AS HomeCurrency ON HomeCurrency.homeCurrency = 1
 WHERE ShipItem.shipId = $P{shipID}
 AND ObjectToObject.recordId2 IS NULL
+AND SoItem.typeId != 80
 
 UNION ALL
 
