@@ -95,7 +95,8 @@
 	WHEN PICKITEM.ORDERTYPEID = 40 THEN XOITEM.NOTE
     END) AS PICKITEMNOTE, COALESCE(SOITEM.DESCRIPTION,PART.DESCRIPTION) AS SOITEMDESCRIPTION, CARRIER.NAME AS CARRIER,
     kitHeader.productNum AS kitHeaderName, kitHeader.description AS kitHeaderDescription, kitHeader.id AS kitFlag,
-    kitHeader.qtyToFulfill AS kitQty
+    kitHeader.qtyToFulfill AS kitQty,
+    soitem.productNum AS soItemProductNum, soitem.customerPartNum AS soItemCustomerPartNum
 
 FROM pick
     INNER JOIN picktype ON pick.typeid = picktype.id
@@ -161,6 +162,8 @@ COALESCE($P!{cbSecondarySortBy}, 'ZZ')]]>
 	<field name="kitHeaderName" class="java.lang.String"/>
 	<field name="kitFlag" class="java.lang.String"/>
 	<field name="kitQty" class="java.math.BigDecimal"/>
+	<field name="soItemProductNum" class="java.lang.String"/>
+	<field name="soItemCustomerPartNum" class="java.lang.String"/>
 	<variable name="QtyDecimal" class="java.lang.String" resetType="None">
 		<variableExpression><![CDATA[System.getProperty("REPORT_DECIMAL_QTY")]]></variableExpression>
 	</variable>
@@ -756,7 +759,7 @@ COALESCE($P!{cbSecondarySortBy}, 'ZZ')]]>
 					<font fontName="Open Sans" size="10"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{PICKITEMPARTNUM} + ($P{Show SO Item Description}.equals(true) ? " - " + $F{SOITEMDESCRIPTION} : "")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{PICKITEMPARTNUM} + ($F{soItemProductNum} != null && !$F{soItemProductNum}.trim().isEmpty() ? " (" + $F{soItemProductNum} + ($F{soItemCustomerPartNum} != null && !$F{soItemCustomerPartNum}.trim().isEmpty() ? " / " + $F{soItemCustomerPartNum} : "") + ")" : "") + ($P{Show SO Item Description}.equals(true) ? " - " + $F{SOITEMDESCRIPTION} : "")]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField" style="body" mode="Transparent" x="0" y="0" width="150" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="d20512b3-a3ad-4cdd-a004-45d4f15c07b1">
@@ -772,7 +775,7 @@ COALESCE($P!{cbSecondarySortBy}, 'ZZ')]]>
 					<font fontName="Open Sans" size="10"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{PICKITEMPARTNUM} + ($P{Show SO Item Description}.equals(true) ? " - " + $F{SOITEMDESCRIPTION} : "")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{PICKITEMPARTNUM} + ($F{soItemProductNum} != null && !$F{soItemProductNum}.trim().isEmpty() ? " (" + $F{soItemProductNum} + ($F{soItemCustomerPartNum} != null && !$F{soItemCustomerPartNum}.trim().isEmpty() ? " / " + $F{soItemCustomerPartNum} : "") + ")" : "") + ($P{Show SO Item Description}.equals(true) ? " - " + $F{SOITEMDESCRIPTION} : "")]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
