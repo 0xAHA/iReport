@@ -775,6 +775,11 @@ $V{Line} : $V{Line} + 1]]></variableExpression>
 			<variableExpression><![CDATA[$V{PriceDecimal}.substring(1,$V{PriceDecimal}.length())]]></variableExpression>
 		</variable>
 	</subDataset>
+	<parameter name="ShowKitComponents" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Group" value="Other Settings"/>
+		<parameterDescription><![CDATA[Show individual kit component rows (product number and qty only, no price) below the kit header line]]></parameterDescription>
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
 	<parameter name="ShowCountry" class="java.lang.Boolean" isForPrompting="false">
 		<defaultValueExpression><![CDATA[new Boolean(false)]]></defaultValueExpression>
 	</parameter>
@@ -1343,11 +1348,6 @@ $V{Line} : $V{Line} + 1]]></variableExpression>
 		<property name="Group" value="Other Settings"/>
 		<property name="Tooltip" value="Show or hide the &quot;S&quot; prefix for the order number"/>
 		<defaultValueExpression><![CDATA[new Boolean(false)]]></defaultValueExpression>
-	</parameter>
-	<parameter name="ShowKitComponents" class="java.lang.Boolean" isForPrompting="false">
-		<property name="Group" value="Other Settings"/>
-		<parameterDescription><![CDATA[Show individual kit component rows (product number and qty only, no price) below the kit header line]]></parameterDescription>
-		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT Company.name AS company, So.num AS soNum, So.customerContact, So.customerPo, So.billToAddress, SHIP.shipToAddress,
@@ -2637,17 +2637,15 @@ $F{SOITEMTYPEID} == 80 ? "" : $V{Line}]]></textFieldExpression>
 						</jr:columnHeader>
 						<jr:detailCell height="13" rowSpan="1">
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-								<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="13" uuid="a1d3381e-c74e-403f-b107-fad4626112a9">
-									<printWhenExpression><![CDATA[new Boolean($F{ISKITCOMPONENT} == 0)]]></printWhenExpression>
-								</reportElement>
+								<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="13" uuid="a1d3381e-c74e-403f-b107-fad4626112a9"/>
 								<box topPadding="0"/>
 								<textElement textAlignment="Right" verticalAlignment="Top">
 									<font fontName="Open Sans" size="9"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$V{isMultiCurrency} ?
+								<textFieldExpression><![CDATA[$F{ISKITCOMPONENT} == 1 ? null : ($V{isMultiCurrency} ?
 com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{HOMECURRENCYSYMBOL}, $F{QTYTOFULFILL} * $F{UNITCOST} * $F{ITEMTAXRATE}, $V{PriceDecimal})
 :
-$F{QTYTOFULFILL} * $F{UNITCOST} * $F{ITEMTAXRATE}]]></textFieldExpression>
+$F{QTYTOFULFILL} * $F{UNITCOST} * $F{ITEMTAXRATE})]]></textFieldExpression>
 								<patternExpression><![CDATA[$V{PriceDecimal}]]></patternExpression>
 							</textField>
 						</jr:detailCell>
@@ -2709,21 +2707,19 @@ $V{CanDisplaySymbol}?
 								<rightPen lineWidth="0.0"/>
 							</box>
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-								<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="13" uuid="b39eb6ef-465a-46b8-9bfd-68f25296114d">
-									<printWhenExpression><![CDATA[new Boolean($F{ISKITCOMPONENT} == 0)]]></printWhenExpression>
-								</reportElement>
+								<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="13" uuid="b39eb6ef-465a-46b8-9bfd-68f25296114d"/>
 								<box topPadding="0" rightPadding="3"/>
 								<textElement textAlignment="Right" verticalAlignment="Top">
 									<font fontName="Open Sans" size="9"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$V{isMultiCurrency} ?
+								<textFieldExpression><![CDATA[$F{ISKITCOMPONENT} == 1 ? null : ($V{isMultiCurrency} ?
     ($F{SOITEMTYPEID}== 30) ?
         com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{HOMECURRENCYSYMBOL}, $F{TOTALPRICE}, $V{PriceDecimal}) :
         com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{HOMECURRENCYSYMBOL}, $F{UNITCOST}, $V{PriceDecimal})
 :
 ($F{SOITEMTYPEID}== 30) ?
     $F{TOTALPRICE} :
-    $F{UNITCOST}]]></textFieldExpression>
+    $F{UNITCOST})]]></textFieldExpression>
 								<patternExpression><![CDATA[$V{PriceDecimal}]]></patternExpression>
 							</textField>
 						</jr:detailCell>
@@ -2754,14 +2750,12 @@ $F{CURRENCYCODE} + "\n" + ($P{FieldTitle:UnitPrice}.equals("%") ? "Unit Price" :
 								<rightPen lineWidth="0.0"/>
 							</box>
 							<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-								<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="13" uuid="d5942e62-2694-4226-8be8-82fbbbe8ae2f">
-									<printWhenExpression><![CDATA[new Boolean($F{ISKITCOMPONENT} == 0)]]></printWhenExpression>
-								</reportElement>
+								<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="13" uuid="d5942e62-2694-4226-8be8-82fbbbe8ae2f"/>
 								<box topPadding="0" rightPadding="3"/>
 								<textElement textAlignment="Right" verticalAlignment="Top">
 									<font fontName="Open Sans" size="9"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$V{isMultiCurrency} ?
+								<textFieldExpression><![CDATA[$F{ISKITCOMPONENT} == 1 ? null : ($V{isMultiCurrency} ?
 $F{SYMBOL} == null ?
     ($F{SOITEMTYPEID} == 30) ?
         com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{HOMECURRENCYSYMBOL}, $F{CURRENCYTOTALEXTENDEDPRICE}, $V{PriceDecimal}) :
@@ -2773,7 +2767,7 @@ $F{SYMBOL} == null ?
 :
     ($F{SOITEMTYPEID} == 30) ?
         $F{TOTALPRICE} :
-        $F{UNITCOST}]]></textFieldExpression>
+        $F{UNITCOST})]]></textFieldExpression>
 								<patternExpression><![CDATA[$V{PriceDecimal}]]></patternExpression>
 							</textField>
 						</jr:detailCell>
@@ -2858,17 +2852,15 @@ $F{SYMBOL} == null ?
 								<rightPen lineWidth="0.0"/>
 							</box>
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-								<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="13" uuid="a3e54060-613b-46b7-8d33-22f41f8d120c">
-									<printWhenExpression><![CDATA[new Boolean($F{ISKITCOMPONENT} == 0)]]></printWhenExpression>
-								</reportElement>
+								<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="13" uuid="a3e54060-613b-46b7-8d33-22f41f8d120c"/>
 								<box topPadding="0" rightPadding="3"/>
 								<textElement textAlignment="Right" verticalAlignment="Top">
 									<font fontName="Open Sans" size="9"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$V{isMultiCurrency} ?
+								<textFieldExpression><![CDATA[$F{ISKITCOMPONENT} == 1 ? null : ($V{isMultiCurrency} ?
     com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{HOMECURRENCYSYMBOL}, $V{extendedPrice}, $V{TotalsDecimal})
 :
-    $V{extendedPrice}]]></textFieldExpression>
+    $V{extendedPrice})]]></textFieldExpression>
 								<patternExpression><![CDATA[$V{TotalsDecimal}]]></patternExpression>
 							</textField>
 						</jr:detailCell>
@@ -2899,20 +2891,18 @@ $F{CURRENCYCODE} + "\n" + ($P{FieldTitle:ExtendedPrice}.equals("%") ? "Extended\
 								<rightPen lineWidth="0.0"/>
 							</box>
 							<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-								<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="13" uuid="91fb79f0-c41e-44e1-b09a-499226259c60">
-									<printWhenExpression><![CDATA[new Boolean($F{ISKITCOMPONENT} == 0)]]></printWhenExpression>
-								</reportElement>
+								<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="13" uuid="91fb79f0-c41e-44e1-b09a-499226259c60"/>
 								<box topPadding="0" rightPadding="3"/>
 								<textElement textAlignment="Right" verticalAlignment="Top">
 									<font fontName="Open Sans" size="9"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$V{isMultiCurrency} ?
+								<textFieldExpression><![CDATA[$F{ISKITCOMPONENT} == 1 ? null : ($V{isMultiCurrency} ?
     $F{SYMBOL} == null ?
         com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{HOMECURRENCYSYMBOL}, $F{CURRENCYTOTALEXTENDEDPRICE}, $V{TotalsDecimal})
     :
         com.fbi.sdk.constants.setup.CurrencySymbolConst.getFormattedCurrency($F{SYMBOL}, $F{CURRENCYTOTALEXTENDEDPRICE}, $V{TotalsDecimal})
 :
-$V{extendedPrice}]]></textFieldExpression>
+$V{extendedPrice})]]></textFieldExpression>
 								<patternExpression><![CDATA[$V{TotalsDecimal}]]></patternExpression>
 							</textField>
 						</jr:detailCell>
