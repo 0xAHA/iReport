@@ -519,22 +519,24 @@ GROUP BY
 			<parameterDescription><![CDATA[Display field]]></parameterDescription>
 			<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
 		</parameter>
+		<parameter name="ShowKitComponents" class="java.lang.Boolean" isForPrompting="false">
+			<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+		</parameter>
 		<queryString>
 			<![CDATA[SELECT SoItem.soLineItem, SoItemType.name AS soItemType, SoItem.unitPrice + (SoItem.adjustAmount/SoItem.qtyToFulfill) AS unitCost, SoItemUom.code AS uomCode, SoItem.productNum,
-    SoItem.customerPartNum, ObjectToObject.recordId2 AS kitParentLine, SoItem.note AS soItemNote, SoItem.description AS productDescription,
+    SoItem.customerPartNum, NULL AS kitParentLine, SoItem.note AS soItemNote, SoItem.description AS productDescription,
     ShipItem.qtyShipped AS qtyToFulfill, TaxRate.code AS itemTaxCode, SoItem.taxRate AS itemTaxRate, Currency.code AS currencyCode, Currency.symbol AS Symbol, (ShipItem.qtyShipped * SoItem.unitPrice) AS totalPrice,
     (SoItem.unitPrice + (SoItem.adjustAmount/SoItem.qtyToFulfill)) / COALESCE(So.currencyRate, 1) * COALESCE(uomConversion.factor/uomConversion.multiply, 1) AS currencyUnitPrice,
     ((ShipItem.qtyShipped * SoItem.unitPrice) / COALESCE(So.currencyRate, 1)) AS currencyTotalExtendedPrice, COALESCE(So.currencyRate, 1) AS currencyRate,
-    ShipItem.id AS shipItemId, SoItem.taxRate * soitem.unitprice * shipitem.qtyshipped  AS soItemTaxAmount,
-	SoItem.typeId AS soItemTypeId, HomeCurrency.symbol AS homeCurrencySymbol, homecurrency.code AS HOMECURRENCYCODE,
+    ShipItem.id AS shipItemId, SoItem.taxRate * soitem.unitprice * shipitem.qtyshipped AS soItemTaxAmount,
+    SoItem.typeId AS soItemTypeId, HomeCurrency.symbol AS homeCurrencySymbol, homecurrency.code AS HOMECURRENCYCODE,
     $P!{CustomField:Item1} AS itemcf1,
     $P!{CustomField:Item2} AS itemcf2,
-    $P!{CustomField:Item3} AS itemcf3
-
-
+    $P!{CustomField:Item3} AS itemcf3,
+    0 AS isKitComponent
 FROM So
     INNER JOIN SoItem ON So.id = SoItem.soId
-	INNER JOIN TaxRate ON soItem.taxId = TaxRate.id
+    INNER JOIN TaxRate ON soItem.taxId = TaxRate.id
     INNER JOIN Uom AS SoItemUom ON SoItem.uomId = SoItemUom.id
     INNER JOIN SoItemType ON SoItem.typeId = SoItemType.id
     INNER JOIN ShipItem ON SoItem.id = ShipItem.soItemId
@@ -543,10 +545,79 @@ FROM So
     LEFT OUTER JOIN ObjectToObject ON ObjectToObject.typeId = 30 AND SoItem.id = ObjectToObject.recordId1
     LEFT OUTER JOIN Currency ON Customer.currencyId = Currency.id
     LEFT OUTER JOIN Currency AS HomeCurrency ON HomeCurrency.homeCurrency = 1
-
 WHERE ShipItem.shipId = $P{shipID}
+AND ObjectToObject.recordId2 IS NULL
 
-ORDER BY SoItem.soLineItem]]>
+UNION ALL
+
+SELECT kitHeader.soLineItem, SoItemType.name AS soItemType,
+    kitHeader.unitPrice + (kitHeader.adjustAmount / NULLIF(kitHeader.qtyToFulfill, 0)) AS unitCost,
+    SoItemUom.code AS uomCode, kitHeader.productNum,
+    kitHeader.customerPartNum, NULL AS kitParentLine,
+    kitHeader.note AS soItemNote, kitHeader.description AS productDescription,
+    MIN(ShipItem.qtyShipped * kitHeader.qtyToFulfill / NULLIF(kitComponent.qtyToFulfill, 0)) AS qtyToFulfill,
+    TaxRate.code AS itemTaxCode, kitHeader.taxRate AS itemTaxRate,
+    Currency.code AS currencyCode, Currency.symbol AS Symbol,
+    MIN(ShipItem.qtyShipped * kitHeader.qtyToFulfill / NULLIF(kitComponent.qtyToFulfill, 0)) * kitHeader.unitPrice AS totalPrice,
+    (kitHeader.unitPrice + (kitHeader.adjustAmount / NULLIF(kitHeader.qtyToFulfill, 0))) / COALESCE(So.currencyRate, 1) AS currencyUnitPrice,
+    (MIN(ShipItem.qtyShipped * kitHeader.qtyToFulfill / NULLIF(kitComponent.qtyToFulfill, 0)) * kitHeader.unitPrice) / COALESCE(So.currencyRate, 1) AS currencyTotalExtendedPrice,
+    COALESCE(So.currencyRate, 1) AS currencyRate,
+    MIN(ShipItem.id) AS shipItemId,
+    kitHeader.taxRate * MIN(ShipItem.qtyShipped * kitHeader.qtyToFulfill / NULLIF(kitComponent.qtyToFulfill, 0)) * kitHeader.unitPrice AS soItemTaxAmount,
+    80 AS soItemTypeId, HomeCurrency.symbol AS homeCurrencySymbol, homecurrency.code AS HOMECURRENCYCODE,
+    $P!{CustomField:Item1} AS itemcf1,
+    $P!{CustomField:Item2} AS itemcf2,
+    $P!{CustomField:Item3} AS itemcf3,
+    0 AS isKitComponent
+FROM So
+    INNER JOIN SoItem AS kitHeader ON So.id = kitHeader.soId AND kitHeader.typeId = 80
+    INNER JOIN TaxRate ON kitHeader.taxId = TaxRate.id
+    INNER JOIN Uom AS SoItemUom ON kitHeader.uomId = SoItemUom.id
+    INNER JOIN SoItemType ON kitHeader.typeId = SoItemType.id
+    INNER JOIN objectToObject ON objectToObject.recordId2 = kitHeader.id AND objectToObject.typeId = 30
+    INNER JOIN SoItem AS kitComponent ON kitComponent.id = objectToObject.recordId1
+    INNER JOIN ShipItem ON kitComponent.id = ShipItem.soItemId AND ShipItem.shipId = $P{shipID}
+    INNER JOIN Customer ON So.customerId = Customer.id
+    LEFT OUTER JOIN Currency ON Customer.currencyId = Currency.id
+    LEFT OUTER JOIN Currency AS HomeCurrency ON HomeCurrency.homeCurrency = 1
+GROUP BY kitHeader.id, kitHeader.soLineItem, SoItemType.name, kitHeader.unitPrice, kitHeader.adjustAmount, kitHeader.qtyToFulfill,
+    SoItemUom.code, kitHeader.productNum, kitHeader.customerPartNum, kitHeader.note, kitHeader.description,
+    TaxRate.code, kitHeader.taxRate, Currency.code, Currency.symbol, So.currencyRate, HomeCurrency.symbol, homecurrency.code
+
+UNION ALL
+
+SELECT kitComponent.soLineItem, SoItemType.name AS soItemType,
+    0 AS unitCost,
+    SoItemUom.code AS uomCode, kitComponent.productNum,
+    kitComponent.customerPartNum, objectToObject.recordId2 AS kitParentLine,
+    kitComponent.note AS soItemNote, kitComponent.description AS productDescription,
+    ShipItem.qtyShipped AS qtyToFulfill,
+    TaxRate.code AS itemTaxCode, 0 AS itemTaxRate,
+    Currency.code AS currencyCode, Currency.symbol AS Symbol,
+    0 AS totalPrice,
+    0 AS currencyUnitPrice,
+    0 AS currencyTotalExtendedPrice,
+    COALESCE(So.currencyRate, 1) AS currencyRate,
+    ShipItem.id AS shipItemId, 0 AS soItemTaxAmount,
+    kitComponent.typeId AS soItemTypeId, HomeCurrency.symbol AS homeCurrencySymbol, homecurrency.code AS HOMECURRENCYCODE,
+    NULL AS itemcf1,
+    NULL AS itemcf2,
+    NULL AS itemcf3,
+    1 AS isKitComponent
+FROM So
+    INNER JOIN SoItem AS kitComponent ON So.id = kitComponent.soId
+    INNER JOIN TaxRate ON kitComponent.taxId = TaxRate.id
+    INNER JOIN Uom AS SoItemUom ON kitComponent.uomId = SoItemUom.id
+    INNER JOIN SoItemType ON kitComponent.typeId = SoItemType.id
+    INNER JOIN objectToObject ON objectToObject.recordId1 = kitComponent.id AND objectToObject.typeId = 30
+    INNER JOIN ShipItem ON kitComponent.id = ShipItem.soItemId
+    INNER JOIN Customer ON So.customerId = Customer.id
+    LEFT OUTER JOIN Currency ON Customer.currencyId = Currency.id
+    LEFT OUTER JOIN Currency AS HomeCurrency ON HomeCurrency.homeCurrency = 1
+WHERE ShipItem.shipId = $P{shipID}
+AND 1 = $P!{ShowKitComponents}
+
+ORDER BY soLineItem, isKitComponent]]>
 		</queryString>
 		<field name="SOLINEITEM" class="java.lang.Integer"/>
 		<field name="SOITEMTYPE" class="java.lang.String"/>
@@ -573,6 +644,7 @@ ORDER BY SoItem.soLineItem]]>
 		<field name="itemcf1" class="java.lang.String"/>
 		<field name="itemcf2" class="java.lang.String"/>
 		<field name="itemcf3" class="java.lang.String"/>
+		<field name="ISKITCOMPONENT" class="java.lang.Integer"/>
 		<variable name="PartInfo" class="java.lang.String" resetType="None">
 			<variableExpression><![CDATA[(($F{KITPARENTLINE} == null)
 	? ""
@@ -1270,6 +1342,11 @@ $V{Line} : $V{Line} + 1]]></variableExpression>
 		<property name="Group" value="Other Settings"/>
 		<property name="Tooltip" value="Show or hide the &quot;S&quot; prefix for the order number"/>
 		<defaultValueExpression><![CDATA[new Boolean(false)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ShowKitComponents" class="java.lang.Boolean" isForPrompting="false">
+		<property name="Group" value="Other Settings"/>
+		<parameterDescription><![CDATA[Show individual kit component rows (product number and qty only, no price) below the kit header line]]></parameterDescription>
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT Company.name AS company, So.num AS soNum, So.customerContact, So.customerPo, So.billToAddress, SHIP.shipToAddress,
@@ -2559,7 +2636,9 @@ $F{SOITEMTYPEID} == 80 ? "" : $V{Line}]]></textFieldExpression>
 						</jr:columnHeader>
 						<jr:detailCell height="13" rowSpan="1">
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-								<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="13" uuid="a1d3381e-c74e-403f-b107-fad4626112a9"/>
+								<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="13" uuid="a1d3381e-c74e-403f-b107-fad4626112a9">
+									<printWhenExpression><![CDATA[new Boolean($F{ISKITCOMPONENT} == 0)]]></printWhenExpression>
+								</reportElement>
 								<box topPadding="0"/>
 								<textElement textAlignment="Right" verticalAlignment="Top">
 									<font fontName="Open Sans" size="9"/>
@@ -2629,7 +2708,9 @@ $V{CanDisplaySymbol}?
 								<rightPen lineWidth="0.0"/>
 							</box>
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-								<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="13" uuid="b39eb6ef-465a-46b8-9bfd-68f25296114d"/>
+								<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="13" uuid="b39eb6ef-465a-46b8-9bfd-68f25296114d">
+									<printWhenExpression><![CDATA[new Boolean($F{ISKITCOMPONENT} == 0)]]></printWhenExpression>
+								</reportElement>
 								<box topPadding="0" rightPadding="3"/>
 								<textElement textAlignment="Right" verticalAlignment="Top">
 									<font fontName="Open Sans" size="9"/>
@@ -2672,7 +2753,9 @@ $F{CURRENCYCODE} + "\n" + ($P{FieldTitle:UnitPrice}.equals("%") ? "Unit Price" :
 								<rightPen lineWidth="0.0"/>
 							</box>
 							<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-								<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="13" uuid="d5942e62-2694-4226-8be8-82fbbbe8ae2f"/>
+								<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="13" uuid="d5942e62-2694-4226-8be8-82fbbbe8ae2f">
+									<printWhenExpression><![CDATA[new Boolean($F{ISKITCOMPONENT} == 0)]]></printWhenExpression>
+								</reportElement>
 								<box topPadding="0" rightPadding="3"/>
 								<textElement textAlignment="Right" verticalAlignment="Top">
 									<font fontName="Open Sans" size="9"/>
@@ -2774,7 +2857,9 @@ $F{SYMBOL} == null ?
 								<rightPen lineWidth="0.0"/>
 							</box>
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-								<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="13" uuid="a3e54060-613b-46b7-8d33-22f41f8d120c"/>
+								<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="13" uuid="a3e54060-613b-46b7-8d33-22f41f8d120c">
+									<printWhenExpression><![CDATA[new Boolean($F{ISKITCOMPONENT} == 0)]]></printWhenExpression>
+								</reportElement>
 								<box topPadding="0" rightPadding="3"/>
 								<textElement textAlignment="Right" verticalAlignment="Top">
 									<font fontName="Open Sans" size="9"/>
@@ -2813,7 +2898,9 @@ $F{CURRENCYCODE} + "\n" + ($P{FieldTitle:ExtendedPrice}.equals("%") ? "Extended\
 								<rightPen lineWidth="0.0"/>
 							</box>
 							<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-								<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="13" uuid="91fb79f0-c41e-44e1-b09a-499226259c60"/>
+								<reportElement style="Zebra" stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="13" uuid="91fb79f0-c41e-44e1-b09a-499226259c60">
+									<printWhenExpression><![CDATA[new Boolean($F{ISKITCOMPONENT} == 0)]]></printWhenExpression>
+								</reportElement>
 								<box topPadding="0" rightPadding="3"/>
 								<textElement textAlignment="Right" verticalAlignment="Top">
 									<font fontName="Open Sans" size="9"/>
