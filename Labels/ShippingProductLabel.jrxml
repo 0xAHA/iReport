@@ -138,7 +138,7 @@ ORDER BY 3]]>
 					<font fontName="Open Sans" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{Qty}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["1"]]></textFieldExpression>
 				<patternExpression><![CDATA[$V{QtyDecimal}]]></patternExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
