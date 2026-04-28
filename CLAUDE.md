@@ -21,21 +21,29 @@
 - Use `GROUP_CONCAT(DISTINCT NULLIF(field, '') SEPARATOR ', ')` pattern to collapse multi-row data (e.g. tracking numbers) while suppressing blank entries
 - Custom field access pattern: use `CustomFieldByName('FieldName', recordId)` or the appropriate Fishbowl custom field view/function
 
-### Common Fishbowl Tables
+### Database Schema Reference
 
-| Table | Purpose |
-|-------|---------|
-| `so`, `soItem` | Sales orders and line items |
-| `product`, `part` | Products and parts master |
-| `ship`, `shipItem`, `shipCarton` | Shipments, shipped items, cartons |
-| `pick`, `pickItem` | Pick orders and picked items |
-| `postso` | Posted SO records |
-| `customer` | Customer master |
-| `accountgroup` | Customer account groupings |
-| `sysuser` | Fishbowl users (e.g. salesperson) |
-| `carrier` | Shipping carriers |
-| `WO` and related | Work orders / manufacturing |
-| `location`, `locationgroup` | Warehouse locations |
+Full table definitions live in `schema/`. Read `schema/schema-index.md` first — it covers naming conventions, FK patterns, status ID lookups, common join patterns, and a view algorithm guide. Load domain files only as needed.
+
+| File | Tables | Use for |
+|------|--------|---------|
+| `schema-orders.sql` | 30 | SO, PO, MO, WO, XO, RMA and their line items |
+| `schema-fulfillment.sql` | 17 | Picking, shipping, receiving, cartons |
+| `schema-inventory.sql` | 29 | On-hand, locations, lot/serial, cost layers |
+| `schema-parts-products.sql` | 23 | Parts, products, BOMs, kits, UOM |
+| `schema-customers-vendors.sql` | 16 | Customers, vendors, addresses, pricing |
+| `schema-setup.sql` | 39 | Users, carriers, payment terms, custom fields |
+| `schema-accounting.sql` | 19 | QB posting, payments, accounting transactions |
+| `schema-views.sql` | 49 views | Quantity summaries, shipping detail, tracking |
+| `schema-audit.sql` | 107 | Change history (`_aud` tables) |
+| `schema-system.sql` | 40 | Integrations, config — rarely needed for reports |
+
+**Key conventions from the index (memorise these):**
+- FK columns: strip `Id` suffix → table name (e.g. `customerId` → `customer.id`)
+- `customFields` column is JSON; access via `CustomFieldByName(table.customfields, 'Field Name')`
+- Transfer orders use table `xo` (not `to` — reserved keyword)
+- All table names lowercase; use `activeFlag = 1` to filter active records
+- `postso` / `postsoitem` — posted (shipped/invoiced) SO records; `postsoitem.dateCreated` is the ship date
 
 ### Standard Parameter Names (Fishbowl conventions)
 
@@ -53,8 +61,9 @@
 ## JRXML Rules
 
 ### UUIDs
-- **Always generate valid RFC 4122 UUIDs** for all `uuid` attributes — never use placeholder/fake values like `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`
-- Each band, field, element, and group must have a unique UUID
+- iReport 5.6.0 schema **does not allow `uuid` on `<field>`, `<variable>`, or `<band>` elements** — omit them entirely on those nodes
+- `uuid` is valid on `<jasperReport>` (root) and `<reportElement>` (visual elements inside bands)
+- When generating new JRXML from scratch, generate valid RFC 4122 v4 UUIDs for the root and all `<reportElement>` nodes — never use placeholder values like `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`
 
 ### Parameters
 - Declare all parameters at the top of the JRXML with correct Java types

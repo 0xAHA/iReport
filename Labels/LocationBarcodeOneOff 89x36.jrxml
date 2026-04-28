@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="LocationBarcodeOneOff 89x36" pageWidth="252" pageHeight="102" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="246" leftMargin="3" rightMargin="3" topMargin="3" bottomMargin="3" uuid="920355eb-1779-4ae0-84aa-8481a2c71a7f">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="default" isDefault="true" fontName="SansSerif" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+	<style name="barcode" hAlign="Center" vAlign="Middle"/>
+	<parameter name="locationGroupID" class="java.lang.String">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="locationID" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT location.Name AS Name, location.description AS Description, tag.num AS Tag,
+    locationGroup.Name AS LG
+FROM Tag, Location, locationGroup
+WHERE tag.typeID = 10
+  AND location.ID = tag.locationID
+  AND location.locationGroupID = locationGroup.ID
+  AND Location.ID LIKE $P{locationID}
+  AND locationgroup.id IN ($P!{locationGroupID})
+  AND location.activeflag = 1
+ORDER BY locationGroup.Name, location.Name]]>
+	</queryString>
+	<field name="NAME" class="java.lang.String"/>
+	<field name="DESCRIPTION" class="java.lang.String"/>
+	<field name="TAG" class="java.lang.Integer"/>
+	<field name="LG" class="java.lang.String"/>
+	<background>
+		<band/>
+	</background>
+	<detail>
+		<band height="96" splitType="Prevent">
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-lg" style="default" x="0" y="1" width="246" height="10" uuid="74620852-7846-4a5d-8e28-2aea90eb14e0"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LG}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-name" style="default" x="0" y="11" width="246" height="13" uuid="1921cbfe-4a2f-4cdb-9476-8b802db95d30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NAME}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement key="line-sep" x="0" y="25" width="246" height="1" uuid="80cd1e27-91d2-4842-ba36-80bc26809ebe"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<componentElement>
+				<reportElement style="barcode" x="23" y="27" width="200" height="40" uuid="9deb9ec9-af9e-4fa3-82b5-a6ca0941124b"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128B" drawText="false" checksumRequired="false" barWidth="0" barHeight="40">
+					<jr:codeExpression><![CDATA[$F{TAG}.toString()]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-tag" style="default" x="0" y="68" width="246" height="13" uuid="4ecc49a5-bf13-4c4e-99f7-4ced596f05c3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TAG}.toString()]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Prevent"/>
+	</columnFooter>
+	<summary>
+		<band splitType="Prevent"/>
+	</summary>
+</jasperReport>
